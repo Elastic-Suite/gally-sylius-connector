@@ -1,0 +1,7 @@
+sylius_ui:
+    events:
+        sylius.admin.gally.form:
+            blocks:
+                content:
+                    template: '@GallySyliusPlugin/Config/Form/_content.html.twig'
+                    priority: 10
