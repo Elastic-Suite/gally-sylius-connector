@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <mapped-superclass name="Gally\SyliusPlugin\Entity\GallyConfiguration" table="gally_configuration">
+        <id name="id" column="id" type="integer">
+            <generator strategy="AUTO" />
+        </id>
+        <field name="baseUrl" type="string" column="base_url" />
+        <field name="userName" type="string" column="username" />
+        <field name="password" type="string" column="password" />
+    </mapped-superclass>
+</doctrine-mapping>
