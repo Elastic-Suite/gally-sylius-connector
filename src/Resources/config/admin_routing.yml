@@ -1,1 +1,6 @@
 # Define your own admin routes here
+gally_sylius_config:
+    path: /gally-config
+    defaults:
+        _controller: Gally\SyliusPlugin\Controller\AdminGallyController::renderGallyConfig
+        name: ~
