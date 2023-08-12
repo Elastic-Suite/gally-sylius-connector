@@ -1,6 +1,18 @@
 # Define your own admin routes here
 gally_sylius_config:
-    path: /gally-config
+    path: /gally/config
     defaults:
-        _controller: Gally\SyliusPlugin\Controller\AdminGallyController::renderGallyConfig
+        _controller: Gally\SyliusPlugin\Controller\AdminGallyController::renderGallyConfigForm
+        name: ~
+
+gally_sylius_test:
+    path: /gally/test-connection
+    defaults:
+        _controller: Gally\SyliusPlugin\Controller\AdminGallyController::renderTestConnectionForm
+        name: ~
+
+gally_sylius_sync:
+    path: /gally/sync-fields
+    defaults:
+        _controller: Gally\SyliusPlugin\Controller\AdminGallyController::renderSyncFieldsForm
         name: ~

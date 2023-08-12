@@ -23,7 +23,7 @@ final class AdminMenuListener
         $configurationMenu
             ->addChild('new-subitem', ['route' => 'gally_sylius_config'])
             ->setLabel('Gally')
-            ->setLabelAttribute('icon', 'fa-mug-saucer')
+            ->setLabelAttribute('icon', 'search')
         ;
     }
 }

@@ -5,3 +5,17 @@ sylius_ui:
                 content:
                     template: '@GallySyliusPlugin/Config/Form/_content.html.twig'
                     priority: 10
+        sylius.admin.gally.form.content:
+            blocks:
+                flashes:
+                    template: "@SyliusUi/_flashes.html.twig"
+                    priority: 50
+                connection:
+                    template: '@GallySyliusPlugin/Config/Form/_connection.html.twig'
+                    priority: 30
+                test_connection:
+                    template: '@GallySyliusPlugin/Config/Form/_test_connection.html.twig'
+                    priority: 20
+                sync_source_fields:
+                    template: '@GallySyliusPlugin/Config/Form/_sync_source_fields.html.twig'
+                    priority: 10

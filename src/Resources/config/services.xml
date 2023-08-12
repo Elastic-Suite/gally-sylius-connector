@@ -9,10 +9,6 @@
 
         <service id="Gally\SyliusPlugin\Api\AuthenticationTokenProvider" class="Gally\SyliusPlugin\Api\AuthenticationTokenProvider"/>
 
-        <service id="Gally\SyliusPlugin\Repository\GallyConfigurationRepository" class="Gally\SyliusPlugin\Repository\GallyConfigurationRepository"/>
-
-        <service id="Gally\SyliusPlugin\Repository\GallyConfigurationRepositoryInterface" alias="Gally\SyliusPlugin\Repository\GallyConfigurationRepository"/>
-
         <service id="Gally\SyliusPlugin\Controller\AdminGallyController" autowire="true" autoconfigure="true" public="true" />
 
         <service

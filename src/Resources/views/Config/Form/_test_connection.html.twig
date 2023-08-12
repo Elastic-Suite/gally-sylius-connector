@@ -1,0 +1,22 @@
+<div class="ui container">
+    {% form_theme testForm '@SyliusAdmin/Form/theme.html.twig' %}
+    {{ form_start(testForm, {'action': path('gally_sylius_test'), 'attr': {'class': 'ui loadable form', 'novalidate': 'novalidate', 'id': testForm.vars.id}}) }}
+
+    <div class="ui horizontal divider"> Test connection </div>
+
+    <div class="ui equal width grid">
+        {{ form_errors(testForm) }}
+        <div class="row">
+            <div class="column">
+                <div class="ui hidden divider"></div>
+                <div class="ui buttons">
+                    <button class="ui labeled icon primary button" type="submit" id="sylius_save_changes_button"><i class="save icon"></i> Test connection</button>
+                </div>
+            </div>
+        </div>
+        <div class="ui hidden divider"></div>
+    </div>
+
+    {{ form_row(testForm._token) }}
+    {{ form_end(testForm, {'render_rest': false}) }}
+</div>

@@ -1,2 +1,3 @@
 imports:
   - { resource: "app/events.yml" }
+  - { resource: "app/resources.yml" }

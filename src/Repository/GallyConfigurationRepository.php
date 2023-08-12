@@ -5,15 +5,14 @@ declare(strict_types=1);
 namespace Gally\SyliusPlugin\Repository;
 
 use Gally\SyliusPlugin\Entity\GallyConfiguration;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
+use Sylius\Bundle\ResourceBundle\Doctrine\ORM\EntityRepository;
+use Sylius\Bundle\ResourceBundle\Doctrine\ORM\ResourceRepositoryTrait;
 use RuntimeException;
-final class GallyConfigurationRepository  extends ServiceEntityRepository
+
+final class GallyConfigurationRepository extends EntityRepository implements GallyConfigurationRepositoryInterface
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, GallyConfiguration::class);
-    }
+    use ResourceRepositoryTrait;
+
     public function getConfiguration(): GallyConfiguration
     {
         $gallyConfig = $this->createQueryBuilder('o')

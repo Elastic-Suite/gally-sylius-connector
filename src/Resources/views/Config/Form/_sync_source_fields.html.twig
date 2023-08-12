@@ -1,0 +1,22 @@
+<div class="ui container">
+    {% form_theme syncForm '@SyliusAdmin/Form/theme.html.twig' %}
+    {{ form_start(syncForm, {'action': path('gally_sylius_sync'), 'attr': {'class': 'ui loadable form', 'novalidate': 'novalidate', 'id': syncForm.vars.id}}) }}
+
+    <div class="ui horizontal divider"> Sync attributes </div>
+
+    <div class="ui equal width grid">
+        {{ form_errors(syncForm) }}
+        <div class="row">
+            <div class="column">
+                <div class="ui hidden divider"></div>
+                <div class="ui buttons">
+                    <button class="ui labeled icon primary button" type="submit" id="sylius_save_changes_button"><i class="save icon"></i> Synchronise</button>
+                </div>
+            </div>
+        </div>
+        <div class="ui hidden divider"></div>
+    </div>
+
+    {{ form_row(syncForm._token) }}
+    {{ form_end(syncForm, {'render_rest': false}) }}
+</div>

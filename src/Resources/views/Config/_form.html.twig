@@ -1,7 +1,11 @@
 {% extends '@SyliusAdmin/layout.html.twig' %}
 
+{% block title %} Gally Configuration | Sylius{% endblock %}
+
 {% block content %}
-    {{ sylius_template_event('sylius.admin.gally.form', _context) }}
+    <div class="ui segment">
+        {{ sylius_template_event('sylius.admin.gally.form', _context) }}
+    </div>
 {% endblock %}
 
 

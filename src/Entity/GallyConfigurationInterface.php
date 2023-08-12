@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace Gally\SyliusPlugin\Entity;
 
-
-use Sylius\Component\Resource\Model\ResourceInterface;
-
-interface GallyConfigurationInterface extends ResourceInterface
+interface GallyConfigurationInterface
 {
     public function getBaseUrl(): string;
     public function setBaseUrl(string $baseUrl): void;
