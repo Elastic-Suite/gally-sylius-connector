@@ -10,7 +10,8 @@
     "license": "OSL-3.0",
     "require": {
         "php": "^8.0",
-        "sylius/sylius": "^1.12"
+        "sylius/sylius": "^1.12",
+        "gally/gally-php-rest-sdk": "fix-guzzle-version-dev"
     },
     "require-dev": {
         "behat/behat": "^3.6.1",
