@@ -2,7 +2,7 @@
     {% form_theme connectionForm '@SyliusAdmin/Form/theme.html.twig' %}
     {{ form_start(connectionForm, {'action': path('gally_sylius_config'), 'attr': {'class': 'ui loadable form', 'novalidate': 'novalidate', 'id': connectionForm.vars.id}}) }}
 
-    <div class="ui horizontal divider"> Connection configuration </div>
+    <div class="ui horizontal divider"> {{ 'gally_sylius_plugin.ui.configuration_header'|trans }} </div>
 
     <div class="ui equal width grid">
         {{ form_errors(connectionForm) }}

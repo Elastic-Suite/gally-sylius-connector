@@ -2,7 +2,7 @@
     {% form_theme syncForm '@SyliusAdmin/Form/theme.html.twig' %}
     {{ form_start(syncForm, {'action': path('gally_sylius_sync'), 'attr': {'class': 'ui loadable form', 'novalidate': 'novalidate', 'id': syncForm.vars.id}}) }}
 
-    <div class="ui horizontal divider"> Sync attributes </div>
+    <div class="ui horizontal divider"> {{ 'gally_sylius_plugin.ui.sync_header'|trans }} </div>
 
     <div class="ui equal width grid">
         {{ form_errors(syncForm) }}
@@ -10,7 +10,7 @@
             <div class="column">
                 <div class="ui hidden divider"></div>
                 <div class="ui buttons">
-                    <button class="ui labeled icon primary button" type="submit" id="sylius_save_changes_button"><i class="save icon"></i> Synchronise</button>
+                    <button class="ui labeled icon primary button" type="submit" id="sylius_save_changes_button"><i class="sync icon"></i> {{ 'gally_sylius_plugin.ui.btn_sync'|trans }}</button>
                 </div>
             </div>
         </div>

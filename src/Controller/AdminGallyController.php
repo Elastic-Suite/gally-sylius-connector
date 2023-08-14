@@ -13,12 +13,14 @@ use Gally\SyliusPlugin\Repository\GallyConfigurationRepository;
 use Gally\SyliusPlugin\Synchronizer\MetadataSynchronizer;
 use Gally\SyliusPlugin\Synchronizer\SourceFieldSynchronizer;
 use ReflectionClass;
+use Sylius\Bundle\ResourceBundle\Controller\ControllerTrait;
 use Sylius\Component\Product\Model\ProductAttribute;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class AdminGallyController extends AbstractController
 {
@@ -28,6 +30,7 @@ final class AdminGallyController extends AbstractController
         private RepositoryInterface $productAttributeRepository,
         private MetadataSynchronizer $metadataSynchronizer,
         private SourceFieldSynchronizer $sourceFieldSynchronizer,
+        private TranslatorInterface $translator,
     ) {
     }
 
@@ -41,7 +44,7 @@ final class AdminGallyController extends AbstractController
             $gallyConfiguration = $configForm->getData();
 
             $this->gallyConfigurationRepository->add($gallyConfiguration);
-            $this->addFlash('success', 'Connection configuration stored!');
+            $this->addFlash('success', $this->translator->trans('gally_sylius_plugin.ui.configuration_saved'));
         }
 
         return $this->render('@GallySyliusPlugin/Config/_form.html.twig', [
@@ -64,9 +67,9 @@ final class AdminGallyController extends AbstractController
                     $configuration->getUserName(),
                     $configuration->getPassword(),
                 );
-                $this->addFlash('success', 'Connection test successful!');
+                $this->addFlash('success', $this->translator->trans('gally_sylius_plugin.ui.test_connection_success'));
             } catch (ApiException $e) {
-                $this->addFlash('error', 'Connection test failed! Wrong credentials?');
+                $this->addFlash('error', $this->translator->trans('gally_sylius_plugin.ui.test_connection_failure'));
             }
         }
 
@@ -87,7 +90,6 @@ final class AdminGallyController extends AbstractController
             $metadataName = (new ReflectionClass(ProductAttribute::class))->getShortName();
             $metadata = $this->metadataSynchronizer->synchronizeItem(['entity' => $metadataName]);
             foreach ($attributes as $attribute) {
-                error_log("Sync ".$attribute."\n", 3, '/tmp/sync.log');
                 $this->sourceFieldSynchronizer->synchronizeItem([
                     'metadata' => $metadata,
                     'field' => [
@@ -97,7 +99,7 @@ final class AdminGallyController extends AbstractController
                 ]);
             }
 
-            $this->addFlash('success', 'Attribute sync successful!');
+            $this->addFlash('success', $this->translator->trans('gally_sylius_plugin.ui.sync_success'));
         }
 
         return $this->render('@GallySyliusPlugin/Config/_form.html.twig', [
@@ -105,5 +107,10 @@ final class AdminGallyController extends AbstractController
             'testForm' => $this->createForm(TestConnectionType::class),
             'syncForm' => $syncForm,
         ]);
+    }
+
+    protected function get(string $id)
+    {
+        return $this->container->get($id);
     }
 }
