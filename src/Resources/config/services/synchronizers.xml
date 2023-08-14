@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="Gally\SyliusPlugin\Synchronizer\AbstractSynchronizer" abstract="true">
+            <argument type="service" id="Gally\SyliusPlugin\Repository\GallyConfigurationRepository" />
+            <argument type="service" id="Gally\SyliusPlugin\Api\RestClient" />
+        </service>
+
+        <service id="Gally\SyliusPlugin\Synchronizer\MetadataSynchronizer" parent="Gally\SyliusPlugin\Synchronizer\AbstractSynchronizer">
+            <argument key="$entityClass">\Gally\Rest\Api\MetadataApi</argument>
+            <argument key="$getCollectionMethod">getMetadataCollection</argument>
+            <argument key="$createEntityMethod">postMetadataCollection</argument>
+            <argument key="$patchEntityMethod">patchMetadataItem</argument>
+        </service>
+
+        <service id="Gally\SyliusPlugin\Synchronizer\SourceFieldSynchronizer" parent="Gally\SyliusPlugin\Synchronizer\AbstractSynchronizer">
+            <argument key="$entityClass">\Gally\Rest\Api\SourceFieldApi</argument>
+            <argument key="$getCollectionMethod">getSourceFieldCollection</argument>
+            <argument key="$createEntityMethod">postSourceFieldCollection</argument>
+            <argument key="$patchEntityMethod">patchSourceFieldItem</argument>
+        </service>
+
+        <service id="Gally\SyliusPlugin\Synchronizer\Subscriber\ProductUpdateSubscriber" autowire="true" autoconfigure="true">
+            <tag name="kernel.event_subscriber" />
+        </service>
+    </services>
+</container>
