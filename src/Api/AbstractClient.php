@@ -6,6 +6,7 @@ namespace Gally\SyliusPlugin\Api;
 use Gally\SyliusPlugin\Entity\GallyConfiguration;
 use Gally\SyliusPlugin\Repository\GallyConfigurationRepository;
 use Psr\Log\LoggerInterface;
+
 abstract class AbstractClient
 {
     protected string $kernelEnv;

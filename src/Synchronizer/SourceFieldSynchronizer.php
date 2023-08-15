@@ -6,6 +6,11 @@ namespace Gally\SyliusPlugin\Synchronizer;
 use Gally\Rest\Model\Metadata;
 use Gally\Rest\Model\ModelInterface;
 use Gally\Rest\Model\SourceFieldSourceFieldApi;
+use Gally\SyliusPlugin\Api\RestClient;
+use Gally\SyliusPlugin\Repository\GallyConfigurationRepository;
+use ReflectionClass;
+use Sylius\Component\Product\Model\ProductAttribute;
+use Sylius\Component\Resource\Repository\RepositoryInterface;
 
 class SourceFieldSynchronizer extends AbstractSynchronizer
 {
@@ -38,10 +43,46 @@ class SourceFieldSynchronizer extends AbstractSynchronizer
         ],
     ];
 
+    public function __construct(
+        GallyConfigurationRepository $configurationRepository,
+        RestClient $client,
+        string $entityClass,
+        string $getCollectionMethod,
+        string $createEntityMethod,
+        string $patchEntityMethod,
+        private RepositoryInterface $productAttributeRepository,
+        private MetadataSynchronizer $metadataSynchronizer
+    ) {
+        parent::__construct(
+            $configurationRepository,
+            $client,
+            $entityClass,
+            $getCollectionMethod,
+            $createEntityMethod,
+            $patchEntityMethod
+        );
+    }
+
     public function getIdentity(ModelInterface $entity): string
     {
         /** @var SourceFieldSourceFieldApi $entity */
         return $entity->getCode();
+    }
+
+    public function synchronizeAll(): void
+    {
+        $attributes = $this->productAttributeRepository->findAll();
+        $metadataName = (new ReflectionClass(ProductAttribute::class))->getShortName();
+        $metadata = $this->metadataSynchronizer->synchronizeItem(['entity' => $metadataName]);
+        foreach ($attributes as $attribute) {
+            $this->synchronizeItem([
+                'metadata' => $metadata,
+                'field' => [
+                    'code' => $attribute->getCode(),
+                    'type' => SourceFieldSynchronizer::getGallyType($attribute->getType()),
+                ]
+            ]);
+        }
     }
 
     public function synchronizeItem(array $params): ?ModelInterface

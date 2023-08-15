@@ -8,6 +8,10 @@ use Gally\Rest\Model\ModelInterface;
 
 final class MetadataSynchronizer extends AbstractSynchronizer
 {
+    public function synchronizeAll(): void
+    {
+    }
+
     public function synchronizeItem(array $params): ?ModelInterface
     {
         return $this->createOrUpdateEntity(new Metadata(["entity" => $params['entity']]));

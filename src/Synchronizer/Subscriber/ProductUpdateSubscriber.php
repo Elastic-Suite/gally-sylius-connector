@@ -4,28 +4,22 @@ declare(strict_types=1);
 
 namespace Gally\SyliusPlugin\Synchronizer\Subscriber;
 
-use Gally\SyliusPlugin\Api\AuthenticationTokenProvider;
-use Gally\SyliusPlugin\Repository\GallyConfigurationRepository;
 use Gally\SyliusPlugin\Synchronizer\MetadataSynchronizer;
 use Gally\SyliusPlugin\Synchronizer\SourceFieldSynchronizer;
 use Psr\Log\LoggerInterface;
 use ReflectionClass;
-use Sylius\Component\Core\Event\ProductCreated;
-use Sylius\Component\Core\Event\ProductUpdated;
 use Sylius\Component\Product\Model\ProductAttribute;
 use Sylius\Component\Product\Model\ProductAttributeInterface;
-use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 final class ProductUpdateSubscriber implements EventSubscriberInterface
 {
-
     public function __construct(
-        protected LoggerInterface              $logger,
+        protected LoggerInterface $logger,
         private MetadataSynchronizer $metadataSynchronizer,
         private SourceFieldSynchronizer $sourceFieldSynchronizer,
-    ){
+    ) {
     }
 
     public static function getSubscribedEvents(): array

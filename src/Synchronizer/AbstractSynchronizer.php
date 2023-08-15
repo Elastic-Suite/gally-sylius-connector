@@ -31,6 +31,8 @@ abstract class AbstractSynchronizer
         $this->configuration = $this->configurationRepository->getConfiguration();
     }
 
+    abstract public function synchronizeAll(): void;
+
     abstract public function synchronizeItem(array $params): ?ModelInterface;
 
     public function getEntityClass(): string

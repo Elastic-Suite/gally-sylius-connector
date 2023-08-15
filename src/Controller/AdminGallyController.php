@@ -10,14 +10,8 @@ use Gally\SyliusPlugin\Form\Type\GallyConfigurationType;
 use Gally\SyliusPlugin\Form\Type\SyncSourceFieldsType;
 use Gally\SyliusPlugin\Form\Type\TestConnectionType;
 use Gally\SyliusPlugin\Repository\GallyConfigurationRepository;
-use Gally\SyliusPlugin\Synchronizer\MetadataSynchronizer;
 use Gally\SyliusPlugin\Synchronizer\SourceFieldSynchronizer;
-use ReflectionClass;
-use Sylius\Bundle\ResourceBundle\Controller\ControllerTrait;
-use Sylius\Component\Product\Model\ProductAttribute;
-use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -27,8 +21,6 @@ final class AdminGallyController extends AbstractController
     public function __construct(
         private GallyConfigurationRepository $gallyConfigurationRepository,
         private AuthenticationTokenProvider $authenticationTokenProvider,
-        private RepositoryInterface $productAttributeRepository,
-        private MetadataSynchronizer $metadataSynchronizer,
         private SourceFieldSynchronizer $sourceFieldSynchronizer,
         private TranslatorInterface $translator,
     ) {
@@ -86,18 +78,7 @@ final class AdminGallyController extends AbstractController
         $syncForm->handleRequest($request);
 
         if($syncForm->isSubmitted() && $syncForm->isValid()) {
-            $attributes = $this->productAttributeRepository->findAll();
-            $metadataName = (new ReflectionClass(ProductAttribute::class))->getShortName();
-            $metadata = $this->metadataSynchronizer->synchronizeItem(['entity' => $metadataName]);
-            foreach ($attributes as $attribute) {
-                $this->sourceFieldSynchronizer->synchronizeItem([
-                    'metadata' => $metadata,
-                    'field' => [
-                        'code' => $attribute->getCode(),
-                        'type' => SourceFieldSynchronizer::getGallyType($attribute->getType()),
-                    ]
-                ]);
-            }
+            $this->sourceFieldSynchronizer->synchronizeAll();
 
             $this->addFlash('success', $this->translator->trans('gally_sylius_plugin.ui.sync_success'));
         }
