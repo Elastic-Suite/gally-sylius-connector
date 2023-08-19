@@ -50,7 +50,7 @@ class SourceFieldSynchronizer extends AbstractSynchronizer
 
     public function synchronizeAll(): void
     {
-        $metadataName = (new ReflectionClass(Product::class))->getShortName();
+        $metadataName = strtolower((new ReflectionClass(Product::class))->getShortName());
         $metadata = $this->metadataSynchronizer->synchronizeItem(['entity' => $metadataName]);
 
         /** @var ProductAttribute[] $attributes */
