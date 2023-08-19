@@ -16,12 +16,26 @@
             <argument key="$patchEntityMethod">patchMetadataItem</argument>
         </service>
 
+        <service id="Gally\SyliusPlugin\Synchronizer\CatalogSynchronizer" parent="Gally\SyliusPlugin\Synchronizer\AbstractSynchronizer" autowire="true" autoconfigure="true">
+            <argument key="$entityClass">\Gally\Rest\Api\CatalogApi</argument>
+            <argument key="$getCollectionMethod">getCatalogCollection</argument>
+            <argument key="$createEntityMethod">postCatalogCollection</argument>
+            <argument key="$patchEntityMethod">patchCatalogItem</argument>
+            <tag name="gally.entity.synchronizer" priority="80"/>
+        </service>
+
+        <service id="Gally\SyliusPlugin\Synchronizer\LocalizedCatalogSynchronizer" parent="Gally\SyliusPlugin\Synchronizer\AbstractSynchronizer" autowire="true" autoconfigure="true">
+            <argument key="$entityClass">\Gally\Rest\Api\LocalizedCatalogApi</argument>
+            <argument key="$getCollectionMethod">getLocalizedCatalogCollection</argument>
+            <argument key="$createEntityMethod">postLocalizedCatalogCollection</argument>
+            <argument key="$patchEntityMethod">patchLocalizedCatalogItem</argument>
+        </service>
+
         <service id="Gally\SyliusPlugin\Synchronizer\SourceFieldSynchronizer" parent="Gally\SyliusPlugin\Synchronizer\AbstractSynchronizer" autowire="true" autoconfigure="true">
             <argument key="$entityClass">\Gally\Rest\Api\SourceFieldApi</argument>
             <argument key="$getCollectionMethod">getSourceFieldCollection</argument>
             <argument key="$createEntityMethod">postSourceFieldCollection</argument>
             <argument key="$patchEntityMethod">patchSourceFieldItem</argument>
-            <tag name="gally.entity.synchronizer" priority="80"/>
         </service>
 
         <service id="Gally\SyliusPlugin\Synchronizer\Subscriber\ProductUpdateSubscriber" autowire="true" autoconfigure="true">
