@@ -9,3 +9,7 @@ gally_sylius_plugin:
     sync_header: Synchronize attributes
     btn_sync: Synchronize
     sync_success: Attribute sync successful!
+    channel:
+      header: Gally configuration
+  form:
+    active: Enable Gally

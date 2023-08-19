@@ -16,6 +16,10 @@
 
         <service id="Gally\SyliusPlugin\Controller\AdminGallyController" autowire="true" autoconfigure="true" public="true" />
 
+        <service id="Gally\SyliusPlugin\Form\Extension\ChannelTypeExtension" autowire="true" autoconfigure="true" public="true">
+            <tag name="form.type_extension"/>
+        </service>
+
         <service
                 id="gally.listener.admin.menu_builder"
                 class="Gally\SyliusPlugin\Listener\AdminMenuListener"

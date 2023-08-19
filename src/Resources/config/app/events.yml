@@ -19,3 +19,8 @@ sylius_ui:
                 sync_source_fields:
                     template: '@GallySyliusPlugin/Config/Form/_sync_source_fields.html.twig'
                     priority: 10
+        sylius.admin.channel.form.second_column_content:
+            blocks:
+                gally:
+                    template: '@GallySyliusPlugin/Channel/_form.html.twig'
+                    priority: 5
