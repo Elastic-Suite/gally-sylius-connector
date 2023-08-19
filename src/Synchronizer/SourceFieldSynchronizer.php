@@ -3,46 +3,24 @@ declare(strict_types=1);
 
 namespace Gally\SyliusPlugin\Synchronizer;
 
+use App\Entity\Product\ProductAttributeTranslation;
+use Doctrine\Common\Collections\Collection;
 use Gally\Rest\Model\Metadata;
 use Gally\Rest\Model\ModelInterface;
 use Gally\Rest\Model\SourceFieldSourceFieldApi;
 use Gally\SyliusPlugin\Api\RestClient;
 use Gally\SyliusPlugin\Repository\GallyConfigurationRepository;
 use ReflectionClass;
+use Sylius\Component\Product\Model\Product;
 use Sylius\Component\Product\Model\ProductAttribute;
+use Sylius\Component\Resource\Model\TranslationInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 
+/**
+ * Synchronise Sylius Product Attributes to Gally Sourcefields
+ */
 class SourceFieldSynchronizer extends AbstractSynchronizer
 {
-    private array $entitiesToSync = ['category', 'product', 'manufacturer'];
-    private array $staticFields = [
-        'product' => [
-            'manufacturer' => [
-                'type' => 'select',
-                'labelKey' => 'listing.filterManufacturerDisplayName'
-            ],
-            'free_shipping' => [
-                'type' => 'boolean',
-                'labelKey' => 'listing.filterFreeShippingDisplayName'
-            ],
-            'rating_avg' => [
-                'type' => 'float',
-                'labelKey' => 'listing.filterRatingDisplayName'
-            ],
-            'category' => [
-                'type' => 'category',
-                'labelKey' => 'general.categories'
-            ],
-        ],
-        'manufacturer' => [
-            'id' => 'text',
-            'name' => 'text',
-            'description' => 'text',
-            'link' => 'text',
-            'image' => 'text',
-        ],
-    ];
-
     public function __construct(
         GallyConfigurationRepository $configurationRepository,
         RestClient $client,
@@ -51,7 +29,8 @@ class SourceFieldSynchronizer extends AbstractSynchronizer
         string $createEntityMethod,
         string $patchEntityMethod,
         private RepositoryInterface $productAttributeRepository,
-        private MetadataSynchronizer $metadataSynchronizer
+        private MetadataSynchronizer $metadataSynchronizer,
+        private SourceFieldLabelSynchronizer $sourceFieldLabelSynchronizer
     ) {
         parent::__construct(
             $configurationRepository,
@@ -71,15 +50,18 @@ class SourceFieldSynchronizer extends AbstractSynchronizer
 
     public function synchronizeAll(): void
     {
-        $attributes = $this->productAttributeRepository->findAll();
-        $metadataName = (new ReflectionClass(ProductAttribute::class))->getShortName();
+        $metadataName = (new ReflectionClass(Product::class))->getShortName();
         $metadata = $this->metadataSynchronizer->synchronizeItem(['entity' => $metadataName]);
+
+        /** @var ProductAttribute[] $attributes */
+        $attributes = $this->productAttributeRepository->findAll();
         foreach ($attributes as $attribute) {
             $this->synchronizeItem([
                 'metadata' => $metadata,
                 'field' => [
                     'code' => $attribute->getCode(),
                     'type' => SourceFieldSynchronizer::getGallyType($attribute->getType()),
+                    'translations' => $attribute->getTranslations(),
                 ]
             ]);
         }
@@ -93,17 +75,30 @@ class SourceFieldSynchronizer extends AbstractSynchronizer
         /** @var array| $field */
         $field = $params['field'];
 
-        $data = ['metadata' => '/metadata/' . $metadata->getId()];
+        /** @var Collection $translations */
+        $translations = $field['translations'];
+        /** @var ProductAttributeTranslation $translation */
+        $translation = $translations->first();
 
-        $data['code'] = $field['code'];
-        $data['type'] = $field['type'];
-        $labels = $field['labels'] ?? [];
-        // Prevent to update system source field
-        if ($field['code'] !== 'category') {
-            $data['defaultLabel'] = empty($labels) ? $data['code'] : reset($labels);
+        $data = [
+            'metadata' => '/metadata/' . $metadata->getId(),
+            'code' => $field['code'],
+            'type' => $field['type'],
+            'defaultLabel' => $translation->getName(),
+        ];
+
+        $sourceField = $this->createOrUpdateEntity(new SourceFieldSourceFieldApi($data));
+
+        foreach ($translations as $translation) {
+            /** @var ProductAttributeTranslation $translation */
+            $this->sourceFieldLabelSynchronizer->synchronizeItem([
+                'field' => $sourceField,
+                'locale' => $translation->getLocale(),
+                'translation' => $translation->getName(),
+            ]);
         }
 
-        return $this->createOrUpdateEntity(new SourceFieldSourceFieldApi($data));
+        return $sourceField;
     }
 
     public static function getGallyType(string $type): string
