@@ -6,17 +6,15 @@ namespace Gally\SyliusPlugin\Synchronizer\Subscriber;
 
 use Gally\SyliusPlugin\Synchronizer\MetadataSynchronizer;
 use Gally\SyliusPlugin\Synchronizer\SourceFieldSynchronizer;
-use Psr\Log\LoggerInterface;
 use ReflectionClass;
 use Sylius\Component\Product\Model\Product;
 use Sylius\Component\Product\Model\ProductAttributeInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
-final class FieldSubscriber implements EventSubscriberInterface
+final class ProductAttributeSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        protected LoggerInterface $logger,
         private MetadataSynchronizer $metadataSynchronizer,
         private SourceFieldSynchronizer $sourceFieldSynchronizer,
     ) {
