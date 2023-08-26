@@ -8,12 +8,12 @@ use Gally\SyliusPlugin\Synchronizer\MetadataSynchronizer;
 use Gally\SyliusPlugin\Synchronizer\SourceFieldSynchronizer;
 use Psr\Log\LoggerInterface;
 use ReflectionClass;
-use Sylius\Component\Product\Model\ProductAttribute;
+use Sylius\Component\Product\Model\Product;
 use Sylius\Component\Product\Model\ProductAttributeInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
-final class ProductUpdateSubscriber implements EventSubscriberInterface
+final class FieldSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         protected LoggerInterface $logger,
@@ -34,14 +34,40 @@ final class ProductUpdateSubscriber implements EventSubscriberInterface
     {
         $attribute = $event->getSubject();
         if ($attribute instanceof ProductAttributeInterface) {
-            $metadataName = (new ReflectionClass(ProductAttribute::class))->getShortName();
+            $metadataName = strtolower((new ReflectionClass(Product::class))->getShortName());
             $metadata = $this->metadataSynchronizer->synchronizeItem(['entity' => $metadataName]);
+
+            $options = [];
+            if ($attribute->getType() === 'select') {
+                $position = 0;
+                $configuration = $attribute->getConfiguration();
+                $choices = $configuration['choices'] ?? [];
+                foreach ($choices as $code => $choice) {
+                    $translations= [];
+                    foreach($choice ?? [] as $locale => $translation) {
+                        $translations[] = [
+                            'locale' => $locale,
+                            'translation' => $translation,
+                        ];
+                    }
+
+                    $options[$position] = [
+                        'code' => $code,
+                        'translations' => $translations,
+                        'position' => $position,
+                    ];
+
+                    $position++;
+                }
+            }
+
             $this->sourceFieldSynchronizer->synchronizeItem([
                 'metadata' => $metadata,
                 'field' => [
                     'code' => $attribute->getCode(),
                     'type' => SourceFieldSynchronizer::getGallyType($attribute->getType()),
-                    'labels' => [$attribute->getNameByLocaleCode('de_DE')] //@ToDo Replace with reasonable data and extend that all locales get synced. Use own SourceFieldLabelSynchronizer like in shopware connectotr
+                    'translations' => $attribute->getTranslations(),
+                    'options' => $options,
                 ]
             ]);
         }

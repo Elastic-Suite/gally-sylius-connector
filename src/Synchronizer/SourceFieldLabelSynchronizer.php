@@ -23,7 +23,7 @@ class SourceFieldLabelSynchronizer extends AbstractSynchronizer
         string $getCollectionMethod,
         string $createEntityMethod,
         string $patchEntityMethod,
-        private LocalizedCatalogSynchronizer $localizedCatalogSynchronizer
+        protected LocalizedCatalogSynchronizer $localizedCatalogSynchronizer
     ) {
         parent::__construct(
             $configurationRepository,

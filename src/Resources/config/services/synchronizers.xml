@@ -46,7 +46,21 @@
             <argument key="$patchEntityMethod">patchSourceFieldLabelItem</argument>
         </service>
 
-        <service id="Gally\SyliusPlugin\Synchronizer\Subscriber\ProductUpdateSubscriber" autowire="true" autoconfigure="true">
+        <service id="Gally\SyliusPlugin\Synchronizer\SourceFieldOptionSynchronizer" parent="Gally\SyliusPlugin\Synchronizer\AbstractSynchronizer" autowire="true" autoconfigure="true">
+            <argument key="$entityClass">\Gally\Rest\Api\SourceFieldOptionApi</argument>
+            <argument key="$getCollectionMethod">getSourceFieldOptionCollection</argument>
+            <argument key="$createEntityMethod">postSourceFieldOptionCollection</argument>
+            <argument key="$patchEntityMethod">patchSourceFieldOptionItem</argument>
+        </service>
+
+        <service id="Gally\SyliusPlugin\Synchronizer\SourceFieldOptionLabelSynchronizer" parent="Gally\SyliusPlugin\Synchronizer\AbstractSynchronizer" autowire="true" autoconfigure="true">
+            <argument key="$entityClass">\Gally\Rest\Api\SourceFieldOptionLabelApi</argument>
+            <argument key="$getCollectionMethod">getSourceFieldOptionLabelCollection</argument>
+            <argument key="$createEntityMethod">postSourceFieldOptionLabelCollection</argument>
+            <argument key="$patchEntityMethod">patchSourceFieldOptionLabelItem</argument>
+        </service>
+
+        <service id="Gally\SyliusPlugin\Synchronizer\Subscriber\FieldSubscriber" autowire="true" autoconfigure="true">
             <tag name="kernel.event_subscriber" />
         </service>
     </services>

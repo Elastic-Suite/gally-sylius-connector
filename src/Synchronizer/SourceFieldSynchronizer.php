@@ -13,7 +13,6 @@ use Gally\SyliusPlugin\Repository\GallyConfigurationRepository;
 use ReflectionClass;
 use Sylius\Component\Product\Model\Product;
 use Sylius\Component\Product\Model\ProductAttribute;
-use Sylius\Component\Resource\Model\TranslationInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 
 /**
@@ -30,7 +29,8 @@ class SourceFieldSynchronizer extends AbstractSynchronizer
         string $patchEntityMethod,
         private RepositoryInterface $productAttributeRepository,
         private MetadataSynchronizer $metadataSynchronizer,
-        private SourceFieldLabelSynchronizer $sourceFieldLabelSynchronizer
+        private SourceFieldLabelSynchronizer $sourceFieldLabelSynchronizer,
+        private SourceFieldOptionSynchronizer $sourceFieldOptionSynchronizer
     ) {
         parent::__construct(
             $configurationRepository,
@@ -56,12 +56,37 @@ class SourceFieldSynchronizer extends AbstractSynchronizer
         /** @var ProductAttribute[] $attributes */
         $attributes = $this->productAttributeRepository->findAll();
         foreach ($attributes as $attribute) {
+            $options = [];
+            if ($attribute->getType() === 'select') {
+                $position = 0;
+                $configuration = $attribute->getConfiguration();
+                $choices = $configuration['choices'] ?? [];
+                foreach ($choices as $code => $choice) {
+                    $translations= [];
+                    foreach($choice ?? [] as $locale => $translation) {
+                        $translations[] = [
+                            'locale' => $locale,
+                            'translation' => $translation,
+                        ];
+                    }
+
+                    $options[$position] = [
+                        'code' => $code,
+                        'translations' => $translations,
+                        'position' => $position,
+                    ];
+
+                    $position++;
+                }
+            }
+
             $this->synchronizeItem([
                 'metadata' => $metadata,
                 'field' => [
                     'code' => $attribute->getCode(),
                     'type' => SourceFieldSynchronizer::getGallyType($attribute->getType()),
                     'translations' => $attribute->getTranslations(),
+                    'options' => $options,
                 ]
             ]);
         }
@@ -80,6 +105,9 @@ class SourceFieldSynchronizer extends AbstractSynchronizer
         /** @var ProductAttributeTranslation $translation */
         $translation = $translations->first();
 
+        /** @var array| $options */
+        $options = $field['options'];
+
         $data = [
             'metadata' => '/metadata/' . $metadata->getId(),
             'code' => $field['code'],
@@ -95,6 +123,14 @@ class SourceFieldSynchronizer extends AbstractSynchronizer
                 'field' => $sourceField,
                 'locale' => $translation->getLocale(),
                 'translation' => $translation->getName(),
+            ]);
+        }
+
+        foreach ($options as $position => $option) {
+            $this->sourceFieldOptionSynchronizer->synchronizeItem([
+                'field' => $sourceField,
+                'option' => $option,
+                'position' => $position,
             ]);
         }
 
