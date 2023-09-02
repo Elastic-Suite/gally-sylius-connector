@@ -4,6 +4,7 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <imports>
         <import resource="services/commands.xml"/>
+        <import resource="services/indexers.xml"/>
         <import resource="services/synchronizers.xml"/>
     </imports>
 
@@ -13,6 +14,11 @@
         <service id="Gally\SyliusPlugin\Api\RestClient" class="Gally\SyliusPlugin\Api\RestClient"/>
 
         <service id="Gally\SyliusPlugin\Api\AuthenticationTokenProvider" class="Gally\SyliusPlugin\Api\AuthenticationTokenProvider"/>
+
+        <service id="Gally\SyliusPlugin\Service\IndexOperation">
+            <argument type="service" id="Gally\SyliusPlugin\Api\RestClient" />
+            <argument type="service" id="Gally\SyliusPlugin\Synchronizer\LocalizedCatalogSynchronizer" />
+        </service>
 
         <service id="Gally\SyliusPlugin\Controller\AdminGallyController" autowire="true" autoconfigure="true" public="true" />
 
