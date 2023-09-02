@@ -29,16 +29,22 @@ class CategoryIndexer extends AbstractIndexer
 
     public function getDocumentsToIndex(ChannelInterface $channel, LocaleInterface $locale, array $documentIdsToReindex): iterable
     {
-        $menuTaxon = $channel->getMenuTaxon();
-        $taxons = $this->taxonRepository->createQueryBuilder('o')
-            ->where('o.root = :taxon_id')
-            ->andWhere('o.left > :taxon_left')
-            ->orderBy('o.left', 'ASC')
-            ->getQuery()
-            ->execute([
-                'taxon_id' => $menuTaxon->getId(),
-                'taxon_left' => $menuTaxon->getLeft()
-            ]);
+        $taxons = [];
+
+        if (!empty($documentIdsToReindex)) {
+            $taxons = $this->taxonRepository->findBy(['id' => $documentIdsToReindex]);
+        } else {
+            $menuTaxon = $channel->getMenuTaxon();
+            $taxons = $this->taxonRepository->createQueryBuilder('o')
+                ->where('o.root = :taxon_id')
+                ->andWhere('o.left > :taxon_left')
+                ->orderBy('o.left', 'ASC')
+                ->getQuery()
+                ->execute([
+                    'taxon_id' => $menuTaxon->getId(),
+                    'taxon_left' => $menuTaxon->getLeft()
+                ]);
+        }
 
         foreach ($taxons as $taxon) {
             /** @var TaxonInterface $taxon */

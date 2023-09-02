@@ -9,5 +9,10 @@
         <service id="Gally\SyliusPlugin\Indexer\CategoryIndexer" parent="Gally\SyliusPlugin\Indexer\AbstractIndexer" autowire="true" autoconfigure="true">
             <tag name="gally.entity.indexer" priority="50"/>
         </service>
+
+        <service id="Gally\SyliusPlugin\Indexer\Subscriber\CategorySubscriber" autowire="true" autoconfigure="true">
+            <argument type="service" id="Gally\SyliusPlugin\Indexer\CategoryIndexer" />
+            <tag name="kernel.event_subscriber" />
+        </service>
     </services>
 </container>

@@ -47,7 +47,7 @@ class IndexOperation
     {
         /** @var LocalizedCatalog $localizedCatalog */
         $localizedCatalog = $this->localizedCatalogSynchronizer->getByIdentity(
-            $channel->getCode() . $locale->getCode()
+            $channel->getId() . $locale->getId()
         );
 
         $indices = $this->client->query(IndexApi::class, 'getIndexCollection');
