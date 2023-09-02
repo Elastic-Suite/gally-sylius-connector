@@ -29,10 +29,21 @@ class CategoryIndexer extends AbstractIndexer
 
     public function getDocumentsToIndex(ChannelInterface $channel, LocaleInterface $locale, array $documentIdsToReindex): iterable
     {
-        $taxons = $this->taxonRepository->findChildrenByChannelMenuTaxon($channel->getMenuTaxon());
+        $menuTaxon = $channel->getMenuTaxon();
+        $taxons = $this->taxonRepository->createQueryBuilder('o')
+            ->where('o.root = :taxon_id')
+            ->andWhere('o.left > :taxon_left')
+            ->orderBy('o.left', 'ASC')
+            ->getQuery()
+            ->execute([
+                'taxon_id' => $menuTaxon->getId(),
+                'taxon_left' => $menuTaxon->getLeft()
+            ]);
+
         foreach ($taxons as $taxon) {
             /** @var TaxonInterface $taxon */
             $taxonTranslation = $taxon->getTranslation($locale->getCode());
+
             yield $this->formatTaxon($taxon, $taxonTranslation);
         }
     }
