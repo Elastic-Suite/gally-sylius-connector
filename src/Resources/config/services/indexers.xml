@@ -10,6 +10,11 @@
             <tag name="gally.entity.indexer" priority="50"/>
         </service>
 
+        <service id="Gally\SyliusPlugin\Indexer\ProductIndexer" parent="Gally\SyliusPlugin\Indexer\AbstractIndexer" autowire="true" autoconfigure="true">
+            <argument key="$productVariantPriceCalculator" type="service" id="sylius.calculator.product_variant_price" />
+            <tag name="gally.entity.indexer" priority="50"/>
+        </service>
+
         <service id="Gally\SyliusPlugin\Indexer\Subscriber\CategorySubscriber" autowire="true" autoconfigure="true">
             <argument type="service" id="Gally\SyliusPlugin\Indexer\CategoryIndexer" />
             <tag name="kernel.event_subscriber" />

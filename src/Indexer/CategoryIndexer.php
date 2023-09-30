@@ -17,8 +17,8 @@ class CategoryIndexer extends AbstractIndexer
     public function __construct(
         RepositoryInterface $channelRepository,
         IndexOperation $indexOperation,
-        private TaxonRepositoryInterface $taxonRepository)
-    {
+        private TaxonRepositoryInterface $taxonRepository
+    ) {
         parent::__construct($channelRepository, $indexOperation);
     }
 
@@ -57,8 +57,8 @@ class CategoryIndexer extends AbstractIndexer
     private function formatTaxon(TaxonInterface $taxon, TaxonTranslationInterface $translation): array
     {
         return [
-            'id' => $taxon->getCode(),
-            'parentId' => $taxon->getParent()->getCode(),
+            'id' => (string) $taxon->getId(),
+            'parentId' => (string) $taxon->getParent()->getId(),
             'level' => $taxon->getLevel(),
             'path' => $taxon->getSlug(),
             'name' => $translation->getName(),

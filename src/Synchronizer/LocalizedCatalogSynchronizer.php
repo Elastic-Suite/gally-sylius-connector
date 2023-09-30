@@ -45,7 +45,7 @@ class LocalizedCatalogSynchronizer extends AbstractSynchronizer
                 "code" => $channel->getId() . $locale->getId(),
                 "locale" => str_replace('-', '_', $locale->getCode()),
                 "currency" => $channel->getBaseCurrency()->getCode(),
-                "isDefault" => $locale->getCode() == $channel->getDefaultLocale()->getCode(),
+                "isDefault" => $locale->getId() == $channel->getDefaultLocale()->getId(),
                 "catalog" => "/catalogs/" . $catalog->getId(),
             ])
         );

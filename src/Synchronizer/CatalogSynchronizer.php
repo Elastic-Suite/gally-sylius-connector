@@ -66,7 +66,7 @@ class CatalogSynchronizer extends AbstractSynchronizer
 
         $catalog = $this->createOrUpdateEntity(
             new Catalog([
-                'code' => $channel->getCode(),
+                'code' => (string) $channel->getId(),
                 'name' => $channel->getName(),
             ])
         );

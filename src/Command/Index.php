@@ -1,12 +1,5 @@
 <?php
-/*
- * This file is part of the sylius-gally package.
- *
- * (c) bitExpert AG
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+
 declare(strict_types=1);
 
 namespace Gally\SyliusPlugin\Command;
@@ -44,7 +37,11 @@ class Index extends Command
             $time = microtime(true);
             $message = "<comment>Indexing {$indexer->getEntityType()}</comment>";
             $output->writeln("$message ...");
-            $indexer->reindex();
+            try {
+                $indexer->reindex();
+            } catch (\Exception $e) {
+                $output->writeln($e->getTraceAsString());
+            }
             $time = number_format(microtime(true) - $time, 2);
             $output->writeln("\033[1A$message <info>✔</info> ($time)s");
         }
