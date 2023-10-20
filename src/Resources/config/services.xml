@@ -37,5 +37,9 @@
         >
             <tag name="kernel.event_listener" event="sylius.menu.admin.main" method="addAdminMenuItems"/>
         </service>
+
+        <service id="Gally\SyliusPlugin\ContextProvider\SortOptionContextProvider" autowire="true" autoconfigure="true" public="true">
+            <tag name="sylius.ui.template_event.context_provider" />
+        </service>
     </services>
 </container>
