@@ -34,7 +34,7 @@ class IndexOperation
         );
         $indexData = [
             'entityType' => $entityType,
-            'localizedCatalog' => (string) $localizedCatalog->getId(),
+            'localizedCatalog' =>  $channel->getId() . '_' . $locale->getCode(),
         ];
 
         /** @var IndexCreate $index */

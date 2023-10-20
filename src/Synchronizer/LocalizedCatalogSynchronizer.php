@@ -42,7 +42,7 @@ class LocalizedCatalogSynchronizer extends AbstractSynchronizer
         return $this->createOrUpdateEntity(
             new LocalizedCatalog([
                 "name" => $locale->getName(),
-                "code" => $channel->getId() . $locale->getId(),
+                "code" => $channel->getId() . '_' . $locale->getCode(),
                 "locale" => str_replace('-', '_', $locale->getCode()),
                 "currency" => $channel->getBaseCurrency()->getCode(),
                 "isDefault" => $locale->getId() == $channel->getDefaultLocale()->getId(),
