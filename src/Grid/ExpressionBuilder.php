@@ -117,7 +117,11 @@ class ExpressionBuilder implements ExpressionBuilderInterface
      */
     public function like(string $field, string $pattern)
     {
-        throw new \RuntimeException('Method not implemented');
+        if ($field === 'translation.name') {
+            return [];
+        }
+
+        return [$field => $pattern];
     }
 
     /**

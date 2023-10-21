@@ -17,7 +17,7 @@ use Sylius\Component\Grid\Parameters;
 final class DataSource implements DataSourceInterface
 {
     private ExpressionBuilderInterface $expressionBuilder;
-    private $filters;
+    private array $filters = [];
 
     public function __construct(
         private QueryBuilder $queryBuilder,
