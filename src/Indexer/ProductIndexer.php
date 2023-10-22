@@ -69,14 +69,7 @@ class ProductIndexer extends AbstractIndexer
 
         foreach ($product->getAttributes() as $attributeValue) {
             $attribute = $attributeValue->getAttribute();
-            $propertyId = 'attribute_' . $attribute->getId();
-            if (!array_key_exists($propertyId, $data)) {
-                $data[$propertyId] = [];
-            }
-            $data[$propertyId][$attribute->getId()] = [
-                'value' => $attribute->getId(),
-                'label' => $attribute->getTranslation($locale->getCode())->getName(),
-            ];
+            $data[$attribute->getCode()] = $attributeValue->getValue();
         }
 
         if ($variants->count() > 1) {
@@ -109,13 +102,8 @@ class ProductIndexer extends AbstractIndexer
 
         foreach ($variant->getOptionValues() as $optionValue) {
             /** @var ProductOptionValueInterface $optionValue */
-            $propertyId = 'option_' . $optionValue->getOption()->getId();
-            if (!array_key_exists($propertyId, $data)) {
-                $data[$propertyId] = [];
-            }
-
-            $data[$propertyId][$optionValue->getId()] = [
-                'value' => $optionValue->getId(),
+            $data[$optionValue->getOption()->getCode()][] = [
+                'value' => $optionValue->getValue(),
                 'label' => $optionValue->getTranslation($locale->getCode())->getValue(),
             ];
         }
