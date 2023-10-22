@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Gally\SyliusPlugin\Search;
 
 use Gally\Rest\ApiException;
+use Gally\SyliusPlugin\Search\Aggregation\AggregationBuilder;
 use Psr\Http\Message\ResponseInterface;
 use Sylius\Component\Core\Model\ChannelInterface;
 
@@ -13,6 +14,10 @@ use Sylius\Component\Core\Model\ChannelInterface;
  */
 class ResultBuilder
 {
+    public function __construct(private AggregationBuilder $aggregationBuilder)
+    {
+    }
+
     public function build(ChannelInterface $channel, ?ResponseInterface $response, int $currentPage): Result
     {
         $response = $response ? json_decode($response->getBody()->getContents(), true) : null;
@@ -31,7 +36,8 @@ class ResultBuilder
             $currentPage,
             (int) $response['paginationInfo']['itemsPerPage'],
             $response['sortInfo']['current'][0]['field'],
-            $response['sortInfo']['current'][0]['direction']
+            $response['sortInfo']['current'][0]['direction'],
+            $this->aggregationBuilder->build($response['aggregations'] ?? [], $channel)
         );
     }
 

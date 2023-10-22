@@ -15,7 +15,8 @@ class Result
         private int $currentPage,
         private int $itemPerPage,
         private string $sortField,
-        private string $sortDirection
+        private string $sortDirection,
+        private array $aggregations
     ) {
     }
 
@@ -36,5 +37,10 @@ class Result
     public function getProductNumbers(): array
     {
         return $this->productNumbers;
+    }
+
+    public function getAggregations(): array
+    {
+        return $this->aggregations;
     }
 }

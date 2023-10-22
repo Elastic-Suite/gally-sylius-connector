@@ -8,5 +8,7 @@
         <service id="Gally\SyliusPlugin\Search\Adapter" autowire="true" autoconfigure="true" />
 
         <service id="Gally\SyliusPlugin\Search\ResultBuilder" autowire="true" autoconfigure="true" />
+
+        <service id="Gally\SyliusPlugin\Search\Aggregation\AggregationBuilder" autowire="true" autoconfigure="true" />
     </services>
 </container>

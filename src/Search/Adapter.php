@@ -23,11 +23,13 @@ class Adapter
         ChannelInterface $channel,
         TaxonInterface $taxon,
         string $locale,
-        string $search = '',
+        array $criteria = [],
         array $sorting = [],
         $page = 1,
         $limit = 9,
     ): Result {
+        $search = (isset($criteria['search'], $criteria['search']['value'])) ? $criteria['search']['value'] : '';
+
         $data = [
             'requestType' => $search !== '' ? 'product_search' : 'product_catalog',
             'localizedCatalog' => $channel->getId() . '_' . $locale,
@@ -35,7 +37,7 @@ class Adapter
             'search' => $search,
             'currentPage' => $page,
             'pageSize' => $limit,
-            'filter' => [], //$this->getFiltersFromCriteria($criteria)
+            'filter' => $this->getFiltersFromCriteria($criteria),
             'sort' => $sorting,
         ];
 
@@ -83,5 +85,20 @@ class Adapter
             }
           }
         GQL;
+    }
+
+    private function getFiltersFromCriteria(array $criteria): array
+    {
+        $filters = [];
+
+        foreach ($criteria as $property => $value) {
+            if ($property === 'search') {
+                continue;
+            }
+
+            $operator = is_numeric($value) ? 'gte' : 'eq';
+            $filters[] = [$property => [$operator => (int) $value]];
+        }
+        return $filters;
     }
 }

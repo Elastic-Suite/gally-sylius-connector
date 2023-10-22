@@ -27,6 +27,15 @@ class PagerfantaGallyAdapter implements AdapterInterface
     ) {
     }
 
+    public function getAggregations(): array
+    {
+        if ($this->gallyResult === null) {
+            return [];
+        }
+
+        return $this->gallyResult->getAggregations();
+    }
+
     /**
      * @inheritDoc
      */
@@ -45,16 +54,13 @@ class PagerfantaGallyAdapter implements AdapterInterface
     public function getSlice(int $offset, int $length): iterable
     {
         $offset = $offset > 0 ? $offset : 1;
-        $sorting = $this->parameters->get('sorting', []);
-        $criteria = $this->parameters->get('criteria', []);
-        $search = (isset($criteria['search'], $criteria['search']['value'])) ? $criteria['search']['value'] : '';
 
         $this->gallyResult = $this->adapter->search(
             $this->channel,
             $this->taxon,
             $this->locale,
-            $search,
-            $sorting,
+            $this->parameters->get('criteria', []),
+            $this->parameters->get('sorting', []),
             $offset,
             $length
         );
