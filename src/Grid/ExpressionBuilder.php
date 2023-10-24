@@ -37,7 +37,7 @@ class ExpressionBuilder implements ExpressionBuilderInterface
      */
     public function equals(string $field, $value)
     {
-        return [$field => $value];
+        return [$field => ['eq' => $value]];
     }
 
     /**
@@ -45,7 +45,7 @@ class ExpressionBuilder implements ExpressionBuilderInterface
      */
     public function notEquals(string $field, $value)
     {
-        throw new \RuntimeException('Method not implemented');
+        return [$field => ['neq' => $value]];
     }
 
     /**
@@ -53,7 +53,7 @@ class ExpressionBuilder implements ExpressionBuilderInterface
      */
     public function lessThan(string $field, $value)
     {
-        throw new \RuntimeException('Method not implemented');
+        return [$field => ['lt' => $value]];
     }
 
     /**
@@ -61,7 +61,7 @@ class ExpressionBuilder implements ExpressionBuilderInterface
      */
     public function lessThanOrEqual(string $field, $value)
     {
-        throw new \RuntimeException('Method not implemented');
+        return [$field => ['lte' => $value]];
     }
 
     /**
@@ -69,7 +69,7 @@ class ExpressionBuilder implements ExpressionBuilderInterface
      */
     public function greaterThan(string $field, $value)
     {
-        throw new \RuntimeException('Method not implemented');
+        return [$field => ['gt' => $value]];
     }
 
     /**
@@ -77,7 +77,7 @@ class ExpressionBuilder implements ExpressionBuilderInterface
      */
     public function greaterThanOrEqual(string $field, $value)
     {
-        throw new \RuntimeException('Method not implemented');
+        return [$field => ['gte' => $value]];
     }
 
     /**

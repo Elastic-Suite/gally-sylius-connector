@@ -6,13 +6,13 @@ namespace Gally\SyliusPlugin\Grid;
 
 use Doctrine\ORM\QueryBuilder;
 use Gally\SyliusPlugin\Search\Adapter;
-use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
 use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\TaxonInterface;
 use Sylius\Component\Grid\Data\DataSourceInterface;
 use Sylius\Component\Grid\Data\ExpressionBuilderInterface;
 use Sylius\Component\Grid\Parameters;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 final class DataSource implements DataSourceInterface
 {
@@ -22,6 +22,7 @@ final class DataSource implements DataSourceInterface
     public function __construct(
         private QueryBuilder $queryBuilder,
         private Adapter $adapter,
+        private EventDispatcherInterface $eventDispatcher,
         private ChannelInterface $channel,
         private TaxonInterface $taxon,
         private string $locale
@@ -31,7 +32,7 @@ final class DataSource implements DataSourceInterface
 
     public function restrict($expression, string $condition = DataSourceInterface::CONDITION_AND): void
     {
-        $this->filters += $expression;
+        $this->filters[] = $expression;
     }
 
     public function getExpressionBuilder(): ExpressionBuilderInterface
@@ -47,9 +48,11 @@ final class DataSource implements DataSourceInterface
             new PagerfantaGallyAdapter(
                 $this->queryBuilder,
                 $this->adapter,
+                $this->eventDispatcher,
                 $this->channel,
                 $this->taxon,
                 $this->locale,
+                $this->filters,
                 $parameters
             )
         );

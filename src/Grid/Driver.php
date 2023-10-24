@@ -11,6 +11,7 @@ use Gally\SyliusPlugin\Search\Adapter;
 use Sylius\Component\Grid\Data\DataSourceInterface;
 use Sylius\Component\Grid\Data\DriverInterface;
 use Sylius\Component\Grid\Parameters;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 final class Driver implements DriverInterface
 {
@@ -18,7 +19,8 @@ final class Driver implements DriverInterface
 
     public function __construct(
         private ManagerRegistry $managerRegistry,
-        private Adapter $adapter
+        private Adapter $adapter,
+        private EventDispatcherInterface $eventDispatcher
     ) {
     }
 
@@ -46,6 +48,7 @@ final class Driver implements DriverInterface
         return new DataSource(
             $queryBuilder,
             $this->adapter,
+            $this->eventDispatcher,
             $configuration['repository']['arguments']['channel'],
             $configuration['repository']['arguments']['taxon'],
             $configuration['repository']['arguments']['locale']

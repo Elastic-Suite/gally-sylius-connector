@@ -21,3 +21,10 @@ sylius_grid:
               locale: "expr:service('sylius.context.locale').getLocaleCode()"
               sorting: "expr:service('request_stack').getCurrentRequest().get('sorting', [])"
               includeAllDescendants: "expr:parameter('sylius_shop.product_grid.include_all_descendants')"
+      filters:
+        gally:
+          type: gally_dynamic_filter
+  templates:
+    filter:
+      gally_dynamic_filter: '@GallySyliusPlugin/Grid/Filter/gally_dynamic_filter.html.twig'
+
