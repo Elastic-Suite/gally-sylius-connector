@@ -31,15 +31,20 @@ final class DataProvider implements DataProviderInterface
 
     public function getData(Grid $grid, Parameters $parameters)
     {
-        $dataSource = $this->dataSourceProvider->getDataSource($grid, $parameters);
+        if ($grid->getCode() === 'sylius_shop_product') {
+            $dataSource = $this->dataSourceProvider->getDataSource($grid, $parameters);
 
-        $this->filtersApplicator->apply($dataSource, $grid, $parameters);
+            $this->filtersApplicator->apply($dataSource, $grid, $parameters);
 
-        if ($grid->getCode() !== 'sylius_shop_product') {
-            $this->sorter->sort($dataSource, $grid, $parameters);
+            return $dataSource->getData($parameters);
         }
 
-        return $dataSource->getData($parameters);
+        // by default use Sylius' implementation of the data provider
+        $dataProvider = new \Sylius\Component\Grid\Data\DataProvider(
+            $this->dataSourceProvider,
+            $this->filtersApplicator,
+            $this->sorter,
+        );
+        return $dataProvider->getData($grid, $parameters);
     }
 }
-
