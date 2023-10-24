@@ -5,10 +5,10 @@
     <services>
         <defaults autowire="true" autoconfigure="true" public="true"/>
 
-        <service id="Gally\SyliusPlugin\Grid\Driver" autowire="true" autoconfigure="true">
+        <service id="Gally\SyliusPlugin\Grid\Gally\Driver" autowire="true" autoconfigure="true">
             <tag name="sylius.grid_driver" alias="gally/rest" />
         </service>
-        <service id="sylius.grid_driver.gally.rest" alias="Gally\SyliusPlugin\Grid\Driver" />
+        <service id="sylius.grid_driver.gally.rest" alias="Gally\SyliusPlugin\Grid\Gally\Driver" />
 
         <service id="sylius.grid.data_provider" class="Gally\SyliusPlugin\Grid\DataProvider">
             <argument type="service" id="sylius.grid.data_source_provider" />

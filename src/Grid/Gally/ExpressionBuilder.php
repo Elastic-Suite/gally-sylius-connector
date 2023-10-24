@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Gally\SyliusPlugin\Grid;
+namespace Gally\SyliusPlugin\Grid\Gally;
 
 use Sylius\Component\Grid\Data\ExpressionBuilderInterface;
 

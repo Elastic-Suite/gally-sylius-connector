@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Gally\SyliusPlugin\Grid;
+namespace Gally\SyliusPlugin\Grid\Gally;
 
 use Doctrine\ORM\QueryBuilder;
 use Gally\SyliusPlugin\Event\GridFilterUpdateEvent;
