@@ -24,7 +24,7 @@ sylius_ui:
                 gally:
                     template: '@GallySyliusPlugin/Channel/_form.html.twig'
                     priority: 5
-        sylius.shop.product.index.gally:
+        sylius.shop.product.index.filters:
             blocks:
                 gally_filters:
                     template: '@GallySyliusPlugin/Product/Index/_filters.html.twig'

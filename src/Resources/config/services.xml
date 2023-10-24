@@ -43,6 +43,11 @@
             <tag name="sylius.ui.template_event.context_provider" />
         </service>
 
+        <service id="Gally\SyliusPlugin\ContextProvider\GallyEnabledContextProvider" autowire="true" autoconfigure="true" public="true">
+            <argument type="service" id="sylius.context.channel" />
+            <tag name="sylius.ui.template_event.context_provider" />
+        </service>
+
         <service id="Gally\SyliusPlugin\Grid\Filter\GallyDynamicFilter" autowire="true" autoconfigure="true" public="true">
             <tag name="sylius.grid_filter" type="gally_dynamic_filter" form_type="Gally\SyliusPlugin\Form\Type\Filter\GallyDynamicFilterType" />
         </service>
