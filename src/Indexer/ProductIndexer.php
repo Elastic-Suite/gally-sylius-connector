@@ -72,15 +72,17 @@ class ProductIndexer extends AbstractIndexer
             $data[$attribute->getCode()] = $attributeValue->getValue();
         }
 
-        if ($variants->count() > 1) {
-            foreach ($variants as $variant) {
-                /** @var ProductVariantInterface $variant */
-                $variantData = $this->formatVariant($variant, $channel, $locale);
-                $variantData['children.sku'] = $variantData['sku'];
-                unset($variantData['sku']);
-                foreach ($variantData as $field => $value) {
-                    $data[$field] = ($data[$field] ?? []) + $value;
+        while ($variants->next()) {
+            /** @var ProductVariantInterface $variant */
+            $variantData = $this->formatVariant($variants->current(), $channel, $locale);
+            $variantData['children.sku'] = $variantData['sku'];
+            unset($variantData['sku']);
+            foreach ($variantData as $field => $value) {
+                if (!isset($data[$field])) {
+                    $data[$field] = [];
                 }
+
+                $data[$field][] = $value;
             }
         }
 
