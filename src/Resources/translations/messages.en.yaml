@@ -11,5 +11,7 @@ gally_sylius_plugin:
     sync_success: Attribute sync successful!
     channel:
       header: Gally configuration
+    filters:
+      headline: Filters
   form:
     active: Enable Gally
