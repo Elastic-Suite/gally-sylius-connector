@@ -42,7 +42,7 @@ final class ProductAttributeSubscriber implements EventSubscriberInterface
                 $choices = $configuration['choices'] ?? [];
                 foreach ($choices as $code => $choice) {
                     $translations= [];
-                    foreach($choice ?? [] as $locale => $translation) {
+                    foreach ($choice ?? [] as $locale => $translation) {
                         $translations[] = [
                             'locale' => $locale,
                             'translation' => $translation,

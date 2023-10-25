@@ -22,7 +22,8 @@ final class AuthenticationTokenProvider
         $resourcePath = '/authentication_token';
 
         try {
-            $responseJson = $this->client->request('POST',
+            $responseJson = $this->client->request(
+                'POST',
                 trim($baseUrl, '/') . $resourcePath,
                 [
                     'headers' => [

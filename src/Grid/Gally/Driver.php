@@ -45,7 +45,8 @@ final class Driver implements DriverInterface
         $fetchJoinCollection = $configuration['pagination']['fetch_join_collection'] ?? true;
         $useOutputWalkers = $configuration['pagination']['use_output_walkers'] ?? true;
 
-        $arguments = isset($configuration['repository']['arguments']) ? array_values($configuration['repository']['arguments']) : [];
+        $arguments = isset($configuration['repository']['arguments']) ?
+            array_values($configuration['repository']['arguments']) : [];
         $method = $configuration['repository']['method'];
 
         $queryBuilder = $repository->$method(...$arguments);

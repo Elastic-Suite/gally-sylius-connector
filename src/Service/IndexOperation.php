@@ -54,8 +54,7 @@ class IndexOperation
 
         /** @var IndexDetails $index */
         foreach ($indices as $index) {
-            if (
-                $index->getEntityType() === $entityType
+            if ($index->getEntityType() === $entityType
                 && $index->getLocalizedCatalog() === '/localized_catalogs/' . $localizedCatalog->getId()
                 && $index->getStatus() === 'live'
             ) {
@@ -64,7 +63,11 @@ class IndexOperation
         }
 
         throw new \LogicException(
-            "Index for entity {$entityType} and localizedCatalog {$localizedCatalog->getCode()} does not exist yet. Make sure everything is reindexed."
+            sprintf(
+                "Index for entity %s and localizedCatalog %s does not exist yet. Make sure everything is reindexed.",
+                $entityType,
+                $localizedCatalog->getCode()
+            )
         );
     }
 

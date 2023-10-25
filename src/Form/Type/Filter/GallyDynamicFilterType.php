@@ -27,9 +27,9 @@ class GallyDynamicFilterType extends AbstractType
                 case 'slider':
                     $min = 0;
                     $max = 0;
-                    foreach($aggregation->getOptions() as $option) {
+                    foreach ($aggregation->getOptions() as $option) {
                         /** @var AggregationOption $option */
-                        if($option->getId() > $max) {
+                        if ($option->getId() > $max) {
                             $max = $option->getId();
                         }
                     }
@@ -59,7 +59,7 @@ class GallyDynamicFilterType extends AbstractType
                     break;
                 case 'checkbox':
                     $choices = [];
-                    foreach($aggregation->getOptions() as $option) {
+                    foreach ($aggregation->getOptions() as $option) {
                         /** @var AggregationOption $option */
                         $choices[$option->getId()] = $option->getLabel();
                     }

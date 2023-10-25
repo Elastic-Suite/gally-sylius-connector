@@ -62,4 +62,3 @@ final class DataSource implements DataSourceInterface
         return $paginator;
     }
 }
-

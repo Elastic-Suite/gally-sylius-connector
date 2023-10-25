@@ -64,5 +64,9 @@ abstract class AbstractIndexer
 
     abstract public function getEntityType(): string;
 
-    abstract public function getDocumentsToIndex(ChannelInterface $channel, LocaleInterface $locale, array $documentIdsToReindex): iterable;
+    abstract public function getDocumentsToIndex(
+        ChannelInterface $channel,
+        LocaleInterface $locale,
+        array $documentIdsToReindex
+    ): iterable;
 }

@@ -35,7 +35,6 @@ class ProductSubscriber implements EventSubscriberInterface
         if ($product instanceof ProductInterface) {
             $this->productIndexer->reindex([$product->getId()]);
         }
-
     }
 
     public function onVariantUpdate(GenericEvent $event): void

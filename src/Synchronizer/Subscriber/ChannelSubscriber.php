@@ -28,7 +28,7 @@ final class ChannelSubscriber implements EventSubscriberInterface
     {
         $channel = $event->getSubject();
         if ($channel instanceof GallyChannelInterface) {
-            if(!$channel->getGallyActive()) {
+            if (!$channel->getGallyActive()) {
                 return;
             }
 

@@ -13,4 +13,3 @@ class TestConnectionType extends AbstractType
     {
     }
 }
-

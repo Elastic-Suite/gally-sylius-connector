@@ -32,7 +32,7 @@ final class AdminGallyController extends AbstractController
         $configForm = $this->createForm(GallyConfigurationType::class, $gallyConfiguration);
         $configForm->handleRequest($request);
 
-        if($configForm->isSubmitted() && $configForm->isValid()) {
+        if ($configForm->isSubmitted() && $configForm->isValid()) {
             $gallyConfiguration = $configForm->getData();
 
             $this->gallyConfigurationRepository->add($gallyConfiguration);
@@ -52,7 +52,7 @@ final class AdminGallyController extends AbstractController
         $testForm = $this->createForm(TestConnectionType::class);
         $testForm->handleRequest($request);
 
-        if($testForm->isSubmitted() && $testForm->isValid()) {
+        if ($testForm->isSubmitted() && $testForm->isValid()) {
             try {
                 $configuration = $this->gallyConfigurationRepository->getConfiguration();
                 $this->authenticationTokenProvider->getAuthenticationToken(
@@ -79,7 +79,7 @@ final class AdminGallyController extends AbstractController
         $syncForm = $this->createForm(SyncSourceFieldsType::class);
         $syncForm->handleRequest($request);
 
-        if($syncForm->isSubmitted() && $syncForm->isValid()) {
+        if ($syncForm->isSubmitted() && $syncForm->isValid()) {
             $this->sourceFieldSynchronizer->synchronizeAll();
 
             $this->addFlash('success', $this->translator->trans('gally_sylius_plugin.ui.sync_success'));

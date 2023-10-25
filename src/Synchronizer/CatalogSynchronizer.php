@@ -13,7 +13,6 @@ use Sylius\Component\Core\Model\Channel;
 use Sylius\Component\Locale\Model\LocaleInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 
-
 /**
  * Synchronize Sylius Sales Channels with Gally catalogs and localizedCatalogs.
  */

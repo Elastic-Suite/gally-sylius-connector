@@ -27,8 +27,11 @@ class CategoryIndexer extends AbstractIndexer
         return 'category';
     }
 
-    public function getDocumentsToIndex(ChannelInterface $channel, LocaleInterface $locale, array $documentIdsToReindex): iterable
-    {
+    public function getDocumentsToIndex(
+        ChannelInterface $channel,
+        LocaleInterface $locale,
+        array $documentIdsToReindex
+    ): iterable {
         $taxons = [];
 
         if (!empty($documentIdsToReindex)) {

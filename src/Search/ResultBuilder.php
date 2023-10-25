@@ -54,8 +54,7 @@ class ResultBuilder
 
         $data = $response['data']['products'];
 
-        if (
-            !array_key_exists('collection', $data)
+        if (!array_key_exists('collection', $data)
             || !array_key_exists('paginationInfo', $data)
             || !array_key_exists('sortInfo', $data)
             || !array_key_exists('aggregations', $data)

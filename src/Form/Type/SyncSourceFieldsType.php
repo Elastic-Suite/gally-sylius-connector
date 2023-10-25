@@ -13,4 +13,3 @@ class SyncSourceFieldsType extends AbstractType
     {
     }
 }
-

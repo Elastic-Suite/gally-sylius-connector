@@ -30,8 +30,11 @@ class ProductIndexer extends AbstractIndexer
         return 'product';
     }
 
-    public function getDocumentsToIndex(ChannelInterface $channel, LocaleInterface $locale, array $documentIdsToReindex): iterable
-    {
+    public function getDocumentsToIndex(
+        ChannelInterface $channel,
+        LocaleInterface $locale,
+        array $documentIdsToReindex
+    ) : iterable {
         $products = [];
 
         if (!empty($documentIdsToReindex)) {
