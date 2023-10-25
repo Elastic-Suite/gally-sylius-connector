@@ -1,4 +1,7 @@
-{% form_theme form '@SyliusUi/Form/theme.html.twig' %}
+{% form_theme form with [
+    '@SyliusUi/Form/theme.html.twig',
+    '@GallySyliusPlugin/Form/_range_widget.html.twig'
+] %}
 
 {% set label = 'gally_sylius_plugin.ui.filters.headline'|trans %}
 {{ form_row(form, {'label': label }) }}

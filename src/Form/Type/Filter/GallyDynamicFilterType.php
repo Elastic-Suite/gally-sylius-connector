@@ -38,10 +38,12 @@ class GallyDynamicFilterType extends AbstractType
                         $aggregation->getField().'_'.$aggregation->getType(),
                         RangeType::class,
                         [
+                            'block_prefix' => 'sylius_gally_filter_range',
                             'label' => $aggregation->getLabel(),
                             'attr' => [
                                 'min' => $min,
-                                'max' => $max
+                                'max' => $max,
+                                'steps' => 100
                             ]
                         ]
                     );

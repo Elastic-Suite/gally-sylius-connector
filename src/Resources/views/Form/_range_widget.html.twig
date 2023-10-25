@@ -1,0 +1,5 @@
+{%- block sylius_gally_filter_range_widget -%}
+    <div class="ui" tabindex="0">
+        <input type="range" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}>
+    </div>
+{%- endblock sylius_gally_filter_range_widget -%}
