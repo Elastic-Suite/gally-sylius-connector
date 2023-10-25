@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Gally\SyliusPlugin\Indexer\Subscriber;
 
 use Gally\SyliusPlugin\Indexer\CategoryIndexer;
-use Sylius\Component\Core\Model\Taxon;
+use Sylius\Component\Core\Model\TaxonInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -26,7 +26,7 @@ class CategorySubscriber implements EventSubscriberInterface
     public function onTaxonUpdate(GenericEvent $event): void
     {
         $taxon = $event->getSubject();
-        if ($taxon instanceof Taxon) {
+        if ($taxon instanceof TaxonInterface) {
             $this->categoryIndexer->reindex([$taxon->getId()]);
         }
     }

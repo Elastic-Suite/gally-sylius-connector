@@ -32,15 +32,22 @@ class ProductIndexer extends AbstractIndexer
 
     public function getDocumentsToIndex(ChannelInterface $channel, LocaleInterface $locale, array $documentIdsToReindex): iterable
     {
-        $products = $this->productRepository->createShopListQueryBuilder(
-            $channel,
-            $channel->getMenuTaxon(),
-            $locale->getCode(),
-            [],
-            true
-        );
+        $products = [];
 
-        foreach ($products->getQuery()->execute() as $product) {
+        if (!empty($documentIdsToReindex)) {
+            $products = $this->productRepository->findBy(['id' => $documentIdsToReindex]);
+        } else {
+            $queryBuilder = $this->productRepository->createShopListQueryBuilder(
+                $channel,
+                $channel->getMenuTaxon(),
+                $locale->getCode(),
+                [],
+                true
+            );
+            $products = $queryBuilder->getQuery()->execute();
+        }
+
+        foreach ($products as $product) {
             /** @var ProductInterface $product */
             yield $this->formatProduct($product, $channel, $locale);
         }
