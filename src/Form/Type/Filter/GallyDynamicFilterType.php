@@ -78,7 +78,7 @@ class GallyDynamicFilterType extends AbstractType
         }
     }
 
-    public function onFilterUpdate(GridFilterUpdateEvent $event)
+    public function onFilterUpdate(GridFilterUpdateEvent $event): void
     {
         $this->aggregations = $event->getAggregations();
     }

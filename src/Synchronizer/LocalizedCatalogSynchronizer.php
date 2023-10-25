@@ -51,7 +51,7 @@ class LocalizedCatalogSynchronizer extends AbstractSynchronizer
         );
     }
 
-    protected function addEntityByIdentity(ModelInterface $entity)
+    protected function addEntityByIdentity(ModelInterface $entity): void
     {
         /** @var LocalizedCatalog $entity */
         parent::addEntityByIdentity($entity);

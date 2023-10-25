@@ -50,7 +50,7 @@ abstract class AbstractIndexer
                         $bulk = [];
                     }
                 }
-                if (count($bulk)) {
+                if (count($bulk) > 0) {
                     $this->indexOperation->executeBulk($indexName, $bulk);
                 }
 

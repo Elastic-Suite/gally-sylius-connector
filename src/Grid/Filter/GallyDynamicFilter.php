@@ -12,7 +12,7 @@ class GallyDynamicFilter implements FilterInterface
     public function apply(DataSourceInterface $dataSource, string $name, $data, array $options): void
     {
         foreach ($data as $field => $value) {
-            if (empty($value)) {
+            if ($value === '') {
                 continue;
             }
 

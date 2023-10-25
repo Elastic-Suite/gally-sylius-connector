@@ -25,9 +25,9 @@ class Adapter
         string $locale,
         array $filters = [],
         array $sorting = [],
-        $search = '',
-        $page = 1,
-        $limit = 9,
+        string $search = '',
+        int $page = 1,
+        int $limit = 9,
     ): Result {
         $data = [
             'requestType' => $search !== '' ? 'product_search' : 'product_catalog',

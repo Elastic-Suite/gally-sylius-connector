@@ -41,7 +41,7 @@ class ResultBuilder
         );
     }
 
-    private function validate(array $response)
+    private function validate(array $response): void
     {
         if (array_key_exists('errors', $response)) {
             $firstError = reset($response['errors']);

@@ -91,9 +91,4 @@ final class AdminGallyController extends AbstractController
             'syncForm' => $syncForm,
         ]);
     }
-
-    protected function get(string $id)
-    {
-        return $this->container->get($id);
-    }
 }

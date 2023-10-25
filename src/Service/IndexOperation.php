@@ -71,17 +71,17 @@ class IndexOperation
         );
     }
 
-    public function refreshIndex(string $indexName)
+    public function refreshIndex(string $indexName): void
     {
         $this->client->query(IndexApi::class, 'refreshIndexItem', $indexName, []);
     }
 
-    public function installIndex(string $indexName)
+    public function installIndex(string $indexName): void
     {
         $this->client->query(IndexApi::class, 'installIndexItem', $indexName, []);
     }
 
-    public function executeBulk(string $indexName, array $documents)
+    public function executeBulk(string $indexName, array $documents): mixed
     {
         return $this->client->query(
             IndexDocumentApi::class,

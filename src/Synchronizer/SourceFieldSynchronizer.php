@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Gally\SyliusPlugin\Synchronizer;
 
-use App\Entity\Product\ProductAttributeTranslation;
+
 use Doctrine\Common\Collections\Collection;
 use Gally\Rest\Model\Metadata;
 use Gally\Rest\Model\ModelInterface;
@@ -13,6 +13,7 @@ use Gally\SyliusPlugin\Repository\GallyConfigurationRepository;
 use ReflectionClass;
 use Sylius\Component\Product\Model\Product;
 use Sylius\Component\Product\Model\ProductAttribute;
+use Sylius\Component\Product\Model\ProductAttributeTranslationInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 
 /**
@@ -97,28 +98,26 @@ class SourceFieldSynchronizer extends AbstractSynchronizer
         /** @var Metadata $metadata */
         $metadata = $params['metadata'];
 
-        /** @var array| $field */
+        /** @var array $field */
         $field = $params['field'];
 
         /** @var Collection $translations */
         $translations = $field['translations'];
-        /** @var ProductAttributeTranslation $translation */
-        $translation = $translations->first();
 
-        /** @var array| $options */
+        /** @var array $options */
         $options = $field['options'];
 
         $data = [
             'metadata' => '/metadata/' . $metadata->getId(),
             'code' => $field['code'],
             'type' => $field['type'],
-            'defaultLabel' => $translation->getName(),
+            'defaultLabel' => $translations->first()->getName(),
         ];
 
         $sourceField = $this->createOrUpdateEntity(new SourceFieldSourceFieldApi($data));
 
         foreach ($translations as $translation) {
-            /** @var ProductAttributeTranslation $translation */
+            /** @var ProductAttributeTranslationInterface $translation */
             $this->sourceFieldLabelSynchronizer->synchronizeItem([
                 'field' => $sourceField,
                 'locale' => $translation->getLocale(),

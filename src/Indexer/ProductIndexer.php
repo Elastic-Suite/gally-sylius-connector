@@ -56,7 +56,7 @@ class ProductIndexer extends AbstractIndexer
         }
     }
 
-    private function formatProduct(ProductInterface $product, ChannelInterface $channel, LocaleInterface $locale)
+    private function formatProduct(ProductInterface $product, ChannelInterface $channel, LocaleInterface $locale): array
     {
         $variants = $product->getVariants();
         /** @var ProductVariantInterface $variant */
@@ -104,7 +104,7 @@ class ProductIndexer extends AbstractIndexer
         );
     }
 
-    private function formatVariant(ProductVariantInterface $variant, ChannelInterface $channel, LocaleInterface $locale)
+    private function formatVariant(ProductVariantInterface $variant, ChannelInterface $channel, LocaleInterface $locale): array
     {
         $data = [
             'sku' => [$variant->getCode()],

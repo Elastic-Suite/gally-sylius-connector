@@ -14,7 +14,7 @@ final class AuthenticationTokenProvider
 
     public function __construct(string $kernelEnv = 'dev')
     {
-        $this->client = new Client(['verify' => false]);
+        $this->client = new Client($kernelEnv !== 'prod' ? ['verify' => false] : []);
     }
 
     public function getAuthenticationToken(string $baseUrl, string $user, string $password): string

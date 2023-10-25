@@ -10,7 +10,7 @@ use GuzzleHttp\Client;
 
 final class RestClient extends AbstractClient
 {
-    public function query($endpoint, $operation, ...$input)
+    public function query(string $endpoint, string $operation, ...$input): mixed
     {
         $config = Configuration::getDefaultConfiguration()
             ->setApiKey('Authorization', $this->getAuthorizationToken())

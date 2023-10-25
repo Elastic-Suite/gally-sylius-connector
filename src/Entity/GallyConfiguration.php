@@ -13,7 +13,7 @@ final class GallyConfiguration implements ResourceInterface, GallyConfigurationI
     protected string $userName;
     protected string $password;
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }

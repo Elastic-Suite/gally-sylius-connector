@@ -119,12 +119,12 @@ abstract class AbstractSynchronizer
         return $this->fetchEntity($entity);
     }
 
-    protected function addEntityByIdentity(ModelInterface $entity)
+    protected function addEntityByIdentity(ModelInterface $entity): void
     {
         $this->entityByCode[$this->getIdentity($entity)] = $entity;
     }
 
-    protected function validateEntity(ModelInterface $entity)
+    protected function validateEntity(ModelInterface $entity): void
     {
         if (!$entity->valid()) {
             throw new \LogicException(

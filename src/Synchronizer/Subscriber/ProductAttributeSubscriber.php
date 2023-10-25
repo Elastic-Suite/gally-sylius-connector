@@ -63,7 +63,7 @@ final class ProductAttributeSubscriber implements EventSubscriberInterface
                 'metadata' => $metadata,
                 'field' => [
                     'code' => $attribute->getCode(),
-                    'type' => SourceFieldSynchronizer::getGallyType($attribute->getType()),
+                    'type' => SourceFieldSynchronizer::getGallyType((string)$attribute->getType()),
                     'translations' => $attribute->getTranslations(),
                     'options' => $options,
                 ]

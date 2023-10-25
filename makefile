@@ -20,5 +20,6 @@ test: ## Starts all Tests
 	php ./vendor/bin/phpunit
 
 stan: ## Starts the PHPStan Analyser
-	php ./vendor/bin/phpstan --memory-limit=1G analyse .
+	php ./vendor/bin/phpstan --memory-limit=1G analyse ./src
+
 
