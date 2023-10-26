@@ -9,16 +9,19 @@ use Gally\Rest\Model\CategorySortingOption;
 use Gally\SyliusPlugin\Api\RestClient;
 use Sylius\Bundle\UiBundle\ContextProvider\ContextProviderInterface;
 use Sylius\Bundle\UiBundle\Registry\TemplateBlock;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class SortOptionContextProvider implements ContextProviderInterface
 {
-    public function __construct(protected RestClient $client)
+    public function __construct(private RestClient $client, private RequestStack $requestStack)
     {
     }
 
     public function provide(array $templateContext, TemplateBlock $templateBlock): array
     {
-        $templateContext['current_sorting_label'] = 'Sort by...';
+        $currentSortOrder = $this->requestStack->getMainRequest()->get('sorting', []);
+
+        $templateContext['current_sorting_label'] = '';
         $templateContext['sort_options'] = [];
 
         $sortingOptions = $this->client->query(CategorySortingOptionApi::class, 'getCategorySortingOptionCollection');
@@ -29,6 +32,10 @@ class SortOptionContextProvider implements ContextProviderInterface
                 'sorting' => [$option->getCode() => 'asc'],
                 'label' => $option->getLabel(),
             ];
+
+            if(isset($currentSortOrder[$option->getCode()])) {
+                $templateContext['current_sorting_label'] = $option->getLabel();
+            }
         }
         return $templateContext;
     }

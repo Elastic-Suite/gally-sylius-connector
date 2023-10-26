@@ -14,7 +14,7 @@
                 {% for option in sort_options %}
                     {% set sort_path = path(route, route_parameters|merge({'sorting': option.sorting, 'criteria': criteria})) %}
 
-                    <a class="item" href="{{ sort_path }}" data-text="{{ option.label|lower }}">{{ option.label }}</a>
+                    <a class="item" href="{{ sort_path }}" data-text="{{ option.label }}">{{ option.label }}</a>
                 {% endfor %}
             </div>
         </div>
