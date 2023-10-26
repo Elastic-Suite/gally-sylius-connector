@@ -11,7 +11,7 @@
     "require": {
         "php": "^8.0",
         "sylius/sylius": "^1.12",
-        "gally/gally-php-rest-sdk": "fix-guzzle-version-dev"
+        "gally/gally-php-rest-sdk": "^1.0.2"
     },
     "require-dev": {
         "behat/behat": "^3.6.1",
