@@ -60,11 +60,14 @@
             <argument key="$patchEntityMethod">patchSourceFieldOptionLabelItem</argument>
         </service>
 
-        <service id="Gally\SyliusPlugin\Synchronizer\Subscriber\ProductAttributeSubscriber" autowire="true" autoconfigure="true">
+        <service id="Gally\SyliusPlugin\Synchronizer\Subscriber\ProductAttributeSubscriber">
+            <argument type="service" id="Gally\SyliusPlugin\Synchronizer\MetadataSynchronizer" />
+            <argument type="service" id="Gally\SyliusPlugin\Synchronizer\SourceFieldSynchronizer" />
             <tag name="kernel.event_subscriber" />
         </service>
 
-        <service id="Gally\SyliusPlugin\Synchronizer\Subscriber\ChannelSubscriber" autowire="true" autoconfigure="true">
+        <service id="Gally\SyliusPlugin\Synchronizer\Subscriber\ChannelSubscriber">
+            <argument type="service" id="Gally\SyliusPlugin\Synchronizer\CatalogSynchronizer" />
             <tag name="kernel.event_subscriber" />
         </service>
     </services>

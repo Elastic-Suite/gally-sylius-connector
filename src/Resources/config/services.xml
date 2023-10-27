@@ -3,6 +3,7 @@
 <container xmlns="http://symfony.com/schema/dic/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <imports>
+        <import resource="services/api.xml"/>
         <import resource="services/commands.xml"/>
         <import resource="services/grid.xml"/>
         <import resource="services/indexers.xml"/>
@@ -11,48 +12,46 @@
     </imports>
 
     <services>
-        <defaults autowire="true" autoconfigure="true" public="true"/>
-
-        <service id="Gally\SyliusPlugin\Api\RestClient" class="Gally\SyliusPlugin\Api\RestClient"/>
-
-        <service id="Gally\SyliusPlugin\Api\GraphQlClient" class="Gally\SyliusPlugin\Api\GraphQlClient"/>
-
-        <service id="Gally\SyliusPlugin\Api\AuthenticationTokenProvider" class="Gally\SyliusPlugin\Api\AuthenticationTokenProvider"/>
-
         <service id="Gally\SyliusPlugin\Service\IndexOperation">
             <argument type="service" id="Gally\SyliusPlugin\Api\RestClient" />
             <argument type="service" id="Gally\SyliusPlugin\Synchronizer\LocalizedCatalogSynchronizer" />
         </service>
 
-        <service id="Gally\SyliusPlugin\Controller\AdminGallyController" autowire="true" autoconfigure="true" public="true" />
+        <service id="Gally\SyliusPlugin\Controller\AdminGallyController">
+            <argument type="service" id="Gally\SyliusPlugin\Repository\GallyConfigurationRepository" />
+            <argument type="service" id="Gally\SyliusPlugin\Api\AuthenticationTokenProvider" />
+            <argument type="service" id="Gally\SyliusPlugin\Synchronizer\SourceFieldSynchronizer" />
+            <argument type="service" id="translator" />
+            <call method="setContainer">
+                <argument type="service" id="service_container" />
+            </call>
+            <tag name="controller.service_arguments" />
+        </service>
 
-        <service id="Gally\SyliusPlugin\Form\Extension\ChannelTypeExtension" autowire="true" autoconfigure="true" public="true">
+        <service id="Gally\SyliusPlugin\Form\Extension\ChannelTypeExtension">
             <tag name="form.type_extension"/>
         </service>
 
-        <service
-                id="gally.listener.admin.menu_builder"
-                class="Gally\SyliusPlugin\Listener\AdminMenuListener"
-                autoconfigure="true"
-                public="true"
-        >
+        <service id="gally.listener.admin.menu_builder" class="Gally\SyliusPlugin\Listener\AdminMenuListener">
             <tag name="kernel.event_listener" event="sylius.menu.admin.main" method="addAdminMenuItems"/>
         </service>
 
-        <service id="Gally\SyliusPlugin\ContextProvider\SortOptionContextProvider" autowire="true" autoconfigure="true" public="true">
+        <service id="Gally\SyliusPlugin\ContextProvider\SortOptionContextProvider">
+            <argument type="service" id="Gally\SyliusPlugin\Api\RestClient" />
+            <argument type="service" id="request_stack" />
             <tag name="sylius.ui.template_event.context_provider" />
         </service>
 
-        <service id="Gally\SyliusPlugin\ContextProvider\GallyEnabledContextProvider" autowire="true" autoconfigure="true" public="true">
+        <service id="Gally\SyliusPlugin\ContextProvider\GallyEnabledContextProvider">
             <argument type="service" id="sylius.context.channel" />
             <tag name="sylius.ui.template_event.context_provider" />
         </service>
 
-        <service id="Gally\SyliusPlugin\Grid\Filter\GallyDynamicFilter" autowire="true" autoconfigure="true" public="true">
+        <service id="Gally\SyliusPlugin\Grid\Filter\GallyDynamicFilter">
             <tag name="sylius.grid_filter" type="gally_dynamic_filter" form_type="Gally\SyliusPlugin\Form\Type\Filter\GallyDynamicFilterType" />
         </service>
 
-        <service id="Gally\SyliusPlugin\Form\Type\Filter\GallyDynamicFilterType" autowire="true" autoconfigure="true" public="true">
+        <service id="Gally\SyliusPlugin\Form\Type\Filter\GallyDynamicFilterType" autoconfigure="true">
             <tag name="kernel.event_listener" event="gally.grid.configure_filter" method="onFilterUpdate" />
         </service>
     </services>

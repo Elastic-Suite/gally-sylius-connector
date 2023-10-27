@@ -3,12 +3,15 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
-        <defaults autowire="true" autoconfigure="true" public="true"/>
+        <service id="Gally\SyliusPlugin\Search\Adapter">
+            <argument type="service" id="Gally\SyliusPlugin\Api\GraphQlClient" />
+            <argument type="service" id="Gally\SyliusPlugin\Search\ResultBuilder" />
+        </service>
 
-        <service id="Gally\SyliusPlugin\Search\Adapter" autowire="true" autoconfigure="true" />
+        <service id="Gally\SyliusPlugin\Search\Aggregation\AggregationBuilder" />
 
-        <service id="Gally\SyliusPlugin\Search\ResultBuilder" autowire="true" autoconfigure="true" />
-
-        <service id="Gally\SyliusPlugin\Search\Aggregation\AggregationBuilder" autowire="true" autoconfigure="true" />
+        <service id="Gally\SyliusPlugin\Search\ResultBuilder">
+            <argument type="service" id="Gally\SyliusPlugin\Search\Aggregation\AggregationBuilder" />
+        </service>
     </services>
 </container>

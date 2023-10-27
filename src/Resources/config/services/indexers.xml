@@ -3,24 +3,28 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
-        <service id="Gally\SyliusPlugin\Indexer\AbstractIndexer" abstract="true" autowire="true" autoconfigure="true">
+        <service id="Gally\SyliusPlugin\Indexer\AbstractIndexer" abstract="true">
+            <argument type="service" id="sylius.repository.channel" />
+            <argument type="service" id="Gally\SyliusPlugin\Service\IndexOperation" />
         </service>
 
-        <service id="Gally\SyliusPlugin\Indexer\CategoryIndexer" parent="Gally\SyliusPlugin\Indexer\AbstractIndexer" autowire="true" autoconfigure="true">
+        <service id="Gally\SyliusPlugin\Indexer\CategoryIndexer" parent="Gally\SyliusPlugin\Indexer\AbstractIndexer">
+            <argument type="service" id="sylius.repository.taxon" />
             <tag name="gally.entity.indexer" priority="50"/>
         </service>
 
-        <service id="Gally\SyliusPlugin\Indexer\ProductIndexer" parent="Gally\SyliusPlugin\Indexer\AbstractIndexer" autowire="true" autoconfigure="true">
-            <argument key="$productVariantPriceCalculator" type="service" id="sylius.calculator.product_variant_price" />
+        <service id="Gally\SyliusPlugin\Indexer\ProductIndexer" parent="Gally\SyliusPlugin\Indexer\AbstractIndexer">
+            <argument type="service" id="sylius.repository.product" />
+            <argument type="service" id="sylius.calculator.product_variant_price" />
             <tag name="gally.entity.indexer" priority="50"/>
         </service>
 
-        <service id="Gally\SyliusPlugin\Indexer\Subscriber\CategorySubscriber" autowire="true" autoconfigure="true">
+        <service id="Gally\SyliusPlugin\Indexer\Subscriber\CategorySubscriber">
             <argument type="service" id="Gally\SyliusPlugin\Indexer\CategoryIndexer" />
             <tag name="kernel.event_subscriber" />
         </service>
 
-        <service id="Gally\SyliusPlugin\Indexer\Subscriber\ProductSubscriber" autowire="true" autoconfigure="true">
+        <service id="Gally\SyliusPlugin\Indexer\Subscriber\ProductSubscriber">
             <argument type="service" id="Gally\SyliusPlugin\Indexer\ProductIndexer" />
             <tag name="kernel.event_subscriber" />
         </service>
