@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Gally\SyliusPlugin\Grid;
 
+use Gally\SyliusPlugin\Model\GallyChannelInterface;
+use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Grid\Data\DataProviderInterface;
 use Sylius\Component\Grid\Data\DataSourceProviderInterface;
 use Sylius\Component\Grid\Definition\Grid;
@@ -13,30 +15,25 @@ use Sylius\Component\Grid\Sorting\SorterInterface;
 
 final class DataProvider implements DataProviderInterface
 {
-    private DataSourceProviderInterface $dataSourceProvider;
-
-    private FiltersApplicatorInterface $filtersApplicator;
-
-    private SorterInterface $sorter;
-
     public function __construct(
-        DataSourceProviderInterface $dataSourceProvider,
-        FiltersApplicatorInterface $filtersApplicator,
-        SorterInterface $sorter,
+        private DataSourceProviderInterface $dataSourceProvider,
+        private FiltersApplicatorInterface $filtersApplicator,
+        private SorterInterface $sorter,
+        private ChannelContextInterface $channelContext
     ) {
-        $this->dataSourceProvider = $dataSourceProvider;
-        $this->filtersApplicator = $filtersApplicator;
-        $this->sorter = $sorter;
     }
 
     public function getData(Grid $grid, Parameters $parameters)
     {
         if ($grid->getCode() === 'sylius_shop_product') {
-            $dataSource = $this->dataSourceProvider->getDataSource($grid, $parameters);
+            $channel = $this->channelContext->getChannel();
+            if (($channel instanceof GallyChannelInterface) && ($channel->getGallyActive())) {
+                $dataSource = $this->dataSourceProvider->getDataSource($grid, $parameters);
 
-            $this->filtersApplicator->apply($dataSource, $grid, $parameters);
+                $this->filtersApplicator->apply($dataSource, $grid, $parameters);
 
-            return $dataSource->getData($parameters);
+                return $dataSource->getData($parameters);
+            }
         }
 
         // by default use Sylius' implementation of the data provider

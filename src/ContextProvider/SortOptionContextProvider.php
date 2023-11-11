@@ -7,14 +7,21 @@ namespace Gally\SyliusPlugin\ContextProvider;
 use Gally\Rest\Api\CategorySortingOptionApi;
 use Gally\Rest\Model\CategorySortingOption;
 use Gally\SyliusPlugin\Api\RestClient;
+use Gally\SyliusPlugin\Model\GallyChannelInterface;
 use Sylius\Bundle\UiBundle\ContextProvider\ContextProviderInterface;
 use Sylius\Bundle\UiBundle\Registry\TemplateBlock;
+use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SortOptionContextProvider implements ContextProviderInterface
 {
-    public function __construct(private RestClient $client, private RequestStack $requestStack)
-    {
+    public function __construct(
+        private RestClient $client,
+        private RequestStack $requestStack,
+        private TranslatorInterface $translator,
+        private ChannelContextInterface $channelContext
+    ) {
     }
 
     public function provide(array $templateContext, TemplateBlock $templateBlock): array
@@ -24,19 +31,44 @@ class SortOptionContextProvider implements ContextProviderInterface
         $templateContext['current_sorting_label'] = '';
         $templateContext['sort_options'] = [];
 
-        $sortingOptions = $this->client->query(CategorySortingOptionApi::class, 'getCategorySortingOptionCollection');
-        foreach ($sortingOptions as $option) {
-            /** @var CategorySortingOption $option */
-            $templateContext['sort_options'][] = [
-                'field' => $option->getCode(),
-                'sorting' => [$option->getCode() => 'asc'],
-                'label' => $option->getLabel(),
+        $channel = $this->channelContext->getChannel();
+        if (($channel instanceof GallyChannelInterface) && ($channel->getGallyActive())) {
+            $sortingOptions = $this->client->query(CategorySortingOptionApi::class, 'getCategorySortingOptionCollection');
+            foreach ($sortingOptions as $option) {
+                /** @var CategorySortingOption $option */
+                $templateContext['sort_options'][] = [
+                    'field' => $option->getCode(),
+                    'sorting' => [$option->getCode() => 'asc'],
+                    'label' => $option->getLabel(),
+                ];
+
+                if (isset($currentSortOrder[$option->getCode()])) {
+                    $templateContext['current_sorting_label'] = $option->getLabel();
+                }
+            }
+        } else {
+            // default Sylius sorting logic (copied from @SyliusShopBundle/Product/Index/_sorting.html.twig template)
+            $templateContext['sort_options'] = [
+                ['field' => '', 'sorting' => null, 'label' => $this->translator->trans('sylius.ui.by_position')],
+                ['field' => 'name', 'sorting' => ['name' => 'asc'], 'label' => $this->translator->trans('sylius.ui.from_a_to_z')],
+                ['field' => 'name', 'sorting' => ['name' => 'desc'], 'label' => $this->translator->trans('sylius.ui.from_z_to_a')],
+                ['field' => 'sorting', 'sorting' => ['sorting' => 'desc'], 'label' => $this->translator->trans('sylius.ui.newest_first')],
+                ['field' => 'sorting', 'sorting' => ['sorting' => 'asc'], 'label' => $this->translator->trans('sylius.ui.oldest_first')],
+                ['field' => 'price', 'sorting' => ['price' => 'asc'], 'label' => $this->translator->trans('sylius.ui.cheapest_first')],
+                ['field' => 'price', 'sorting' => ['price' => 'desc'], 'label' => $this->translator->trans('sylius.ui.most_expensive_first')]
             ];
 
-            if(isset($currentSortOrder[$option->getCode()])) {
-                $templateContext['current_sorting_label'] = $option->getLabel();
+            foreach ($templateContext['sort_options'] as $option) {
+                if (empty($templateContext['current_sorting_label'])) {
+                    // set first element by default
+                    $templateContext['current_sorting_label'] = strtolower($option['label']);
+                } else if ($option['sorting'] === $currentSortOrder) {
+                    $templateContext['current_sorting_label'] = strtolower($option['label']);
+                    break;
+                }
             }
         }
+
         return $templateContext;
     }
 

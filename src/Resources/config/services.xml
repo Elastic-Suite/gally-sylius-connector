@@ -39,6 +39,8 @@
         <service id="Gally\SyliusPlugin\ContextProvider\SortOptionContextProvider">
             <argument type="service" id="Gally\SyliusPlugin\Api\RestClient" />
             <argument type="service" id="request_stack" />
+            <argument type="service" id="translator" />
+            <argument type="service" id="sylius.context.channel" />
             <tag name="sylius.ui.template_event.context_provider" />
         </service>
 
