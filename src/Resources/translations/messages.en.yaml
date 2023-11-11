@@ -15,3 +15,5 @@ gally_sylius_plugin:
       headline: Filters
   form:
     active: Enable Gally
+    product_index_batch_size: Product Indexing Batch Size
+    category_index_batch_size: Category Indexing Batch Size

@@ -40,8 +40,8 @@ abstract class AbstractIndexer
                     $indexName = $this->indexOperation->getIndexByName($this->getEntityType(), $channel, $locale);
                 }
 
-                // @TODO: Make batch size configurable for each entity
-                $batchSize = 50;
+                /** @var GallyChannelInterface $channel */
+                $batchSize = $this->getBatchSize($this->getEntityType(), $channel);
                 $bulk = [];
                 foreach ($this->getDocumentsToIndex($channel, $locale, $documentIdsToReindex) as $document) {
                     $bulk[$document['id']] = json_encode($document);
@@ -59,6 +59,19 @@ abstract class AbstractIndexer
                     $this->indexOperation->installIndex($indexName);
                 }
             }
+        }
+    }
+
+    private function getBatchSize(string $entityType, GallyChannelInterface $channel)
+    {
+        switch ($entityType)
+        {
+            case 'category':
+                return $channel->getGallyCategoryIndexBatchSize();
+            case 'product':
+                return $channel->getGallyProductIndexBatchSize();
+            default:
+                return 50;
         }
     }
 

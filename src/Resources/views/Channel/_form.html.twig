@@ -4,9 +4,13 @@
 <div class="ui attached segment">
     {{ form_errors(form) }}
 
-    <div class="fields">
-        <div class="field">
-            {{ form_row(form.gallyActive) }}
-        </div>
+    <div class="field">
+        {{ form_row(form.gallyActive) }}
+    </div>
+    <div class="field">
+        {{ form_row(form.gallyProductIndexBatchSize) }}
+    </div>
+    <div class="field">
+        {{ form_row(form.gallyCategoryIndexBatchSize) }}
     </div>
 </div>
