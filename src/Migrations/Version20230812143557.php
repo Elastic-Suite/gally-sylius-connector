@@ -7,7 +7,7 @@ namespace Gally\SyliusPlugin\Migrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-final class Version20240812143557 extends AbstractMigration
+final class Version20230812143557 extends AbstractMigration
 {
     public function up(Schema $schema): void
     {
