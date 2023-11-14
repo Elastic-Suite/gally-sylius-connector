@@ -11,7 +11,21 @@
         <import resource="services/synchronizers.xml"/>
     </imports>
 
+    <parameters>
+        <parameter key="gally.model.configuration">Gally\SyliusPlugin\Entity\GallyConfiguration</parameter>
+    </parameters>
+
     <services>
+        <service id="Gally\SyliusPlugin\Repository\GallyConfigurationRepository">
+            <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument type="service">
+                <service class="Doctrine\ORM\Mapping\ClassMetadata">
+                    <factory service="doctrine.orm.entity_manager" method="getClassMetadata" />
+                    <argument>%gally.model.configuration%</argument>
+                </service>
+            </argument>
+        </service>
+
         <service id="Gally\SyliusPlugin\Service\IndexOperation">
             <argument type="service" id="Gally\SyliusPlugin\Api\RestClient" />
             <argument type="service" id="Gally\SyliusPlugin\Synchronizer\LocalizedCatalogSynchronizer" />
