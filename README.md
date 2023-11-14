@@ -9,6 +9,10 @@
     [...]
     Gally\SyliusPlugin\GallySyliusPlugin::class => ['all' => true],
     ```
+  - Import the Gally Sylius bundle configuration by adding the following lines to the imports section of `config/packages/_sylius.yaml`
+    ```yaml
+    - { resource: "@GallySyliusPlugin/Resources/config/config.yml" }
+    ```
   - Import routes by creating a file `config/routes/gally_admin.yaml`
     ```yaml
     gally_admin:
