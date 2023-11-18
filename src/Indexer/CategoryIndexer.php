@@ -14,6 +14,8 @@ use Sylius\Component\Taxonomy\Repository\TaxonRepositoryInterface;
 
 class CategoryIndexer extends AbstractIndexer
 {
+    private $pathCache = [];
+
     public function __construct(
         RepositoryInterface $channelRepository,
         IndexOperation $indexOperation,
@@ -59,11 +61,22 @@ class CategoryIndexer extends AbstractIndexer
 
     private function formatTaxon(TaxonInterface $taxon, TaxonTranslationInterface $translation): array
     {
+        if (isset($this->pathCache[$taxon->getParent()->getId()])) {
+            $this->pathCache[$taxon->getId()] = $this->pathCache[$taxon->getParent()->getId()] . '/' . $taxon->getId();
+        } else {
+            $this->pathCache[$taxon->getId()] = (string) $taxon->getId();
+        }
+
+        $parentId = '';
+        if ($taxon->getParent()->getLevel() !== 0) {
+            $parentId = (string) $taxon->getParent()->getId();
+        }
+
         return [
             'id' => (string) $taxon->getId(),
-            'parentId' => (string) $taxon->getParent()->getId(),
+            'parentId' => $parentId,
             'level' => $taxon->getLevel(),
-            'path' => $taxon->getSlug(),
+            'path' => $this->pathCache[$taxon->getId()],
             'name' => $translation->getName(),
         ];
     }
