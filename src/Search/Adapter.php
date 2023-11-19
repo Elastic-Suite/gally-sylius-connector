@@ -40,7 +40,7 @@ class Adapter
         ];
 
         if ($sorting !== []) {
-            $data['sorting'] = $sorting;
+            $data['sort'] = $sorting;
         }
 
         return $this->resultBuilder->build(
