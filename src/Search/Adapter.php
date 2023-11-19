@@ -37,8 +37,11 @@ class Adapter
             'currentPage' => $page,
             'pageSize' => $limit,
             'filter' => $filters,
-            'sort' => $sorting,
         ];
+
+        if ($sorting !== []) {
+            $data['sorting'] = $sorting;
+        }
 
         return $this->resultBuilder->build(
             $channel,
