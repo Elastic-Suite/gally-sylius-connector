@@ -38,17 +38,39 @@ class CategoryIndexer extends AbstractIndexer
 
         if (!empty($documentIdsToReindex)) {
             $taxons = $this->taxonRepository->findBy(['id' => $documentIdsToReindex]);
+
+            foreach ($taxons as $taxon) {
+                /** @var TaxonInterface $taxon */
+                $path = (string) $taxon->getId();
+
+                $parent = $taxon->getParent();
+                while ($parent !== null) {
+                    $path = $parent->getId(). '/' .$path;
+                    $parent = $parent->getParent();
+                }
+
+                $this->pathCache[$taxon->getId()] = $path;
+            }
         } else {
             $menuTaxon = $channel->getMenuTaxon();
             $taxons = $this->taxonRepository->createQueryBuilder('o')
                 ->where('o.root = :taxon_id')
-                ->andWhere('o.left > :taxon_left')
+                ->andWhere('o.left >= :taxon_left')
                 ->orderBy('o.left', 'ASC')
                 ->getQuery()
                 ->execute([
                     'taxon_id' => $menuTaxon->getId(),
                     'taxon_left' => $menuTaxon->getLeft()
                 ]);
+
+            foreach ($taxons as $taxon) {
+                /** @var TaxonInterface $taxon */
+                if (($taxon->getParent() !== null) && isset($this->pathCache[$taxon->getParent()->getId()])) {
+                    $this->pathCache[$taxon->getId()] = $this->pathCache[$taxon->getParent()->getId()] . '/' . $taxon->getId();
+                } else {
+                    $this->pathCache[$taxon->getId()] = (string) $taxon->getId();
+                }
+            }
         }
 
         foreach ($taxons as $taxon) {
@@ -61,21 +83,15 @@ class CategoryIndexer extends AbstractIndexer
 
     private function formatTaxon(TaxonInterface $taxon, TaxonTranslationInterface $translation): array
     {
-        if (isset($this->pathCache[$taxon->getParent()->getId()])) {
-            $this->pathCache[$taxon->getId()] = $this->pathCache[$taxon->getParent()->getId()] . '/' . $taxon->getId();
-        } else {
-            $this->pathCache[$taxon->getId()] = (string) $taxon->getId();
-        }
-
         $parentId = '';
-        if ($taxon->getParent()->getLevel() !== 0) {
+        if ($taxon->getParent() !== null) {
             $parentId = (string) $taxon->getParent()->getId();
         }
 
         return [
             'id' => (string) $taxon->getId(),
             'parentId' => $parentId,
-            'level' => $taxon->getLevel(),
+            'level' => $taxon->getLevel() + 1,
             'path' => $this->pathCache[$taxon->getId()],
             'name' => $translation->getName(),
         ];
