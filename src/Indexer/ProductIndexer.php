@@ -164,9 +164,9 @@ class ProductIndexer extends AbstractIndexer
 
         foreach ($product->getTaxons() as $taxon) {
             if ($taxon->isEnabled()) {
-                $categories[$taxon->getId()] = [
-                    'id' => (string) $taxon->getId(),
-                    'category_uid' => (string) $taxon->getId(),
+                $categories[$taxon->getCode()] = [
+                    'id' => (string) $taxon->getCode(),
+                    'category_uid' => (string) $taxon->getCode(),
                     'name' => $taxon->getName(),
                     'is_parent' => $taxon->hasChildren(),
                 ];

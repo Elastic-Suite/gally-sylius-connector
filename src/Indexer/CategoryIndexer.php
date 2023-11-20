@@ -41,15 +41,15 @@ class CategoryIndexer extends AbstractIndexer
 
             foreach ($taxons as $taxon) {
                 /** @var TaxonInterface $taxon */
-                $path = (string) $taxon->getId();
+                $path = (string) $taxon->getCode();
 
                 $parent = $taxon->getParent();
                 while ($parent !== null) {
-                    $path = $parent->getId(). '/' .$path;
+                    $path = $parent->getCode(). '/' .$path;
                     $parent = $parent->getParent();
                 }
 
-                $this->pathCache[$taxon->getId()] = $path;
+                $this->pathCache[$taxon->getCode()] = $path;
             }
         } else {
             $menuTaxon = $channel->getMenuTaxon();
@@ -65,10 +65,10 @@ class CategoryIndexer extends AbstractIndexer
 
             foreach ($taxons as $taxon) {
                 /** @var TaxonInterface $taxon */
-                if (($taxon->getParent() !== null) && isset($this->pathCache[$taxon->getParent()->getId()])) {
-                    $this->pathCache[$taxon->getId()] = $this->pathCache[$taxon->getParent()->getId()] . '/' . $taxon->getId();
+                if (($taxon->getParent() !== null) && isset($this->pathCache[$taxon->getParent()->getCode()])) {
+                    $this->pathCache[$taxon->getCode()] = $this->pathCache[$taxon->getParent()->getCode()] . '/' . $taxon->getCode();
                 } else {
-                    $this->pathCache[$taxon->getId()] = (string) $taxon->getId();
+                    $this->pathCache[$taxon->getCode()] = (string) $taxon->getCode();
                 }
             }
         }
@@ -85,14 +85,14 @@ class CategoryIndexer extends AbstractIndexer
     {
         $parentId = '';
         if ($taxon->getParent() !== null) {
-            $parentId = (string) $taxon->getParent()->getId();
+            $parentId = (string) $taxon->getParent()->getCode();
         }
 
         return [
-            'id' => (string) $taxon->getId(),
+            'id' => (string) $taxon->getCode(),
             'parentId' => $parentId,
             'level' => $taxon->getLevel() + 1,
-            'path' => $this->pathCache[$taxon->getId()],
+            'path' => $this->pathCache[$taxon->getCode()],
             'name' => $translation->getName(),
         ];
     }
