@@ -75,6 +75,17 @@ class PagerfantaGallyAdapter implements AdapterInterface
 
         $this->eventDispatcher->dispatch(new GridFilterUpdateEvent($this->gallyResult), 'gally.grid.configure_filter');
 
+        // get rid of the where condition to not limit the product query to the currently active taxon as some
+        // products from Gally might not be part of that taxon (e.g. products in virtual categories defined in Gally)
+        $this->queryBuilder->resetDQLPart('where');
+
+        // manually add the "missing" query parameters again to make the query work. Since query parameters cannot
+        // be removed from the DQL query :taxonLeft, :taxonRight, and :taxonRoot parameter have to be added again in
+        // a way that the expression always evaluates to true to get "ignored"
+        $this->queryBuilder->andWhere(':taxonLeft < :taxonRight');
+        $this->queryBuilder->andWhere(':taxonRoot = :taxonRoot');
+        $this->queryBuilder->andWhere(':channel MEMBER OF o.channels');
+        $this->queryBuilder->andWhere('o.enabled = :enabled');
         $this->queryBuilder->andWhere('o.code IN (:code)');
         $this->queryBuilder->setParameter('code', array_keys($this->gallyResult->getProductNumbers()));
 
