@@ -21,7 +21,7 @@ class GraphQlClient extends AbstractClient
             }
             $result = $client->request(
                 'post',
-                $this->configuration->getBaseUrl() . '/graphql',
+                trim($this->configuration->getBaseUrl(), '/') . '/graphql',
                 [
                     'headers' => [
                         'Authorization' => 'bearer ' . $this->getAuthorizationToken(),

@@ -15,7 +15,7 @@ final class RestClient extends AbstractClient
         $config = Configuration::getDefaultConfiguration()
             ->setApiKey('Authorization', $this->getAuthorizationToken())
             ->setApiKeyPrefix('Authorization', 'Bearer')
-            ->setHost($this->configuration->getBaseUrl());
+            ->setHost(trim($this->configuration->getBaseUrl(), '/'));
 
         $apiInstance = new $endpoint(new Client($this->kernelEnv !== 'prod' ? ['verify' => false] : []), $config);
 
