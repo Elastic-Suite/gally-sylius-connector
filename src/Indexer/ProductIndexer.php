@@ -69,7 +69,7 @@ class ProductIndexer extends AbstractIndexer
             'image' => [$this->formatMedia($product) ?: null],
             'price' => $this->formatPrice($variant, $channel),
             'stock' => [
-                'status' => (bool) $variant->isTracked(),
+                'status' => $variant->isInStock(),
                 'qty' => $variant->getOnHand()
             ],
             'category' => $this->formatCategories($product),
