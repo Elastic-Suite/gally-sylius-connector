@@ -134,6 +134,10 @@ class ProductIndexer extends AbstractIndexer
         $price = $this->productVariantPriceCalculator->calculate($variant, $context);
         $originalPrice = $this->productVariantPriceCalculator->calculateOriginal($variant, $context);
 
+        // fix price rendering in Gally
+        $price = $price / 100;
+        $originalPrice = $originalPrice / 100;
+
         $prices = [];
         $prices[] = [
             'price' => $price,

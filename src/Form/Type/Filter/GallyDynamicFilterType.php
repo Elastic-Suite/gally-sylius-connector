@@ -27,8 +27,12 @@ class GallyDynamicFilterType extends AbstractType
                 case 'slider':
                     $min = 0;
                     $max = 0;
+                    $steps = 10;
                     foreach ($aggregation->getOptions() as $option) {
                         /** @var AggregationOption $option */
+                        if ($min === 0) {
+                            $min = $option->getId();
+                        }
                         if ($option->getId() > $max) {
                             $max = $option->getId();
                         }
@@ -42,8 +46,8 @@ class GallyDynamicFilterType extends AbstractType
                             'label' => $aggregation->getLabel(),
                             'attr' => [
                                 'min' => $min,
-                                'max' => $max,
-                                'steps' => 100
+                                'max' => $max + $steps,
+                                'steps' => $steps
                             ]
                         ]
                     );
