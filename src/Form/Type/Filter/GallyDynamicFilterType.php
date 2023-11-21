@@ -12,6 +12,7 @@ use Sylius\Bundle\GridBundle\Form\Type\Filter\SelectFilterType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\RangeType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class GallyDynamicFilterType extends AbstractType
 {
@@ -20,22 +21,40 @@ class GallyDynamicFilterType extends AbstractType
      */
     private array $aggregations = [];
 
+    public function __construct(private RequestStack $requestStack)
+    {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $criteria = $this->requestStack->getMainRequest()->get('criteria', []);
+
         foreach ($this->aggregations as $aggregation) {
             switch ($aggregation->getType()) {
                 case 'slider':
-                    $min = 0;
-                    $max = 0;
-                    $steps = 10;
+                    $attr = [
+                        'min' => 0,
+                        'max' => 0,
+                        'steps' => 10,
+                    ];
+
                     foreach ($aggregation->getOptions() as $option) {
                         /** @var AggregationOption $option */
-                        if ($min === 0) {
-                            $min = $option->getId();
+                        if ($attr['min'] === 0) {
+                            $attr['min'] = $option->getId();
                         }
-                        if ($option->getId() > $max) {
-                            $max = $option->getId();
+                        if ($option->getId() > $attr['max']) {
+                            $attr['max'] = $option->getId();
                         }
+                    }
+
+                    // raise the max limit to make sure the most expensive product will be part of the filtering
+                    $attr['max'] += $attr['steps'];
+
+                    // for some odd reason the price filter default value seems not to be the max value, that's why
+                    // it is explicitly set here
+                    if (!isset($criteria['gally'][$aggregation->getField().'_'.$aggregation->getType()])) {
+                        $attr['value'] = $attr['max'];
                     }
 
                     $builder->add(
@@ -44,11 +63,7 @@ class GallyDynamicFilterType extends AbstractType
                         [
                             'block_prefix' => 'sylius_gally_filter_range',
                             'label' => $aggregation->getLabel(),
-                            'attr' => [
-                                'min' => $min,
-                                'max' => $max + $steps,
-                                'steps' => $steps
-                            ]
+                            'attr' => $attr,
                         ]
                     );
                     break;
