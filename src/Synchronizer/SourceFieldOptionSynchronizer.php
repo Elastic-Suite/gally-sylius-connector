@@ -6,7 +6,7 @@ namespace Gally\SyliusPlugin\Synchronizer;
 
 use Gally\Rest\Model\ModelInterface;
 use Gally\Rest\Model\SourceFieldOptionSourceFieldOptionWrite;
-use Gally\Rest\Model\SourceFieldSourceFieldApi;
+use Gally\Rest\Model\SourceFieldSourceFieldWrite;
 use Gally\SyliusPlugin\Api\RestClient;
 use Gally\SyliusPlugin\Repository\GallyConfigurationRepository;
 
@@ -21,7 +21,7 @@ class SourceFieldOptionSynchronizer extends AbstractSynchronizer
         string $entityClass,
         string $getCollectionMethod,
         string $createEntityMethod,
-        string $patchEntityMethod,
+        string $putEntityMethod,
         protected SourceFieldOptionLabelSynchronizer $sourceFieldOptionLabelSynchronizer
     ) {
         parent::__construct(
@@ -30,7 +30,7 @@ class SourceFieldOptionSynchronizer extends AbstractSynchronizer
             $entityClass,
             $getCollectionMethod,
             $createEntityMethod,
-            $patchEntityMethod
+            $putEntityMethod
         );
     }
 
@@ -47,40 +47,7 @@ class SourceFieldOptionSynchronizer extends AbstractSynchronizer
 
     public function synchronizeItem(array $params): ?ModelInterface
     {
-        /** @var SourceFieldSourceFieldApi $sourceField */
-        $sourceField = $params['field'];
-
-        /** @var array $option */
-        $option = $params['option'];
-
-        /** @var int $position */
-        $position = $params['position'];
-
-        /** @var array $labels */
-        $labels = $option['translations'] ?? [];
-
-        $sourceFieldOption = $this->createOrUpdateEntity(
-            new SourceFieldOptionSourceFieldOptionWrite(
-                [
-                    'sourceField' => '/source_fields/' . $sourceField->getId(),
-                    'code' => $option['code'],
-                    'defaultLabel' => $labels[0]['translation'],
-                    'position' => $position,
-                ]
-            )
-        );
-
-        foreach ($labels as $label) {
-            $this->sourceFieldOptionLabelSynchronizer->synchronizeItem(
-                [
-                    'fieldOption' => $sourceFieldOption,
-                    'label' => $label['translation'],
-                    'localeCode' => $label['locale'],
-                ]
-            );
-        }
-
-        return $sourceFieldOption;
+        throw new \LogicException('Run source field synchronizer to sync option');
     }
 
     public function fetchEntities(): void

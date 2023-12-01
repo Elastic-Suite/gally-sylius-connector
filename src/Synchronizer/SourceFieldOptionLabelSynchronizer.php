@@ -34,29 +34,7 @@ class SourceFieldOptionLabelSynchronizer extends SourceFieldLabelSynchronizer
 
     public function synchronizeItem(array $params): ?ModelInterface
     {
-        /** @var SourceFieldOptionSourceFieldOptionWrite $option */
-        $option = $params['fieldOption'];
-
-        /** @var string $localeCode */
-        $localeCode = $params['localeCode'];
-
-        /** @var string $label */
-        $label = $params['label'];
-
-        /** @var LocalizedCatalog $localizedCatalog */
-        foreach ($this->localizedCatalogSynchronizer->getLocalizedCatalogByLocale($localeCode) as $localizedCatalog) {
-            $this->createOrUpdateEntity(
-                new SourceFieldOptionLabelSourceFieldOptionLabelWrite(
-                    [
-                        'sourceFieldOption' => '/source_field_options/' . $option->getId(),
-                        'localizedCatalog' => '/localized_catalogs/' . $localizedCatalog->getId(),
-                        'label' => $label,
-                    ]
-                )
-            );
-        }
-
-        return null;
+        throw new \LogicException('Run source field synchronizer to sync localized option label');
     }
 
     protected function buildFetchAllParams(int $page): array

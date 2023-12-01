@@ -26,7 +26,7 @@ abstract class AbstractSynchronizer
         protected string $entityClass,
         protected string $getCollectionMethod,
         protected string $createEntityMethod,
-        protected string $patchEntityMethod
+        protected string $putEntityMethod
     ) {
         $this->configuration = $this->configurationRepository->getConfiguration();
     }
@@ -99,7 +99,7 @@ abstract class AbstractSynchronizer
             } else {
                 $entity = $this->client->query(
                     $this->entityClass,
-                    $this->patchEntityMethod,
+                    $this->putEntityMethod,
                     $existingEntity->getId(), // @phpstan-ignore-line
                     $entity
                 );

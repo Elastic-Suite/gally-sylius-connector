@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Gally\SyliusPlugin\ContextProvider;
 
-use Gally\Rest\Api\CategorySortingOptionApi;
-use Gally\Rest\Model\CategorySortingOption;
+use Gally\Rest\Api\ProductSortingOptionApi;
+use Gally\Rest\Model\ProductSortingOption;
 use Gally\SyliusPlugin\Api\RestClient;
 use Gally\SyliusPlugin\Model\GallyChannelInterface;
 use Sylius\Bundle\UiBundle\ContextProvider\ContextProviderInterface;
@@ -33,9 +33,9 @@ class SortOptionContextProvider implements ContextProviderInterface
 
         $channel = $this->channelContext->getChannel();
         if (($channel instanceof GallyChannelInterface) && ($channel->getGallyActive())) {
-            $sortingOptions = $this->client->query(CategorySortingOptionApi::class, 'getCategorySortingOptionCollection');
+            $sortingOptions = $this->client->query(ProductSortingOptionApi::class, 'getProductSortingOptionCollection');
             foreach ($sortingOptions as $option) {
-                /** @var CategorySortingOption $option */
+                /** @var ProductSortingOption $option */
                 $templateContext['sort_options'][] = [
                     'field' => $option->getCode(),
                     'sorting' => [$option->getCode() => 'asc'],
