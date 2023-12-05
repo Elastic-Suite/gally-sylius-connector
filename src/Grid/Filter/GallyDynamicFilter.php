@@ -23,8 +23,7 @@ class GallyDynamicFilter implements FilterInterface
                 $field = str_replace('_boolean', '', $field);
                 $value = ($value === 'true');
                 $dataSource->restrict($dataSource->getExpressionBuilder()->equals($field, $value));
-            } elseif (str_contains($field, '_checkbox')) {
-                $field = str_replace('_checkbox', '', $field);
+            } else {
                 $dataSource->restrict($dataSource->getExpressionBuilder()->equals($field, $value));
             }
         }
