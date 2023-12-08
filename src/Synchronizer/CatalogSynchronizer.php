@@ -24,7 +24,7 @@ class CatalogSynchronizer extends AbstractSynchronizer
         string $entityClass,
         string $getCollectionMethod,
         string $createEntityMethod,
-        string $patchEntityMethod,
+        string $putEntityMethod,
         private RepositoryInterface $channelRepository,
         private LocalizedCatalogSynchronizer $localizedCatalogSynchronizer
     ) {
@@ -34,7 +34,7 @@ class CatalogSynchronizer extends AbstractSynchronizer
             $entityClass,
             $getCollectionMethod,
             $createEntityMethod,
-            $patchEntityMethod
+            $putEntityMethod
         );
     }
 

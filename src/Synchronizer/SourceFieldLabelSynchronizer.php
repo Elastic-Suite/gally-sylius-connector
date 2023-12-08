@@ -7,12 +7,12 @@ namespace Gally\SyliusPlugin\Synchronizer;
 use Gally\Rest\Model\LocalizedCatalog;
 use Gally\Rest\Model\ModelInterface;
 use Gally\Rest\Model\SourceFieldLabel;
-use Gally\Rest\Model\SourceFieldSourceFieldApi;
+use Gally\Rest\Model\SourceFieldSourceFieldWrite;
 use Gally\SyliusPlugin\Api\RestClient;
 use Gally\SyliusPlugin\Repository\GallyConfigurationRepository;
 
 /**
- * Synchronize Sylius Product Attribute Translations to Gally Sourcefield Labels
+ * Synchronize Sylius Product Attribute Translations to Gally SourceField Labels
  */
 class SourceFieldLabelSynchronizer extends AbstractSynchronizer
 {
@@ -22,7 +22,7 @@ class SourceFieldLabelSynchronizer extends AbstractSynchronizer
         string $entityClass,
         string $getCollectionMethod,
         string $createEntityMethod,
-        string $patchEntityMethod,
+        string $putEntityMethod,
         protected LocalizedCatalogSynchronizer $localizedCatalogSynchronizer
     ) {
         parent::__construct(
@@ -31,7 +31,7 @@ class SourceFieldLabelSynchronizer extends AbstractSynchronizer
             $entityClass,
             $getCollectionMethod,
             $createEntityMethod,
-            $patchEntityMethod
+            $putEntityMethod
         );
     }
 
@@ -48,29 +48,7 @@ class SourceFieldLabelSynchronizer extends AbstractSynchronizer
 
     public function synchronizeItem(array $params): ?ModelInterface
     {
-        /** @var SourceFieldSourceFieldApi $sourceField */
-        $sourceField = $params['field'];
-
-        /** @var string $locale */
-        $locale = $params['locale'];
-
-        /** @var string $translation */
-        $translation = $params['translation'];
-
-        /** @var LocalizedCatalog $localizedCatalog */
-        foreach ($this->localizedCatalogSynchronizer->getLocalizedCatalogByLocale($locale) as $localizedCatalog) {
-            $this->createOrUpdateEntity(
-                new SourceFieldLabel(
-                    [
-                        'sourceField' => '/source_fields/' . $sourceField->getId(),
-                        'localizedCatalog' => '/localized_catalogs/' . $localizedCatalog->getId(),
-                        'label' => $translation,
-                    ]
-                )
-            );
-        }
-
-        return null;
+        throw new \LogicException('Run source field synchronizer to sync localized label');
     }
 
     protected function buildFetchAllParams(int $page): array
