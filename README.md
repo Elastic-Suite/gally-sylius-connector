@@ -1,5 +1,10 @@
 # Gally Plugin for Sylius
 
+## Requirements
+
+- Gally version: 1.2.x
+- Sylius version: 1.12.x
+
 ## Usage
 
 - Install the `gally/sylius-plugin` bundle 
