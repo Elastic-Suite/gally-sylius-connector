@@ -34,7 +34,7 @@ class ProductIndexer extends AbstractIndexer
         ChannelInterface $channel,
         LocaleInterface $locale,
         array $documentIdsToReindex
-    ) : iterable {
+    ): iterable {
         $products = [];
 
         if (!empty($documentIdsToReindex)) {
@@ -52,6 +52,10 @@ class ProductIndexer extends AbstractIndexer
 
         foreach ($products as $product) {
             /** @var ProductInterface $product */
+            if (!$product->isEnabled()) {
+                continue;
+            }
+
             yield $this->formatProduct($product, $channel, $locale);
         }
     }
@@ -82,16 +86,20 @@ class ProductIndexer extends AbstractIndexer
             $data[$attribute->getCode()] = $attributeValue->getValue();
         }
 
-        while ($variants->next()) {
-            /** @var ProductVariantInterface $variant */
-            $variantData = $this->formatVariant($variants->current(), $channel, $locale);
-            foreach ($variantData as $field => $value) {
-                if (!isset($data[$field])) {
-                    $data[$field] = [];
-                }
+        while ($variants->current()) {
+            if ($variants->current()->isEnabled()) {
+                /** @var ProductVariantInterface $variant */
+                $variantData = $this->formatVariant($variants->current(), $channel, $locale);
+                foreach ($variantData as $field => $value) {
+                    if (!isset($data[$field])) {
+                        $data[$field] = [];
+                    }
 
-                $data[$field][] = $value;
+                    $data[$field][] = $value;
+                }
             }
+
+            $variants->next();
         }
 
         // Remove empty values
@@ -107,12 +115,12 @@ class ProductIndexer extends AbstractIndexer
         $data = [
             'children.sku' => [$variant->getCode()],
             'children.name' => [$variant->getTranslation($locale->getCode())->getName()],
-            'childen.image' => [ $this->formatMedia($variant->getProduct()) ?: null],
+            'childen.image' => [$this->formatMedia($variant->getProduct()) ?: null],
         ];
 
         foreach ($variant->getOptionValues() as $optionValue) {
             /** @var ProductOptionValueInterface $optionValue */
-            $data['children.'.$optionValue->getOption()->getCode()][] = [
+            $data['children.' . $optionValue->getOption()->getCode()][] = [
                 'value' => $optionValue->getValue(),
                 'label' => $optionValue->getTranslation($locale->getCode())->getValue(),
             ];
