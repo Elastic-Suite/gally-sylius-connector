@@ -84,8 +84,11 @@ class ProductIndexer extends AbstractIndexer
 
         foreach ($product->getAttributes() as $attributeValue) {
             /** @var AttributeValueInterface $attributeValue */
-            $attribute = $attributeValue->getAttribute();
+            if ($attributeValue->getLocaleCode() !== $locale->getCode()) {
+                continue;
+            }
 
+            $attribute = $attributeValue->getAttribute();
             $attributeValue = $attributeValue->getValue();
             if ($attribute->getType() === 'select') {
                 if(!is_array($attributeValue)) {
@@ -95,13 +98,12 @@ class ProductIndexer extends AbstractIndexer
                 $attributeConfiguration = $attribute->getConfiguration();
                 foreach ($attributeValue as $key => $value) {
                     $translations = $attributeConfiguration['choices'][$value] ?? [];
-                    if (isset($translations[$locale->getCode()])) {
-                        $label = $translations[$locale->getCode()];
-                        $attributeValue[$key] = [
-                            'value' => $value,
-                            'label' => $label,
-                        ];
-                    }
+                    $label = $translations[$locale->getCode()] ?? '';
+
+                    $attributeValue[$key] = [
+                        'value' => $value,
+                        'label' => $label,
+                    ];
                 }
             }
 
