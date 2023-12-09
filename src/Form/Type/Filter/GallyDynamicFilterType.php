@@ -80,7 +80,7 @@ class GallyDynamicFilterType extends AbstractType
                     $choices = [];
                     foreach ($aggregation->getOptions() as $option) {
                         /** @var AggregationOption $option */
-                        $choices[$option->getId()] = $option->getLabel();
+                        $choices[$option->getLabel()] = $option->getId();
                     }
                     $builder->add(
                         $aggregation->getField(),
