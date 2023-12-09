@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Gally\SyliusPlugin\Indexer;
 
 use Gally\SyliusPlugin\Service\IndexOperation;
+use Sylius\Component\Attribute\Model\AttributeValueInterface;
 use Sylius\Component\Core\Calculator\ProductVariantPricesCalculatorInterface;
 use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\ProductInterface;
@@ -82,8 +83,29 @@ class ProductIndexer extends AbstractIndexer
         ];
 
         foreach ($product->getAttributes() as $attributeValue) {
+            /** @var AttributeValueInterface $attributeValue */
             $attribute = $attributeValue->getAttribute();
-            $data[$attribute->getCode()] = $attributeValue->getValue();
+
+            $attributeValue = $attributeValue->getValue();
+            if ($attribute->getType() === 'select') {
+                if(!is_array($attributeValue)) {
+                    $attributeValue = [ $attributeValue ];
+                }
+
+                $attributeConfiguration = $attribute->getConfiguration();
+                foreach ($attributeValue as $key => $value) {
+                    $translations = $attributeConfiguration['choices'][$value] ?? [];
+                    if (isset($translations[$locale->getCode()])) {
+                        $label = $translations[$locale->getCode()];
+                        $attributeValue[$key] = [
+                            'value' => $value,
+                            'label' => $label,
+                        ];
+                    }
+                }
+            }
+
+            $data[$attribute->getCode()] = $attributeValue;
         }
 
         while ($variants->current()) {
