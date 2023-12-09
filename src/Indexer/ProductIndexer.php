@@ -12,6 +12,7 @@ use Sylius\Component\Core\Model\ProductInterface;
 use Sylius\Component\Core\Model\ProductVariantInterface;
 use Sylius\Component\Core\Repository\ProductRepositoryInterface;
 use Sylius\Component\Locale\Model\LocaleInterface;
+use Sylius\Component\Product\Model\ProductOptionInterface;
 use Sylius\Component\Product\Model\ProductOptionValueInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 
@@ -144,7 +145,7 @@ class ProductIndexer extends AbstractIndexer
 
         foreach ($variant->getOptionValues() as $optionValue) {
             /** @var ProductOptionValueInterface $optionValue */
-            $data['children.' . $optionValue->getOption()->getCode()][] = [
+            $data[$optionValue->getOption()->getCode()][] = [
                 'value' => $optionValue->getValue(),
                 'label' => $optionValue->getTranslation($locale->getCode())->getValue(),
             ];

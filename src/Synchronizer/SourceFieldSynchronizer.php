@@ -18,6 +18,9 @@ use Gally\SyliusPlugin\Repository\GallyConfigurationRepository;
 use ReflectionClass;
 use Sylius\Component\Product\Model\Product;
 use Sylius\Component\Product\Model\ProductAttribute;
+use Sylius\Component\Product\Model\ProductOption;
+use Sylius\Component\Product\Model\ProductOptionValueInterface;
+use Sylius\Component\Product\Model\ProductOptionValueTranslation;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 
 /**
@@ -35,6 +38,7 @@ class SourceFieldSynchronizer extends AbstractSynchronizer
         string $createEntityMethod,
         string $putEntityMethod,
         private RepositoryInterface $productAttributeRepository,
+        private RepositoryInterface $productOptionRepository,
         private MetadataSynchronizer $metadataSynchronizer,
         private SourceFieldLabelSynchronizer $sourceFieldLabelSynchronizer,
         private SourceFieldOptionSynchronizer $sourceFieldOptionSynchronizer,
@@ -98,6 +102,43 @@ class SourceFieldSynchronizer extends AbstractSynchronizer
                     'type' => SourceFieldSynchronizer::getGallyType($attribute->getType()),
                     'translations' => $attribute->getTranslations(),
                     'options' => $options,
+                ]
+            ]);
+        }
+
+        /** @var ProductOption[] $options */
+        $options = $this->productOptionRepository->findAll();
+        foreach ($options as $option)
+        {
+            $optionValues = [];
+            $position = 0;
+            foreach ($option->getValues() as $value) {
+                $translations= [];
+                foreach ($value->getTranslations() as $translation) {
+                    /** @var ProductOptionValueTranslation $translation */
+                    $translations[] = [
+                        'locale' => $translation->getLocale(),
+                        'translation' => $translation->getValue(),
+                    ];
+                }
+
+                /** @var ProductOptionValueInterface $value */
+                $optionValues[$position] = [
+                    'code' => $value->getCode(),
+                    'translations' => $translations,
+                    'position' => $position,
+                ];
+
+                $position++;
+            }
+
+            $this->synchronizeItem([
+                'metadata' => $metadata,
+                'field' => [
+                    'code' => $option->getCode(),
+                    'type' => SourceFieldSynchronizer::getGallyType('select'),
+                    'translations' => $option->getTranslations(),
+                    'options' => $optionValues,
                 ]
             ]);
         }
