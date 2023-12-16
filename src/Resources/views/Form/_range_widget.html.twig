@@ -1,5 +1,6 @@
 {%- block sylius_gally_filter_range_widget -%}
     <div class="ui" tabindex="0">
-        <input type="range" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}>
+        <input type="hidden" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}>
+        <div class="range-slider" data-input-id="#{{ id }}" data-min="{{ attr.min }}" data-max="{{ attr.max }}" data-steps="{{ attr.steps }}" {% if value is defined %} data-value="{{ value }}"{% endif %}></div>
     </div>
 {%- endblock sylius_gally_filter_range_widget -%}
