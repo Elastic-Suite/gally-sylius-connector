@@ -49,6 +49,10 @@
      }
      ```
     - Copy the templates from `vendor/gally/sylius-plugin/src/Resources/views/SyliusShopBundle/` to `templates/bundles/SyliusShopBundle/`.
+    - Copy the bundle assets (Javascript & CSS files):
+       - Run `php bin/console assets:install`
+       - Run `php bin/console sylius:install:assets`
+       - Run `php bin/console sylius:theme:assets:install`
     - Run `php bin/console doctrine:migrations:diff` and `php bin/console doctrine:migrations:migrate` to update the database schema
     - Open Sylius Admin, head to Configuration > Gally and configure the Gally endpoint (URL, credentials)
 - Run this commands from your Sylius instance. This commands must be runned only once to synchronize the structure.
@@ -62,4 +66,9 @@
 - At this step, you should be able to see your product and source field in the Gally backend.
 - They should also appear in your Sylius frontend when searching or browsing categories.
 - And you're done !
+
+## noUiSlider 
+
+This bundle includes the [noUiSlider](https://github.com/leongersen/noUiSlider) distribution files. 
+noUiSlider is "a lightweight, ARIA-accessible JavaScript range slider with multi-touch and keyboard support" which is used in this project for the price slider implementation.
 
