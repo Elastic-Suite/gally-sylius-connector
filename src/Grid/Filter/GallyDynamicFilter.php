@@ -18,7 +18,11 @@ class GallyDynamicFilter implements FilterInterface
 
             if (str_contains($field, '_slider')) {
                 $field = str_replace('_slider', '', $field);
-                $dataSource->restrict($dataSource->getExpressionBuilder()->lessThanOrEqual($field, (int) $value));
+                $values = explode(';', $value, 2);
+                $dataSource->restrict($dataSource->getExpressionBuilder()->andX(
+                    $dataSource->getExpressionBuilder()->greaterThanOrEqual($field, (int) $values[0]),
+                    $dataSource->getExpressionBuilder()->lessThanOrEqual($field, (int) $values[1]),
+                ));
             } elseif (str_contains($field, '_boolean')) {
                 $field = str_replace('_boolean', '', $field);
                 $value = ($value === 'true');

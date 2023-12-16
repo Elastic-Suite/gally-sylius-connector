@@ -13,7 +13,19 @@ class ExpressionBuilder implements ExpressionBuilderInterface
      */
     public function andX(...$expressions)
     {
-        throw new \RuntimeException('Method not implemented');
+        $return = [];
+
+        foreach ($expressions as $filter) {
+            foreach ($filter as $key => $value) {
+                if (!isset($return[$key])) {
+                    $return[$key] = $value;
+                } else {
+                    $return[$key] += $value;
+                }
+            }
+        }
+
+        return $return;
     }
 
     /**

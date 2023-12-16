@@ -68,7 +68,6 @@
         </service>
 
         <service id="Gally\SyliusPlugin\Form\Type\Filter\GallyDynamicFilterType" autoconfigure="true">
-            <argument type="service" id="request_stack" />
             <tag name="kernel.event_listener" event="gally.grid.configure_filter" method="onFilterUpdate" />
         </service>
     </services>
