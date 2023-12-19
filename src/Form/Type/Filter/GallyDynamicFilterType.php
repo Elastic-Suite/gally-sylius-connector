@@ -12,7 +12,6 @@ use Sylius\Bundle\GridBundle\Form\Type\Filter\SelectFilterType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\RangeType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 class GallyDynamicFilterType extends AbstractType
 {
@@ -73,8 +72,11 @@ class GallyDynamicFilterType extends AbstractType
                         $aggregation->getField(),
                         SelectFilterType::class,
                         [
+                            'block_prefix' => 'sylius_gally_filter_checkbox',
                             'label' => $aggregation->getLabel(),
                             'choices' => $choices,
+                            'expanded' => true,
+                            'multiple' => true,
                         ]
                     );
                     break;

@@ -28,7 +28,12 @@ class GallyDynamicFilter implements FilterInterface
                 $value = ($value === 'true');
                 $dataSource->restrict($dataSource->getExpressionBuilder()->equals($field, $value));
             } else {
-                $dataSource->restrict($dataSource->getExpressionBuilder()->equals($field, $value));
+                if (is_array($value)) {
+                    $dataSource->restrict($dataSource->getExpressionBuilder()->in($field, $value));
+                } else {
+                    $dataSource->restrict($dataSource->getExpressionBuilder()->equals($field, $value));
+                }
+
             }
         }
     }
