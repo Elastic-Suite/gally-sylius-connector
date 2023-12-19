@@ -19,6 +19,6 @@ final class GallySyliusExtension extends AbstractResourceExtension
 
         $loader->load('services.xml');
 
-        $this->registerResources('gally_sylius_plugin', $config['driver'], $config['resources'], $container);
+        $this->registerResources('gally_sylius', $config['driver'], $config['resources'], $container);
     }
 }

@@ -1,4 +1,4 @@
-gally_sylius_plugin:
+gally_sylius:
   ui:
     configuration_header: Gally configuration
     configuration_saved: Connection configuration stored!

@@ -36,7 +36,7 @@ final class AdminGallyController extends AbstractController
             $gallyConfiguration = $configForm->getData();
 
             $this->gallyConfigurationRepository->add($gallyConfiguration);
-            $this->addFlash('success', $this->translator->trans('gally_sylius_plugin.ui.configuration_saved'));
+            $this->addFlash('success', $this->translator->trans('gally_sylius.ui.configuration_saved'));
         }
 
         return $this->render('@GallySyliusPlugin/Config/_form.html.twig', [
@@ -60,9 +60,9 @@ final class AdminGallyController extends AbstractController
                     $configuration->getUserName(),
                     $configuration->getPassword(),
                 );
-                $this->addFlash('success', $this->translator->trans('gally_sylius_plugin.ui.test_connection_success'));
+                $this->addFlash('success', $this->translator->trans('gally_sylius.ui.test_connection_success'));
             } catch (ApiException $e) {
-                $this->addFlash('error', $this->translator->trans('gally_sylius_plugin.ui.test_connection_failure'));
+                $this->addFlash('error', $this->translator->trans('gally_sylius.ui.test_connection_failure'));
             }
         }
 
@@ -82,7 +82,7 @@ final class AdminGallyController extends AbstractController
         if ($syncForm->isSubmitted() && $syncForm->isValid()) {
             $this->sourceFieldSynchronizer->synchronizeAll();
 
-            $this->addFlash('success', $this->translator->trans('gally_sylius_plugin.ui.sync_success'));
+            $this->addFlash('success', $this->translator->trans('gally_sylius.ui.sync_success'));
         }
 
         return $this->render('@GallySyliusPlugin/Config/_form.html.twig', [

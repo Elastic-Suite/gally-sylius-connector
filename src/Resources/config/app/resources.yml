@@ -1,7 +1,0 @@
-sylius_resource:
-  resources:
-    gally_sylius.gally_configuration:
-      classes:
-        model: Gally\SyliusPlugin\Entity\GallyConfiguration
-        repository: Gally\SyliusPlugin\Repository\GallyConfigurationRepository
-        form: Gally\SyliusPlugin\Form\Type\GallyConfigurationType
