@@ -2,7 +2,7 @@
     {% form_theme testForm '@SyliusAdmin/Form/theme.html.twig' %}
     {{ form_start(testForm, {'action': path('gally_sylius_test'), 'attr': {'class': 'ui loadable form', 'novalidate': 'novalidate', 'id': testForm.vars.id}}) }}
 
-    <div class="ui horizontal divider"> {{ 'gally_sylius_plugin.ui.test_connection_header'|trans }} </div>
+    <div class="ui horizontal divider"> {{ 'gally_sylius.ui.test_connection_header'|trans }} </div>
 
     <div class="ui equal width grid">
         {{ form_errors(testForm) }}
@@ -10,7 +10,7 @@
             <div class="column">
                 <div class="ui hidden divider"></div>
                 <div class="ui buttons">
-                    <button class="ui labeled icon primary button" type="submit" id="sylius_save_changes_button"><i class="plug icon"></i> {{ 'gally_sylius_plugin.ui.btn_test'|trans }}</button>
+                    <button class="ui labeled icon primary button" type="submit" id="sylius_save_changes_button"><i class="plug icon"></i> {{ 'gally_sylius.ui.btn_test'|trans }}</button>
                 </div>
             </div>
         </div>

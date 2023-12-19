@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace Gally\SyliusPlugin\Synchronizer;
 
+use Gally\Rest\Model\ModelInterface;
 use Gally\SyliusPlugin\Api\RestClient;
 use Gally\SyliusPlugin\Entity\GallyConfiguration;
 use Gally\SyliusPlugin\Repository\GallyConfigurationRepository;
-use Gally\Rest\Model\ModelInterface;
 
 /**
  * Synchronize shopware store structure with gally.

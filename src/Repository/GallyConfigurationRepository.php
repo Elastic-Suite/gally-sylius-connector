@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Gally\SyliusPlugin\Repository;
 
 use Gally\SyliusPlugin\Entity\GallyConfiguration;
+use RuntimeException;
 use Sylius\Bundle\ResourceBundle\Doctrine\ORM\EntityRepository;
 use Sylius\Bundle\ResourceBundle\Doctrine\ORM\ResourceRepositoryTrait;
-use RuntimeException;
 
 final class GallyConfigurationRepository extends EntityRepository implements GallyConfigurationRepositoryInterface
 {
@@ -20,7 +20,7 @@ final class GallyConfigurationRepository extends EntityRepository implements Gal
             ->getOneOrNullResult();
 
         if (null === $gallyConfig) {
-            throw new RuntimeException('There MUST be exactly one Gally_configuration available.');
+            $gallyConfig = new GallyConfiguration();
         }
 
         return $gallyConfig;

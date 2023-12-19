@@ -17,13 +17,13 @@ final class ChannelTypeExtension extends AbstractTypeExtension
         $builder
             ->add('gallyActive', CheckboxType::class, [
                 'required' => true,
-                'label' => 'gally_sylius_plugin.form.active',
+                'label' => 'gally_sylius.form.active',
             ])
             ->add('gallyProductIndexBatchSize', TextType::class, [
-                'label' => 'gally_sylius_plugin.form.product_index_batch_size',
+                'label' => 'gally_sylius.form.product_index_batch_size',
             ])
             ->add('gallyCategoryIndexBatchSize', TextType::class, [
-                'label' => 'gally_sylius_plugin.form.category_index_batch_size',
+                'label' => 'gally_sylius.form.category_index_batch_size',
             ]);
     }
 
