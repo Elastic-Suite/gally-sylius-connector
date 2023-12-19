@@ -97,7 +97,7 @@ class ExpressionBuilder implements ExpressionBuilderInterface
      */
     public function in(string $field, array $values)
     {
-        throw new \RuntimeException('Method not implemented');
+        return [$field => ['in' => $values]];
     }
 
     /**
