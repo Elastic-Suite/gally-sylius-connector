@@ -1,4 +1,14 @@
 <?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Gally to newer versions in the future.
+ *
+ * @package   Gally
+ * @author    Stephan Hochdörfer <S.Hochdoerfer@bitexpert.de>, Gally Team <elasticsuite@smile.fr>
+ * @copyright 2022-present Smile
+ * @license   Open Software License v. 3.0 (OSL-3.0)
+ */
 
 declare(strict_types=1);
 
@@ -41,12 +51,12 @@ class LocalizedCatalogSynchronizer extends AbstractSynchronizer
 
         return $this->createOrUpdateEntity(
             new LocalizedCatalog([
-                "name" => $locale->getName(),
-                "code" => $channel->getId() . '_' . $locale->getCode(),
-                "locale" => str_replace('-', '_', $locale->getCode()),
-                "currency" => $channel->getBaseCurrency()->getCode(),
-                "isDefault" => $locale->getId() == $channel->getDefaultLocale()->getId(),
-                "catalog" => "/catalogs/" . $catalog->getId(),
+                'name' => $locale->getName(),
+                'code' => $channel->getId() . '_' . $locale->getCode(),
+                'locale' => str_replace('-', '_', $locale->getCode()),
+                'currency' => $channel->getBaseCurrency()->getCode(),
+                'isDefault' => $locale->getId() == $channel->getDefaultLocale()->getId(),
+                'catalog' => '/catalogs/' . $catalog->getId(),
             ])
         );
     }
@@ -56,7 +66,7 @@ class LocalizedCatalogSynchronizer extends AbstractSynchronizer
         /** @var LocalizedCatalog $entity */
         parent::addEntityByIdentity($entity);
 
-        if (!array_key_exists($entity->getLocale(), $this->localizedCatalogByLocale)) {
+        if (!\array_key_exists($entity->getLocale(), $this->localizedCatalogByLocale)) {
             $this->localizedCatalogByLocale[$entity->getLocale()] = [];
         }
 

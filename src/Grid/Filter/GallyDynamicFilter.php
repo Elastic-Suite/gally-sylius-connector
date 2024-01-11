@@ -1,4 +1,14 @@
 <?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Gally to newer versions in the future.
+ *
+ * @package   Gally
+ * @author    Stephan Hochdörfer <S.Hochdoerfer@bitexpert.de>, Gally Team <elasticsuite@smile.fr>
+ * @copyright 2022-present Smile
+ * @license   Open Software License v. 3.0 (OSL-3.0)
+ */
 
 declare(strict_types=1);
 
@@ -12,7 +22,7 @@ class GallyDynamicFilter implements FilterInterface
     public function apply(DataSourceInterface $dataSource, string $name, $data, array $options): void
     {
         foreach ($data as $field => $value) {
-            if ($value === '') {
+            if ('' === $value) {
                 continue;
             }
 
@@ -25,15 +35,14 @@ class GallyDynamicFilter implements FilterInterface
                 ));
             } elseif (str_contains($field, '_boolean')) {
                 $field = str_replace('_boolean', '', $field);
-                $value = ($value === 'true');
+                $value = ('true' === $value);
                 $dataSource->restrict($dataSource->getExpressionBuilder()->equals($field, $value));
             } else {
-                if (is_array($value)) {
+                if (\is_array($value)) {
                     $dataSource->restrict($dataSource->getExpressionBuilder()->in($field, $value));
                 } else {
                     $dataSource->restrict($dataSource->getExpressionBuilder()->equals($field, $value));
                 }
-
             }
         }
     }

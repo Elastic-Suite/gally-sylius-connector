@@ -1,4 +1,14 @@
 <?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Gally to newer versions in the future.
+ *
+ * @package   Gally
+ * @author    Stephan Hochdörfer <S.Hochdoerfer@bitexpert.de>, Gally Team <elasticsuite@smile.fr>
+ * @copyright 2022-present Smile
+ * @license   Open Software License v. 3.0 (OSL-3.0)
+ */
 
 declare(strict_types=1);
 
@@ -6,7 +16,6 @@ namespace Gally\SyliusPlugin\Service;
 
 use Gally\Rest\Api\IndexApi;
 use Gally\Rest\Api\IndexDocumentApi;
-use Gally\Rest\ApiException;
 use Gally\Rest\Model\IndexCreate;
 use Gally\Rest\Model\IndexDetails;
 use Gally\Rest\Model\LocalizedCatalog;
@@ -34,7 +43,7 @@ class IndexOperation
         );
         $indexData = [
             'entityType' => $entityType,
-            'localizedCatalog' =>  $channel->getId() . '_' . $locale->getCode(),
+            'localizedCatalog' => $channel->getId() . '_' . $locale->getCode(),
         ];
 
         /** @var IndexCreate $index */
@@ -56,19 +65,13 @@ class IndexOperation
         foreach ($indices as $index) {
             if ($index->getEntityType() === $entityType
                 && $index->getLocalizedCatalog() === '/localized_catalogs/' . $localizedCatalog->getId()
-                && $index->getStatus() === 'live'
+                && 'live' === $index->getStatus()
             ) {
                 return $index->getName();
             }
         }
 
-        throw new \LogicException(
-            sprintf(
-                "Index for entity %s and localizedCatalog %s does not exist yet. Make sure everything is reindexed.",
-                $entityType,
-                $localizedCatalog->getCode()
-            )
-        );
+        throw new \LogicException(sprintf('Index for entity %s and localizedCatalog %s does not exist yet. Make sure everything is reindexed.', $entityType, $localizedCatalog->getCode()));
     }
 
     public function refreshIndex(string $indexName): void

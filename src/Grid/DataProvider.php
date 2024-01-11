@@ -1,4 +1,14 @@
 <?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Gally to newer versions in the future.
+ *
+ * @package   Gally
+ * @author    Stephan Hochdörfer <S.Hochdoerfer@bitexpert.de>, Gally Team <elasticsuite@smile.fr>
+ * @copyright 2022-present Smile
+ * @license   Open Software License v. 3.0 (OSL-3.0)
+ */
 
 declare(strict_types=1);
 
@@ -25,9 +35,9 @@ final class DataProvider implements DataProviderInterface
 
     public function getData(Grid $grid, Parameters $parameters)
     {
-        if ($grid->getCode() === 'sylius_shop_product') {
+        if ('sylius_shop_product' === $grid->getCode()) {
             $channel = $this->channelContext->getChannel();
-            if (($channel instanceof GallyChannelInterface) && ($channel->getGallyActive())) {
+            if (($channel instanceof GallyChannelInterface) && $channel->getGallyActive()) {
                 $dataSource = $this->dataSourceProvider->getDataSource($grid, $parameters);
 
                 $this->filtersApplicator->apply($dataSource, $grid, $parameters);
@@ -42,6 +52,7 @@ final class DataProvider implements DataProviderInterface
             $this->filtersApplicator,
             $this->sorter,
         );
+
         return $dataProvider->getData($grid, $parameters);
     }
 }

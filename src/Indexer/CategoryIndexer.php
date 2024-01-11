@@ -1,4 +1,14 @@
 <?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Gally to newer versions in the future.
+ *
+ * @package   Gally
+ * @author    Stephan Hochdörfer <S.Hochdoerfer@bitexpert.de>, Gally Team <elasticsuite@smile.fr>
+ * @copyright 2022-present Smile
+ * @license   Open Software License v. 3.0 (OSL-3.0)
+ */
 
 declare(strict_types=1);
 
@@ -44,8 +54,8 @@ class CategoryIndexer extends AbstractIndexer
                 $path = (string) $taxon->getCode();
 
                 $parent = $taxon->getParent();
-                while ($parent !== null) {
-                    $path = $parent->getCode(). '/' .$path;
+                while (null !== $parent) {
+                    $path = $parent->getCode() . '/' . $path;
                     $parent = $parent->getParent();
                 }
 
@@ -60,12 +70,12 @@ class CategoryIndexer extends AbstractIndexer
                 ->getQuery()
                 ->execute([
                     'taxon_id' => $menuTaxon->getId(),
-                    'taxon_left' => $menuTaxon->getLeft()
+                    'taxon_left' => $menuTaxon->getLeft(),
                 ]);
 
             foreach ($taxons as $taxon) {
                 /** @var TaxonInterface $taxon */
-                if (($taxon->getParent() !== null) && isset($this->pathCache[$taxon->getParent()->getCode()])) {
+                if ((null !== $taxon->getParent()) && isset($this->pathCache[$taxon->getParent()->getCode()])) {
                     $this->pathCache[$taxon->getCode()] = $this->pathCache[$taxon->getParent()->getCode()] . '/' . $taxon->getCode();
                 } else {
                     $this->pathCache[$taxon->getCode()] = (string) $taxon->getCode();
@@ -84,7 +94,7 @@ class CategoryIndexer extends AbstractIndexer
     private function formatTaxon(TaxonInterface $taxon, TaxonTranslationInterface $translation): array
     {
         $parentId = '';
-        if ($taxon->getParent() !== null) {
+        if (null !== $taxon->getParent()) {
             $parentId = (string) $taxon->getParent()->getCode();
         }
 

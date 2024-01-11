@@ -1,4 +1,14 @@
 <?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Gally to newer versions in the future.
+ *
+ * @package   Gally
+ * @author    Stephan Hochdörfer <S.Hochdoerfer@bitexpert.de>, Gally Team <elasticsuite@smile.fr>
+ * @copyright 2022-present Smile
+ * @license   Open Software License v. 3.0 (OSL-3.0)
+ */
 
 declare(strict_types=1);
 
@@ -32,7 +42,7 @@ class SortOptionContextProvider implements ContextProviderInterface
         $templateContext['sort_options'] = [];
 
         $channel = $this->channelContext->getChannel();
-        if (($channel instanceof GallyChannelInterface) && ($channel->getGallyActive())) {
+        if (($channel instanceof GallyChannelInterface) && $channel->getGallyActive()) {
             $sortingOptions = $this->client->query(ProductSortingOptionApi::class, 'getProductSortingOptionCollection');
             foreach ($sortingOptions as $option) {
                 /** @var ProductSortingOption $option */
@@ -55,14 +65,14 @@ class SortOptionContextProvider implements ContextProviderInterface
                 ['field' => 'sorting', 'sorting' => ['sorting' => 'desc'], 'label' => $this->translator->trans('sylius.ui.newest_first')],
                 ['field' => 'sorting', 'sorting' => ['sorting' => 'asc'], 'label' => $this->translator->trans('sylius.ui.oldest_first')],
                 ['field' => 'price', 'sorting' => ['price' => 'asc'], 'label' => $this->translator->trans('sylius.ui.cheapest_first')],
-                ['field' => 'price', 'sorting' => ['price' => 'desc'], 'label' => $this->translator->trans('sylius.ui.most_expensive_first')]
+                ['field' => 'price', 'sorting' => ['price' => 'desc'], 'label' => $this->translator->trans('sylius.ui.most_expensive_first')],
             ];
 
             foreach ($templateContext['sort_options'] as $option) {
                 if (empty($templateContext['current_sorting_label'])) {
                     // set first element by default
                     $templateContext['current_sorting_label'] = strtolower($option['label']);
-                } else if ($option['sorting'] === $currentSortOrder) {
+                } elseif ($option['sorting'] === $currentSortOrder) {
                     $templateContext['current_sorting_label'] = strtolower($option['label']);
                     break;
                 }

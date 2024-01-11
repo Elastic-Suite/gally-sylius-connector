@@ -1,4 +1,14 @@
 <?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Gally to newer versions in the future.
+ *
+ * @package   Gally
+ * @author    Stephan Hochdörfer <S.Hochdoerfer@bitexpert.de>, Gally Team <elasticsuite@smile.fr>
+ * @copyright 2022-present Smile
+ * @license   Open Software License v. 3.0 (OSL-3.0)
+ */
 
 declare(strict_types=1);
 
@@ -36,12 +46,12 @@ final class ProductAttributeSubscriber implements EventSubscriberInterface
             $metadata = $this->metadataSynchronizer->synchronizeItem(['entity' => $metadataName]);
 
             $options = [];
-            if ($attribute->getType() === 'select') {
+            if ('select' === $attribute->getType()) {
                 $position = 0;
                 $configuration = $attribute->getConfiguration();
                 $choices = $configuration['choices'] ?? [];
                 foreach ($choices as $code => $choice) {
-                    $translations= [];
+                    $translations = [];
                     foreach ($choice ?? [] as $locale => $translation) {
                         $translations[] = [
                             'locale' => $locale,
@@ -55,7 +65,7 @@ final class ProductAttributeSubscriber implements EventSubscriberInterface
                         'position' => $position,
                     ];
 
-                    $position++;
+                    ++$position;
                 }
             }
 
@@ -63,10 +73,10 @@ final class ProductAttributeSubscriber implements EventSubscriberInterface
                 'metadata' => $metadata,
                 'field' => [
                     'code' => $attribute->getCode(),
-                    'type' => SourceFieldSynchronizer::getGallyType((string)$attribute->getType()),
+                    'type' => SourceFieldSynchronizer::getGallyType((string) $attribute->getType()),
                     'translations' => $attribute->getTranslations(),
                     'options' => $options,
-                ]
+                ],
             ]);
         }
     }

@@ -1,4 +1,14 @@
 <?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Gally to newer versions in the future.
+ *
+ * @package   Gally
+ * @author    Stephan Hochdörfer <S.Hochdoerfer@bitexpert.de>, Gally Team <elasticsuite@smile.fr>
+ * @copyright 2022-present Smile
+ * @license   Open Software License v. 3.0 (OSL-3.0)
+ */
 
 declare(strict_types=1);
 
@@ -12,7 +22,6 @@ use Sylius\Component\Core\Model\ProductInterface;
 use Sylius\Component\Core\Model\ProductVariantInterface;
 use Sylius\Component\Core\Repository\ProductRepositoryInterface;
 use Sylius\Component\Locale\Model\LocaleInterface;
-use Sylius\Component\Product\Model\ProductOptionInterface;
 use Sylius\Component\Product\Model\ProductOptionValueInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 
@@ -76,7 +85,7 @@ class ProductIndexer extends AbstractIndexer
             'price' => $this->formatPrice($variant, $channel),
             'stock' => [
                 'status' => $variant->isInStock(),
-                'qty' => $variant->getOnHand()
+                'qty' => $variant->getOnHand(),
             ],
             'category' => $this->formatCategories($product),
             'free_shipping' => true, // $product->getShippingFree(),
@@ -91,9 +100,9 @@ class ProductIndexer extends AbstractIndexer
 
             $attribute = $attributeValue->getAttribute();
             $attributeValue = $attributeValue->getValue();
-            if ($attribute->getType() === 'select') {
-                if(!is_array($attributeValue)) {
-                    $attributeValue = [ $attributeValue ];
+            if ('select' === $attribute->getType()) {
+                if (!\is_array($attributeValue)) {
+                    $attributeValue = [$attributeValue];
                 }
 
                 $attributeConfiguration = $attribute->getConfiguration();
@@ -130,8 +139,8 @@ class ProductIndexer extends AbstractIndexer
         // Remove empty values
         return array_filter(
             $data,
-            fn($item, $key) => in_array($key, ['stock']) || !is_array($item) || !empty(array_filter($item)),
-            ARRAY_FILTER_USE_BOTH
+            fn ($item, $key) => \in_array($key, ['stock'], true) || !\is_array($item) || !empty(array_filter($item)),
+            \ARRAY_FILTER_USE_BOTH
         );
     }
 
@@ -154,8 +163,8 @@ class ProductIndexer extends AbstractIndexer
         // Remove empty values
         return array_filter(
             $data,
-            fn($item, $key) => in_array($key, ['stock']) || !is_array($item) || !empty(array_filter($item)),
-            ARRAY_FILTER_USE_BOTH
+            fn ($item, $key) => \in_array($key, ['stock'], true) || !\is_array($item) || !empty(array_filter($item)),
+            \ARRAY_FILTER_USE_BOTH
         );
     }
 
@@ -174,7 +183,7 @@ class ProductIndexer extends AbstractIndexer
             'price' => $price,
             'original_price' => $originalPrice,
             'group_id' => 0,
-            'is_discounted' => $price < $originalPrice
+            'is_discounted' => $price < $originalPrice,
         ];
 
         return $prices;
@@ -183,9 +192,9 @@ class ProductIndexer extends AbstractIndexer
     private function formatMedia(ProductInterface $product): string
     {
         $image = $product->getImagesByType('thumbnail')->first();
-        if ($image === false) {
+        if (false === $image) {
             $image = $product->getImages()->first();
-            if ($image === false) {
+            if (false === $image) {
                 return '';
             }
         }

@@ -1,4 +1,15 @@
 <?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Gally to newer versions in the future.
+ *
+ * @package   Gally
+ * @author    Stephan Hochdörfer <S.Hochdoerfer@bitexpert.de>, Gally Team <elasticsuite@smile.fr>
+ * @copyright 2022-present Smile
+ * @license   Open Software License v. 3.0 (OSL-3.0)
+ */
+
 declare(strict_types=1);
 
 namespace Gally\SyliusPlugin\Synchronizer;
@@ -49,17 +60,18 @@ abstract class AbstractSynchronizer
             foreach ($entities as $entity) {
                 $this->addEntityByIdentity($entity);
             }
-            $currentPage++;
-        } while (count($entities) >= self::FETCH_PAGE_SIZE);
+            ++$currentPage;
+        } while (\count($entities) >= self::FETCH_PAGE_SIZE);
         $this->allEntityHasBeenFetch = true;
     }
 
     public function fetchEntity(ModelInterface $entity): ?ModelInterface
     {
         $entities = $this->client->query(...$this->buildFetchOneParams($entity));
-        if (count($entities) !== 1) {
+        if (1 !== \count($entities)) {
             return null;
         }
+
         return reset($entities);
     }
 
@@ -73,7 +85,7 @@ abstract class AbstractSynchronizer
             null,
             null,
             $page,
-            self::FETCH_PAGE_SIZE
+            self::FETCH_PAGE_SIZE,
         ];
     }
 
@@ -127,11 +139,7 @@ abstract class AbstractSynchronizer
     protected function validateEntity(ModelInterface $entity): void
     {
         if (!$entity->valid()) {
-            throw new \LogicException(
-                "Missing properties for "
-                . get_class($entity) . " : "
-                . implode(",", $entity->listInvalidProperties())
-            );
+            throw new \LogicException('Missing properties for ' . \get_class($entity) . ' : ' . implode(',', $entity->listInvalidProperties()));
         }
     }
 }

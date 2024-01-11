@@ -1,4 +1,14 @@
 <?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Gally to newer versions in the future.
+ *
+ * @package   Gally
+ * @author    Stephan Hochdörfer <S.Hochdoerfer@bitexpert.de>, Gally Team <elasticsuite@smile.fr>
+ * @copyright 2022-present Smile
+ * @license   Open Software License v. 3.0 (OSL-3.0)
+ */
 
 declare(strict_types=1);
 
@@ -32,7 +42,7 @@ class Index extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $output->writeln("");
+        $output->writeln('');
         foreach ($this->indexers as $indexer) {
             $time = microtime(true);
             $message = "<comment>Indexing {$indexer->getEntityType()}</comment>";
@@ -40,12 +50,13 @@ class Index extends Command
             try {
                 $indexer->reindex();
             } catch (\Exception $e) {
+                $output->writeln($e->getMessage());
                 $output->writeln($e->getTraceAsString());
             }
             $time = number_format(microtime(true) - $time, 2);
             $output->writeln("\033[1A$message <info>✔</info> ($time)s");
         }
-        $output->writeln("");
+        $output->writeln('');
 
         return 0;
     }

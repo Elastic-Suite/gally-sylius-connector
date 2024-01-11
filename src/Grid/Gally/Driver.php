@@ -1,4 +1,14 @@
 <?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Gally to newer versions in the future.
+ *
+ * @package   Gally
+ * @author    Stephan Hochdörfer <S.Hochdoerfer@bitexpert.de>, Gally Team <elasticsuite@smile.fr>
+ * @copyright 2022-present Smile
+ * @license   Open Software License v. 3.0 (OSL-3.0)
+ */
 
 declare(strict_types=1);
 
@@ -28,7 +38,7 @@ final class Driver implements DriverInterface
 
     public function getDataSource(array $configuration, Parameters $parameters): DataSourceInterface
     {
-        if (!array_key_exists('class', $configuration)) {
+        if (!\array_key_exists('class', $configuration)) {
             throw new \InvalidArgumentException('"class" must be configured.');
         }
 
@@ -49,7 +59,7 @@ final class Driver implements DriverInterface
             array_values($configuration['repository']['arguments']) : [];
         $method = $configuration['repository']['method'];
 
-        $queryBuilder = $repository->$method(...$arguments);
+        $queryBuilder = $repository->{$method}(...$arguments);
 
         $channel = $configuration['repository']['arguments']['channel'];
         if (($channel instanceof GallyChannelInterface) && $channel->getGallyActive()) {
