@@ -30,6 +30,7 @@ final class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('gally_sylius');
+        /** @var ArrayNodeDefinition $rootNode */
         $rootNode = $treeBuilder->getRootNode();
 
         $rootNode
@@ -62,7 +63,6 @@ final class Configuration implements ConfigurationInterface
                                         ->scalarNode('form')->defaultValue(GallyConfigurationType::class)->cannotBeEmpty()->end()
                                     ->end()
                                 ->end()
-
                             ->end()
                         ->end()
                     ->end()

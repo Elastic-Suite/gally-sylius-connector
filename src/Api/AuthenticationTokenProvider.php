@@ -53,6 +53,7 @@ final class AuthenticationTokenProvider
         }
 
         try {
+            /** @var array $response */
             $response = json_decode($responseJson->getBody()->getContents(), true, 512, \JSON_THROW_ON_ERROR);
 
             return (string) $response['token'];

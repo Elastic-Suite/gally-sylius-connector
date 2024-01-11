@@ -176,6 +176,7 @@ class SourceFieldSynchronizer extends AbstractSynchronizer
         ];
 
         foreach ($translations as $translation) {
+            /** @var SourceFieldSourceFieldRead $tempSourceField */
             $tempSourceField = $this->getEntityFromApi(new SourceFieldSourceFieldWrite($data));
             $locale = $translation->getLocale();
 
@@ -205,8 +206,9 @@ class SourceFieldSynchronizer extends AbstractSynchronizer
             }
         }
 
+        /** @var SourceFieldSourceFieldRead $sourceField */
         $sourceField = $this->createOrUpdateEntity(new SourceFieldSourceFieldWrite($data));
-        $this->addOptions($sourceField, $options ?? []);
+        $this->addOptions($sourceField, $options);
 
         return $sourceField;
     }
@@ -240,7 +242,7 @@ class SourceFieldSynchronizer extends AbstractSynchronizer
         }
     }
 
-    protected function addOptions(ModelInterface $sourceField, iterable $options)
+    protected function addOptions(SourceFieldSourceFieldRead $sourceField, iterable $options)
     {
         $currentBulkSize = 0;
         $currentBulk = [];

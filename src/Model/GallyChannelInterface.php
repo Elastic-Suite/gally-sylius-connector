@@ -14,7 +14,9 @@ declare(strict_types=1);
 
 namespace Gally\SyliusPlugin\Model;
 
-interface GallyChannelInterface
+use Sylius\Component\Core\Model\ChannelInterface;
+
+interface GallyChannelInterface extends ChannelInterface
 {
     public function getGallyActive(): bool;
 
