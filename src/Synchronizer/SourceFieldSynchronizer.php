@@ -1,8 +1,18 @@
 <?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Gally to newer versions in the future.
+ *
+ * @package   Gally
+ * @author    Stephan Hochdörfer <S.Hochdoerfer@bitexpert.de>, Gally Team <elasticsuite@smile.fr>
+ * @copyright 2022-present Smile
+ * @license   Open Software License v. 3.0 (OSL-3.0)
+ */
+
 declare(strict_types=1);
 
 namespace Gally\SyliusPlugin\Synchronizer;
-
 
 use Doctrine\Common\Collections\Collection;
 use Gally\Rest\Model\LocalizedCatalog;
@@ -24,7 +34,7 @@ use Sylius\Component\Product\Model\ProductOptionValueTranslation;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 
 /**
- * Synchronise Sylius Product Attributes to Gally SourceFields
+ * Synchronise Sylius Product Attributes to Gally SourceFields.
  */
 class SourceFieldSynchronizer extends AbstractSynchronizer
 {
@@ -72,12 +82,12 @@ class SourceFieldSynchronizer extends AbstractSynchronizer
         $attributes = $this->productAttributeRepository->findAll();
         foreach ($attributes as $attribute) {
             $options = [];
-            if ($attribute->getType() === 'select') {
+            if ('select' === $attribute->getType()) {
                 $position = 0;
                 $configuration = $attribute->getConfiguration();
                 $choices = $configuration['choices'] ?? [];
                 foreach ($choices as $code => $choice) {
-                    $translations= [];
+                    $translations = [];
                     foreach ($choice ?? [] as $locale => $translation) {
                         $translations[] = [
                             'locale' => $locale,
@@ -91,7 +101,7 @@ class SourceFieldSynchronizer extends AbstractSynchronizer
                         'position' => $position,
                     ];
 
-                    $position++;
+                    ++$position;
                 }
             }
 
@@ -99,21 +109,20 @@ class SourceFieldSynchronizer extends AbstractSynchronizer
                 'metadata' => $metadata,
                 'field' => [
                     'code' => $attribute->getCode(),
-                    'type' => SourceFieldSynchronizer::getGallyType($attribute->getType()),
+                    'type' => self::getGallyType($attribute->getType()),
                     'translations' => $attribute->getTranslations(),
                     'options' => $options,
-                ]
+                ],
             ]);
         }
 
         /** @var ProductOption[] $options */
         $options = $this->productOptionRepository->findAll();
-        foreach ($options as $option)
-        {
+        foreach ($options as $option) {
             $optionValues = [];
             $position = 0;
             foreach ($option->getValues() as $value) {
-                $translations= [];
+                $translations = [];
                 foreach ($value->getTranslations() as $translation) {
                     /** @var ProductOptionValueTranslation $translation */
                     $translations[] = [
@@ -129,17 +138,17 @@ class SourceFieldSynchronizer extends AbstractSynchronizer
                     'position' => $position,
                 ];
 
-                $position++;
+                ++$position;
             }
 
             $this->synchronizeItem([
                 'metadata' => $metadata,
                 'field' => [
                     'code' => $option->getCode(),
-                    'type' => SourceFieldSynchronizer::getGallyType('select'),
+                    'type' => self::getGallyType('select'),
                     'translations' => $option->getTranslations(),
                     'options' => $optionValues,
-                ]
+                ],
             ]);
         }
     }
@@ -177,9 +186,9 @@ class SourceFieldSynchronizer extends AbstractSynchronizer
                     ? $this->sourceFieldLabelSynchronizer->getEntityFromApi(
                         new SourceFieldLabel(
                             [
-                                'sourceField'      => '/source_fields/' . $tempSourceField->getId() ,
+                                'sourceField' => '/source_fields/' . $tempSourceField->getId(),
                                 'localizedCatalog' => '/localized_catalogs/' . $localizedCatalog->getId(),
-                                'label'            =>  $translation->getName(),
+                                'label' => $translation->getName(),
                             ]
                         )
                     )
@@ -286,7 +295,7 @@ class SourceFieldSynchronizer extends AbstractSynchronizer
             }
 
             $currentBulk[] = $optionData;
-            $currentBulkSize++;
+            ++$currentBulkSize;
             if ($currentBulkSize > $this->optionBatchSize) {
                 $this->client->query($this->entityClass, 'addOptionsSourceFieldItem', $sourceField->getId(), $currentBulk);
                 $currentBulkSize = 0;

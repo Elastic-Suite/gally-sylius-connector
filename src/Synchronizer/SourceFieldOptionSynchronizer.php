@@ -1,4 +1,14 @@
 <?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Gally to newer versions in the future.
+ *
+ * @package   Gally
+ * @author    Stephan Hochdörfer <S.Hochdoerfer@bitexpert.de>, Gally Team <elasticsuite@smile.fr>
+ * @copyright 2022-present Smile
+ * @license   Open Software License v. 3.0 (OSL-3.0)
+ */
 
 declare(strict_types=1);
 
@@ -6,12 +16,11 @@ namespace Gally\SyliusPlugin\Synchronizer;
 
 use Gally\Rest\Model\ModelInterface;
 use Gally\Rest\Model\SourceFieldOptionSourceFieldOptionWrite;
-use Gally\Rest\Model\SourceFieldSourceFieldWrite;
 use Gally\SyliusPlugin\Api\RestClient;
 use Gally\SyliusPlugin\Repository\GallyConfigurationRepository;
 
 /**
- * Synchronise Sylius Product Attribute Options to Gally Sourcefield Options
+ * Synchronise Sylius Product Attribute Options to Gally Sourcefield Options.
  */
 class SourceFieldOptionSynchronizer extends AbstractSynchronizer
 {
@@ -69,9 +78,10 @@ class SourceFieldOptionSynchronizer extends AbstractSynchronizer
                 $filteredResults[] = $result;
             }
         }
-        if (count($filteredResults) !== 1) {
+        if (1 !== \count($filteredResults)) {
             return null;
         }
+
         return reset($filteredResults);
     }
 

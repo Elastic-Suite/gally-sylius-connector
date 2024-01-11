@@ -1,4 +1,14 @@
 <?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Gally to newer versions in the future.
+ *
+ * @package   Gally
+ * @author    Stephan Hochdörfer <S.Hochdoerfer@bitexpert.de>, Gally Team <elasticsuite@smile.fr>
+ * @copyright 2022-present Smile
+ * @license   Open Software License v. 3.0 (OSL-3.0)
+ */
 
 declare(strict_types=1);
 
@@ -45,12 +55,12 @@ abstract class AbstractIndexer
                 $bulk = [];
                 foreach ($this->getDocumentsToIndex($channel, $locale, $documentIdsToReindex) as $document) {
                     $bulk[$document['id']] = json_encode($document);
-                    if (count($bulk) >= $batchSize) {
+                    if (\count($bulk) >= $batchSize) {
                         $this->indexOperation->executeBulk($indexName, $bulk);
                         $bulk = [];
                     }
                 }
-                if (count($bulk) > 0) {
+                if (\count($bulk) > 0) {
                     $this->indexOperation->executeBulk($indexName, $bulk);
                 }
 
@@ -64,8 +74,7 @@ abstract class AbstractIndexer
 
     private function getBatchSize(string $entityType, GallyChannelInterface $channel)
     {
-        switch ($entityType)
-        {
+        switch ($entityType) {
             case 'category':
                 return $channel->getGallyCategoryIndexBatchSize();
             case 'product':

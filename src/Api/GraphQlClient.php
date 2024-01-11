@@ -1,4 +1,14 @@
 <?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Gally to newer versions in the future.
+ *
+ * @package   Gally
+ * @author    Stephan Hochdörfer <S.Hochdoerfer@bitexpert.de>, Gally Team <elasticsuite@smile.fr>
+ * @copyright 2022-present Smile
+ * @license   Open Software License v. 3.0 (OSL-3.0)
+ */
 
 declare(strict_types=1);
 
@@ -11,11 +21,11 @@ class GraphQlClient extends AbstractClient
 {
     public function query(string $query, array $variables): ?ResponseInterface
     {
-        $client = new Client($this->kernelEnv !== 'prod' ? ['verify' => false] : []);
+        $client = new Client('prod' !== $this->kernelEnv ? ['verify' => false] : []);
 
         try {
-            if ($this->debug === true) {
-                $this->logger->info("Calling : ");
+            if (true === $this->debug) {
+                $this->logger->info('Calling : ');
                 $this->logger->info(print_r($query, true));
                 $this->logger->info(print_r($variables, true));
             }
@@ -25,24 +35,24 @@ class GraphQlClient extends AbstractClient
                 [
                     'headers' => [
                         'Authorization' => 'bearer ' . $this->getAuthorizationToken(),
-                        'Content-Type' => 'application/json'
+                        'Content-Type' => 'application/json',
                     ],
                     'body' => json_encode(
                         [
                             'query' => $query,
                             'variables' => $variables,
                         ]
-                    )
+                    ),
                 ]
             );
-            if ($this->debug === true) {
-                $this->logger->info("Result : ");
+            if (true === $this->debug) {
+                $this->logger->info('Result : ');
                 $this->logger->info(print_r($result, true));
             }
         } catch (\Exception $e) {
-            $this->logger->info(get_class($e) . ": " . $e->getMessage());
+            $this->logger->info(\get_class($e) . ': ' . $e->getMessage());
             $this->logger->info($e->getTraceAsString());
-            $this->logger->info("Input was");
+            $this->logger->info('Input was');
             $this->logger->info(print_r($query, true));
             $this->logger->info(print_r($variables, true));
 

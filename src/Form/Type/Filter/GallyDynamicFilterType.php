@@ -1,4 +1,14 @@
 <?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Gally to newer versions in the future.
+ *
+ * @package   Gally
+ * @author    Stephan Hochdörfer <S.Hochdoerfer@bitexpert.de>, Gally Team <elasticsuite@smile.fr>
+ * @copyright 2022-present Smile
+ * @license   Open Software License v. 3.0 (OSL-3.0)
+ */
 
 declare(strict_types=1);
 
@@ -32,7 +42,7 @@ class GallyDynamicFilterType extends AbstractType
 
                     foreach ($aggregation->getOptions() as $option) {
                         /** @var AggregationOption $option */
-                        if ($attr['min'] === 0) {
+                        if (0 === $attr['min']) {
                             $attr['min'] = $option->getId();
                         }
                         if ($option->getId() > $attr['max']) {
@@ -41,10 +51,10 @@ class GallyDynamicFilterType extends AbstractType
                     }
 
                     // raise the max limit to make sure the most expensive product will be part of the filtering
-                    $attr['max']++;
+                    ++$attr['max'];
 
                     $builder->add(
-                        $aggregation->getField().'_'.$aggregation->getType(),
+                        $aggregation->getField() . '_' . $aggregation->getType(),
                         RangeType::class,
                         [
                             'block_prefix' => 'sylius_gally_filter_range',
@@ -55,7 +65,7 @@ class GallyDynamicFilterType extends AbstractType
                     break;
                 case 'boolean':
                     $builder->add(
-                        $aggregation->getField().'_'.$aggregation->getType(),
+                        $aggregation->getField() . '_' . $aggregation->getType(),
                         BooleanFilterType::class,
                         [
                             'label' => $aggregation->getLabel(),

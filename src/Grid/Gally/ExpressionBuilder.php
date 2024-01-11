@@ -1,4 +1,14 @@
 <?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Gally to newer versions in the future.
+ *
+ * @package   Gally
+ * @author    Stephan Hochdörfer <S.Hochdoerfer@bitexpert.de>, Gally Team <elasticsuite@smile.fr>
+ * @copyright 2022-present Smile
+ * @license   Open Software License v. 3.0 (OSL-3.0)
+ */
 
 declare(strict_types=1);
 
@@ -9,7 +19,7 @@ use Sylius\Component\Grid\Data\ExpressionBuilderInterface;
 class ExpressionBuilder implements ExpressionBuilderInterface
 {
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function andX(...$expressions)
     {
@@ -29,7 +39,7 @@ class ExpressionBuilder implements ExpressionBuilderInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function orX(...$expressions)
     {
@@ -37,7 +47,7 @@ class ExpressionBuilder implements ExpressionBuilderInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function comparison(string $field, string $operator, $value)
     {
@@ -45,7 +55,7 @@ class ExpressionBuilder implements ExpressionBuilderInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function equals(string $field, $value)
     {
@@ -53,7 +63,7 @@ class ExpressionBuilder implements ExpressionBuilderInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function notEquals(string $field, $value)
     {
@@ -61,7 +71,7 @@ class ExpressionBuilder implements ExpressionBuilderInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function lessThan(string $field, $value)
     {
@@ -69,7 +79,7 @@ class ExpressionBuilder implements ExpressionBuilderInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function lessThanOrEqual(string $field, $value)
     {
@@ -77,7 +87,7 @@ class ExpressionBuilder implements ExpressionBuilderInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function greaterThan(string $field, $value)
     {
@@ -85,7 +95,7 @@ class ExpressionBuilder implements ExpressionBuilderInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function greaterThanOrEqual(string $field, $value)
     {
@@ -93,7 +103,7 @@ class ExpressionBuilder implements ExpressionBuilderInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function in(string $field, array $values)
     {
@@ -101,7 +111,7 @@ class ExpressionBuilder implements ExpressionBuilderInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function notIn(string $field, array $values)
     {
@@ -109,7 +119,7 @@ class ExpressionBuilder implements ExpressionBuilderInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function isNull(string $field)
     {
@@ -117,7 +127,7 @@ class ExpressionBuilder implements ExpressionBuilderInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function isNotNull(string $field)
     {
@@ -125,11 +135,11 @@ class ExpressionBuilder implements ExpressionBuilderInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function like(string $field, string $pattern)
     {
-        if ($field === 'translation.name') {
+        if ('translation.name' === $field) {
             return [];
         }
 
@@ -137,7 +147,7 @@ class ExpressionBuilder implements ExpressionBuilderInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function notLike(string $field, string $pattern)
     {
@@ -145,7 +155,7 @@ class ExpressionBuilder implements ExpressionBuilderInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function orderBy(string $field, string $direction)
     {
@@ -153,7 +163,7 @@ class ExpressionBuilder implements ExpressionBuilderInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function addOrderBy(string $field, string $direction)
     {

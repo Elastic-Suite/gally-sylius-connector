@@ -1,4 +1,14 @@
 <?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Gally to newer versions in the future.
+ *
+ * @package   Gally
+ * @author    Stephan Hochdörfer <S.Hochdoerfer@bitexpert.de>, Gally Team <elasticsuite@smile.fr>
+ * @copyright 2022-present Smile
+ * @license   Open Software License v. 3.0 (OSL-3.0)
+ */
 
 declare(strict_types=1);
 
@@ -33,7 +43,7 @@ class PagerfantaGallyAdapter implements AdapterInterface
 
     public function getAggregations(): array
     {
-        if ($this->gallyResult === null) {
+        if (null === $this->gallyResult) {
             return [];
         }
 
@@ -41,11 +51,11 @@ class PagerfantaGallyAdapter implements AdapterInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getNbResults(): int
     {
-        if ($this->gallyResult === null) {
+        if (null === $this->gallyResult) {
             return 0;
         }
 
@@ -53,7 +63,7 @@ class PagerfantaGallyAdapter implements AdapterInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getSlice(int $offset, int $length): iterable
     {
@@ -90,13 +100,12 @@ class PagerfantaGallyAdapter implements AdapterInterface
         $this->queryBuilder->setParameter('code', array_keys($this->gallyResult->getProductNumbers()));
 
         $products = $this->queryBuilder->getQuery()->execute();
+
         return $this->sortProductResults($this->gallyResult->getProductNumbers(), $products);
     }
 
     /**
-     * @param array $productNumbers
      * @param ProductInterface[] $products
-     * @return array
      */
     private function sortProductResults(array $productNumbers, array $products): array
     {
