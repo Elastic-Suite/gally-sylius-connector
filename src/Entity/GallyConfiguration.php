@@ -28,6 +28,11 @@ final class GallyConfiguration implements ResourceInterface, GallyConfigurationI
         return $this->id;
     }
 
+    public function setId(int $id = null): void
+    {
+        $this->id = $id;
+    }
+
     public function getBaseUrl(): string
     {
         return $this->baseUrl;

@@ -123,7 +123,8 @@ class ProductIndexer extends AbstractIndexer
         while ($variants->current()) {
             if ($variants->current()->isEnabled()) {
                 /** @var ProductVariantInterface $variant */
-                $variantData = $this->formatVariant($variants->current(), $channel, $locale);
+                $variant = $variants->current();
+                $variantData = $this->formatVariant($variant, $channel, $locale);
                 foreach ($variantData as $field => $value) {
                     if (!isset($data[$field])) {
                         $data[$field] = [];
@@ -146,10 +147,12 @@ class ProductIndexer extends AbstractIndexer
 
     private function formatVariant(ProductVariantInterface $variant, ChannelInterface $channel, LocaleInterface $locale): array
     {
+        /** @var ProductInterface $parent */
+        $parent = $variant->getProduct();
         $data = [
             'children.sku' => [$variant->getCode()],
             'children.name' => [$variant->getTranslation($locale->getCode())->getName()],
-            'childen.image' => [$this->formatMedia($variant->getProduct()) ?: null],
+            'childen.image' => [$parent ? $this->formatMedia($parent) : null],
         ];
 
         foreach ($variant->getOptionValues() as $optionValue) {

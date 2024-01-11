@@ -52,4 +52,24 @@ class Result
     {
         return $this->aggregations;
     }
+
+    public function getCurrentPage(): int
+    {
+        return $this->currentPage;
+    }
+
+    public function getItemPerPage(): int
+    {
+        return $this->itemPerPage;
+    }
+
+    public function getSortField(): string
+    {
+        return $this->sortField;
+    }
+
+    public function getSortDirection(): string
+    {
+        return $this->sortDirection;
+    }
 }

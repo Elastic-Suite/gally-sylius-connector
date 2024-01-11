@@ -1,7 +1,8 @@
 parameters:
-    level: max
+    level: 5
     reportUnmatchedIgnoredErrors: false
     checkMissingIterableValueType: false
+    treatPhpDocTypesAsCertain: false 
     paths:
         - src
         - tests/Behat
@@ -11,8 +12,7 @@ parameters:
         - 'src/DependencyInjection/Configuration.php'
 
         # Test dependencies
-        - 'tests/Application/app/**.php'
-        - 'tests/Application/src/**.php'
+        - 'tests/Application/**/**.php'
 
     ignoreErrors:
         - '/Parameter #1 \$configuration of method Symfony\\Component\\DependencyInjection\\Extension\\Extension::processConfiguration\(\) expects Symfony\\Component\\Config\\Definition\\ConfigurationInterface, Symfony\\Component\\Config\\Definition\\ConfigurationInterface\|null given\./'

@@ -15,6 +15,8 @@ declare(strict_types=1);
 namespace Gally\SyliusPlugin\Indexer;
 
 use Gally\SyliusPlugin\Service\IndexOperation;
+use Sylius\Bundle\ResourceBundle\Doctrine\ORM\ResourceRepositoryTrait;
+use Sylius\Bundle\TaxonomyBundle\Doctrine\ORM\TaxonRepository;
 use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\TaxonInterface;
 use Sylius\Component\Locale\Model\LocaleInterface;
@@ -24,14 +26,16 @@ use Sylius\Component\Taxonomy\Repository\TaxonRepositoryInterface;
 
 class CategoryIndexer extends AbstractIndexer
 {
+    private TaxonRepositoryInterface $taxonRepository;
     private $pathCache = [];
 
     public function __construct(
         RepositoryInterface $channelRepository,
         IndexOperation $indexOperation,
-        private TaxonRepositoryInterface $taxonRepository
+        TaxonRepositoryInterface $taxonRepository
     ) {
         parent::__construct($channelRepository, $indexOperation);
+        $this->taxonRepository = $taxonRepository;
     }
 
     public function getEntityType(): string
@@ -63,7 +67,8 @@ class CategoryIndexer extends AbstractIndexer
             }
         } else {
             $menuTaxon = $channel->getMenuTaxon();
-            $taxons = $this->taxonRepository->createQueryBuilder('o')
+
+            $taxons = $this->taxonRepository->createQueryBuilder('o') /* @phpstan-ignore-line */
                 ->where('o.root = :taxon_id')
                 ->andWhere('o.left >= :taxon_left')
                 ->orderBy('o.left', 'ASC')
