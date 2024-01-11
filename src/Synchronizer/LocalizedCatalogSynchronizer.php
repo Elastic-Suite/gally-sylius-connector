@@ -42,10 +42,8 @@ class LocalizedCatalogSynchronizer extends AbstractSynchronizer
     {
         /** @var Channel $channel */
         $channel = $params['channel'];
-
         /** @var Locale $locale */
         $locale = $params['locale'];
-
         /** @var Catalog $catalog */
         $catalog = $params['catalog'];
 
@@ -85,10 +83,7 @@ class LocalizedCatalogSynchronizer extends AbstractSynchronizer
 
     public function getByIdentity(string $identifier): ?ModelInterface
     {
-        if (!$this->allEntityHasBeenFetch) {
-            $this->fetchEntities();
-        }
-
+        $this->fetchEntities();
         return $this->entityByCode[$identifier] ?? null;
     }
 }

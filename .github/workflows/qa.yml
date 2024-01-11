@@ -17,7 +17,7 @@ jobs:
       - uses: php-actions/composer@v6
         with:
           php_version: "8.1"
-          php_extensions: ctype curl dom hash iconv intl gd json mbstring openssl session simplexml xml zip zlib pdo_mysql
+          php_extensions: ctype curl dom hash iconv intl gd json mbstring openssl session simplexml xml zip zlib pdo_mysql exif
       - name: Php cs fixer
         run: php ./vendor/bin/php-cs-fixer fix src
       - name: Phpstan

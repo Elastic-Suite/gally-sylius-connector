@@ -15,6 +15,8 @@ declare(strict_types=1);
 namespace Gally\SyliusPlugin\Synchronizer;
 
 use Gally\Rest\Model\Catalog;
+use Gally\Rest\Model\CatalogCatalogRead;
+use Gally\Rest\Model\LocalizedCatalogCatalogRead;
 use Gally\Rest\Model\ModelInterface;
 use Gally\SyliusPlugin\Api\RestClient;
 use Gally\SyliusPlugin\Repository\GallyConfigurationRepository;
@@ -27,6 +29,9 @@ use Sylius\Component\Resource\Repository\RepositoryInterface;
  */
 class CatalogSynchronizer extends AbstractSynchronizer
 {
+    private array $catalogCodes = [];
+    private array $localizedCatalogCodes = [];
+
     public function __construct(
         GallyConfigurationRepository $configurationRepository,
         RestClient $client,
@@ -34,6 +39,7 @@ class CatalogSynchronizer extends AbstractSynchronizer
         string $getCollectionMethod,
         string $createEntityMethod,
         string $putEntityMethod,
+        string $deleteEntityMethod,
         private RepositoryInterface $channelRepository,
         private LocalizedCatalogSynchronizer $localizedCatalogSynchronizer
     ) {
@@ -43,20 +49,23 @@ class CatalogSynchronizer extends AbstractSynchronizer
             $entityClass,
             $getCollectionMethod,
             $createEntityMethod,
-            $putEntityMethod
+            $putEntityMethod,
+            $deleteEntityMethod
         );
     }
 
     public function getIdentity(ModelInterface $entity): string
     {
         /** @var Catalog $entity */
-        return $entity->getCode();
+        return "catalog" . $entity->getCode();
     }
 
     public function synchronizeAll(): void
     {
         $this->fetchEntities();
+        $this->catalogCodes = array_flip($this->getAllEntityCodes());
         $this->localizedCatalogSynchronizer->fetchEntities();
+        $this->localizedCatalogCodes = array_flip($this->localizedCatalogSynchronizer->getAllEntityCodes());
 
         // synchronize all channels where the Gally integration is active
         $channels = $this->channelRepository->findBy(['gallyActive' => 1]);
@@ -64,6 +73,18 @@ class CatalogSynchronizer extends AbstractSynchronizer
         /** @var Channel[] $channels */
         foreach ($channels as $channel) {
             $this->synchronizeItem(['channel' => $channel]);
+        }
+
+        foreach (array_flip($this->localizedCatalogCodes) as $localizedCatalogCode) {
+            /** @var LocalizedCatalogCatalogRead $localizedCatalog */
+            $localizedCatalog = $this->localizedCatalogSynchronizer->getEntityFromApi($localizedCatalogCode);
+            $this->localizedCatalogSynchronizer->deleteEntity($localizedCatalog->getId() );
+        }
+
+        foreach (array_flip($this->catalogCodes) as $catalogCode) {
+            /** @var CatalogCatalogRead $catalog */
+            $catalog = $this->getEntityFromApi($catalogCode);
+            $this->deleteEntity($catalog->getId());
         }
     }
 
@@ -81,12 +102,16 @@ class CatalogSynchronizer extends AbstractSynchronizer
 
         /** @var LocaleInterface $locale */
         foreach ($channel->getLocales() as $locale) {
-            $this->localizedCatalogSynchronizer->synchronizeItem([
+            $localizedCatalog = $this->localizedCatalogSynchronizer->synchronizeItem([
                 'channel' => $channel,
                 'locale' => $locale,
                 'catalog' => $catalog,
             ]);
+
+            unset($this->localizedCatalogCodes[$this->localizedCatalogSynchronizer->getIdentity($localizedCatalog)]);
         }
+
+        unset($this->catalogCodes[$this->getIdentity($catalog)]);
 
         return $catalog;
     }
