@@ -25,6 +25,14 @@ use Sylius\Component\Locale\Model\LocaleInterface;
 use Sylius\Component\Product\Model\ProductOptionValueInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 
+/**
+ * Class ProductIndexer
+ *
+ * @package   Gally
+ * @author    Stephan Hochdörfer <S.Hochdoerfer@bitexpert.de>, Gally Team <elasticsuite@smile.fr>
+ * @copyright 2022-present Smile
+ * @license   Open Software License v. 3.0 (OSL-3.0)
+ */
 class ProductIndexer extends AbstractIndexer
 {
     public function __construct(

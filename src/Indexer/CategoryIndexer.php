@@ -15,8 +15,6 @@ declare(strict_types=1);
 namespace Gally\SyliusPlugin\Indexer;
 
 use Gally\SyliusPlugin\Service\IndexOperation;
-use Sylius\Bundle\ResourceBundle\Doctrine\ORM\ResourceRepositoryTrait;
-use Sylius\Bundle\TaxonomyBundle\Doctrine\ORM\TaxonRepository;
 use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\TaxonInterface;
 use Sylius\Component\Locale\Model\LocaleInterface;
@@ -24,6 +22,14 @@ use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Sylius\Component\Taxonomy\Model\TaxonTranslationInterface;
 use Sylius\Component\Taxonomy\Repository\TaxonRepositoryInterface;
 
+/**
+ * Class CategoryIndexer
+ *
+ * @package   Gally
+ * @author    Stephan Hochdörfer <S.Hochdoerfer@bitexpert.de>, Gally Team <elasticsuite@smile.fr>
+ * @copyright 2022-present Smile
+ * @license   Open Software License v. 3.0 (OSL-3.0)
+ */
 class CategoryIndexer extends AbstractIndexer
 {
     private TaxonRepositoryInterface $taxonRepository;
@@ -100,11 +106,11 @@ class CategoryIndexer extends AbstractIndexer
     {
         $parentId = '';
         if (null !== $taxon->getParent()) {
-            $parentId = (string) $taxon->getParent()->getCode();
+            $parentId = str_replace('/', '_', (string) $taxon->getParent()->getCode());
         }
 
         return [
-            'id' => (string) $taxon->getCode(),
+            'id' => str_replace('/', '_', (string) $taxon->getCode()),
             'parentId' => $parentId,
             'level' => $taxon->getLevel() + 1,
             'path' => $this->pathCache[$taxon->getCode()],

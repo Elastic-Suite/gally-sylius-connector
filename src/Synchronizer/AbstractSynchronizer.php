@@ -25,8 +25,11 @@ use Gally\SyliusPlugin\Repository\GallyConfigurationRepository;
 abstract class AbstractSynchronizer
 {
     protected const FETCH_PAGE_SIZE = 50;
+    protected const BATCH_SIZE = 100;
 
     protected array $entityByCode = [];
+    private array $currentBatch = [];
+    private int $currentBatchSize = 0;
     protected bool $allEntityHasBeenFetch = false;
 
     protected GallyConfiguration $configuration;
@@ -37,7 +40,9 @@ abstract class AbstractSynchronizer
         protected string $entityClass,
         protected string $getCollectionMethod,
         protected string $createEntityMethod,
-        protected string $putEntityMethod
+        protected string $putEntityMethod,
+        protected string $deleteEntityMethod,
+        protected ?string $bulkEntityMethod = null
     ) {
         $this->configuration = $this->configurationRepository->getConfiguration();
     }
@@ -53,16 +58,18 @@ abstract class AbstractSynchronizer
 
     public function fetchEntities(): void
     {
-        $currentPage = 1;
-        do {
-            $entities = $this->client->query(...$this->buildFetchAllParams($currentPage));
+        if (!$this->allEntityHasBeenFetch) {
+            $currentPage = 1;
+            do {
+                $entities = $this->client->query(...$this->buildFetchAllParams($currentPage));
 
-            foreach ($entities as $entity) {
-                $this->addEntityByIdentity($entity);
-            }
-            ++$currentPage;
-        } while (\count($entities) >= self::FETCH_PAGE_SIZE);
-        $this->allEntityHasBeenFetch = true;
+                foreach ($entities as $entity) {
+                    $this->addEntityByIdentity($entity);
+                }
+                ++$currentPage;
+            } while (\count($entities) >= self::FETCH_PAGE_SIZE);
+            $this->allEntityHasBeenFetch = true;
+        }
     }
 
     public function fetchEntity(ModelInterface $entity): ?ModelInterface
@@ -122,10 +129,10 @@ abstract class AbstractSynchronizer
         return $this->entityByCode[$this->getIdentity($entity)];
     }
 
-    protected function getEntityFromApi(ModelInterface $entity): ?ModelInterface
+    protected function getEntityFromApi(ModelInterface|string $entity): ?ModelInterface
     {
         if ($this->allEntityHasBeenFetch) {
-            return $this->entityByCode[$this->getIdentity($entity)] ?? null;
+            return $this->entityByCode[is_string($entity) ? $entity : $this->getIdentity($entity)] ?? null;
         }
 
         return $this->fetchEntity($entity);
@@ -141,5 +148,41 @@ abstract class AbstractSynchronizer
         if (!$entity->valid()) {
             throw new \LogicException('Missing properties for ' . \get_class($entity) . ' : ' . implode(',', $entity->listInvalidProperties()));
         }
+    }
+
+    protected function addEntityToBulk(ModelInterface $entity): void
+    {
+        if ($this->bulkEntityMethod === null) {
+            throw new \Exception(sprintf('The entity %s doesn\'t have a bulk method.', $this->getEntityClass()));
+        }
+
+        $this->currentBatch[] = $entity;
+        $this->currentBatchSize++;
+        if ($this->currentBatchSize >= self::BATCH_SIZE) {
+            $this->runBulk();
+        }
+    }
+
+    protected function runBulk(): void
+    {
+        if ($this->currentBatchSize) {
+            $entities = $this->client->query($this->entityClass, $this->bulkEntityMethod, 'fakeId', $this->currentBatch);
+            foreach ($entities as $entity) {
+                $this->addEntityByIdentity($entity);
+            }
+            $this->currentBatch = [];
+            $this->currentBatchSize = 0;
+        }
+    }
+
+    protected function getAllEntityCodes(): array
+    {
+        $this->fetchEntities();
+        return array_keys($this->entityByCode);
+    }
+
+    protected function deleteEntity(int|string $entityId)
+    {
+        $this->client->query($this->entityClass, $this->deleteEntityMethod, $entityId);
     }
 }
