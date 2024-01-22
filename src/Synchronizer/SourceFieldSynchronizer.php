@@ -16,14 +16,12 @@ namespace Gally\SyliusPlugin\Synchronizer;
 
 use Doctrine\Common\Collections\Collection;
 use Gally\Rest\Model\LocalizedCatalog;
-use Gally\Rest\Model\Metadata;
 use Gally\Rest\Model\MetadataMetadataRead;
 use Gally\Rest\Model\ModelInterface;
 use Gally\Rest\Model\SourceFieldSourceFieldRead;
 use Gally\Rest\Model\SourceFieldSourceFieldWrite;
 use Gally\SyliusPlugin\Api\RestClient;
 use Gally\SyliusPlugin\Repository\GallyConfigurationRepository;
-use ReflectionClass;
 use Sylius\Component\Product\Model\Product;
 use Sylius\Component\Product\Model\ProductAttribute;
 use Sylius\Component\Product\Model\ProductOption;
@@ -74,7 +72,7 @@ class SourceFieldSynchronizer extends AbstractSynchronizer
     {
         $this->sourceFieldCodes = array_flip($this->getAllEntityCodes());
 
-        $metadataName = strtolower((new ReflectionClass(Product::class))->getShortName());
+        $metadataName = strtolower((new \ReflectionClass(Product::class))->getShortName());
         $metadata = $this->metadataSynchronizer->synchronizeItem(['entity' => $metadataName]);
 
         /** @var ProductAttribute[] $attributes */
@@ -224,6 +222,7 @@ class SourceFieldSynchronizer extends AbstractSynchronizer
     public function getEntityByCode(MetadataMetadataRead $metadata, string $code): ?ModelInterface
     {
         $key = '/metadata/' . $metadata->getId() . $code;
+
         return $this->entityByCode[$key] ?? null;
     }
 

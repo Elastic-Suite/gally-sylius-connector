@@ -23,7 +23,6 @@ use Gally\Rest\Model\SourceFieldOptionSourceFieldOptionWrite;
 use Gally\Rest\Model\SourceFieldSourceFieldRead;
 use Gally\SyliusPlugin\Api\RestClient;
 use Gally\SyliusPlugin\Repository\GallyConfigurationRepository;
-use ReflectionClass;
 use Sylius\Component\Product\Model\Product;
 use Sylius\Component\Product\Model\ProductAttribute;
 use Sylius\Component\Product\Model\ProductOption;
@@ -76,7 +75,7 @@ class SourceFieldOptionSynchronizer extends AbstractSynchronizer
         $this->sourceFieldOptionCodes = array_flip($this->getAllEntityCodes());
         $this->sourceFieldSynchronizer->fetchEntities();
 
-        $metadataName = strtolower((new ReflectionClass(Product::class))->getShortName());
+        $metadataName = strtolower((new \ReflectionClass(Product::class))->getShortName());
         /** @var MetadataMetadataRead $metadata */
         $metadata = $this->metadataSynchronizer->synchronizeItem(['entity' => $metadataName]);
 

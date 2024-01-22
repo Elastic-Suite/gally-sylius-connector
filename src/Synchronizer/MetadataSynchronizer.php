@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Gally\SyliusPlugin\Synchronizer;
 
-use Gally\Rest\Model\Metadata;
 use Gally\Rest\Model\MetadataMetadataRead;
 use Gally\Rest\Model\MetadataMetadataWrite;
 use Gally\Rest\Model\ModelInterface;
@@ -28,12 +27,13 @@ final class MetadataSynchronizer extends AbstractSynchronizer
     public function synchronizeItem(array $params): ?ModelInterface
     {
         $this->fetchEntities();
+
         return $this->createOrUpdateEntity(new MetadataMetadataWrite(['entity' => $params['entity']]));
     }
 
     public function getIdentity(ModelInterface $entity): string
     {
-        /** @var MetadataMetadataRead    $entity */
+        /** @var MetadataMetadataRead $entity */
         return $entity->getEntity();
     }
 }

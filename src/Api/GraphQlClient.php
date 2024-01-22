@@ -50,7 +50,7 @@ class GraphQlClient extends AbstractClient
                 $this->logger->info(print_r($result, true));
             }
         } catch (\Exception $e) {
-            $this->logger->info(\get_class($e) . ': ' . $e->getMessage());
+            $this->logger->info($e::class . ': ' . $e->getMessage());
             $this->logger->info($e->getTraceAsString());
             $this->logger->info('Input was');
             $this->logger->info(print_r($query, true));

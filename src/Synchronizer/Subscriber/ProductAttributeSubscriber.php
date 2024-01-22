@@ -16,7 +16,6 @@ namespace Gally\SyliusPlugin\Synchronizer\Subscriber;
 
 use Gally\SyliusPlugin\Synchronizer\MetadataSynchronizer;
 use Gally\SyliusPlugin\Synchronizer\SourceFieldSynchronizer;
-use ReflectionClass;
 use Sylius\Component\Product\Model\Product;
 use Sylius\Component\Product\Model\ProductAttributeInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -42,7 +41,7 @@ final class ProductAttributeSubscriber implements EventSubscriberInterface
     {
         $attribute = $event->getSubject();
         if ($attribute instanceof ProductAttributeInterface) {
-            $metadataName = strtolower((new ReflectionClass(Product::class))->getShortName());
+            $metadataName = strtolower((new \ReflectionClass(Product::class))->getShortName());
             $metadata = $this->metadataSynchronizer->synchronizeItem(['entity' => $metadataName]);
 
             $options = [];
