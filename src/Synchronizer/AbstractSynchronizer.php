@@ -132,7 +132,7 @@ abstract class AbstractSynchronizer
     protected function getEntityFromApi(ModelInterface|string $entity): ?ModelInterface
     {
         if ($this->allEntityHasBeenFetch) {
-            return $this->entityByCode[is_string($entity) ? $entity : $this->getIdentity($entity)] ?? null;
+            return $this->entityByCode[\is_string($entity) ? $entity : $this->getIdentity($entity)] ?? null;
         }
 
         return $this->fetchEntity($entity);
@@ -146,18 +146,18 @@ abstract class AbstractSynchronizer
     protected function validateEntity(ModelInterface $entity): void
     {
         if (!$entity->valid()) {
-            throw new \LogicException('Missing properties for ' . \get_class($entity) . ' : ' . implode(',', $entity->listInvalidProperties()));
+            throw new \LogicException('Missing properties for ' . $entity::class . ' : ' . implode(',', $entity->listInvalidProperties()));
         }
     }
 
     protected function addEntityToBulk(ModelInterface $entity): void
     {
-        if ($this->bulkEntityMethod === null) {
+        if (null === $this->bulkEntityMethod) {
             throw new \Exception(sprintf('The entity %s doesn\'t have a bulk method.', $this->getEntityClass()));
         }
 
         $this->currentBatch[] = $entity;
-        $this->currentBatchSize++;
+        ++$this->currentBatchSize;
         if ($this->currentBatchSize >= self::BATCH_SIZE) {
             $this->runBulk();
         }
@@ -178,6 +178,7 @@ abstract class AbstractSynchronizer
     protected function getAllEntityCodes(): array
     {
         $this->fetchEntities();
+
         return array_keys($this->entityByCode);
     }
 

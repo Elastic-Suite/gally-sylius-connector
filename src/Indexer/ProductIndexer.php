@@ -26,9 +26,8 @@ use Sylius\Component\Product\Model\ProductOptionValueInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 
 /**
- * Class ProductIndexer
+ * Class ProductIndexer.
  *
- * @package   Gally
  * @author    Stephan Hochdörfer <S.Hochdoerfer@bitexpert.de>, Gally Team <elasticsuite@smile.fr>
  * @copyright 2022-present Smile
  * @license   Open Software License v. 3.0 (OSL-3.0)
@@ -186,8 +185,8 @@ class ProductIndexer extends AbstractIndexer
         $originalPrice = $this->productVariantPriceCalculator->calculateOriginal($variant, $context);
 
         // fix price rendering in Gally
-        $price = $price / 100;
-        $originalPrice = $originalPrice / 100;
+        $price /= 100;
+        $originalPrice /= 100;
 
         $prices = [];
         $prices[] = [

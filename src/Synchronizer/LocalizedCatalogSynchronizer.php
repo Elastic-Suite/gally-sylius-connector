@@ -84,6 +84,7 @@ class LocalizedCatalogSynchronizer extends AbstractSynchronizer
     public function getByIdentity(string $identifier): ?ModelInterface
     {
         $this->fetchEntities();
+
         return $this->entityByCode[$identifier] ?? null;
     }
 }

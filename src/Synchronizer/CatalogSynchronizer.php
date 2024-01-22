@@ -57,7 +57,7 @@ class CatalogSynchronizer extends AbstractSynchronizer
     public function getIdentity(ModelInterface $entity): string
     {
         /** @var Catalog $entity */
-        return "catalog" . $entity->getCode();
+        return 'catalog' . $entity->getCode();
     }
 
     public function synchronizeAll(): void
@@ -78,7 +78,7 @@ class CatalogSynchronizer extends AbstractSynchronizer
         foreach (array_flip($this->localizedCatalogCodes) as $localizedCatalogCode) {
             /** @var LocalizedCatalogCatalogRead $localizedCatalog */
             $localizedCatalog = $this->localizedCatalogSynchronizer->getEntityFromApi($localizedCatalogCode);
-            $this->localizedCatalogSynchronizer->deleteEntity($localizedCatalog->getId() );
+            $this->localizedCatalogSynchronizer->deleteEntity($localizedCatalog->getId());
         }
 
         foreach (array_flip($this->catalogCodes) as $catalogCode) {

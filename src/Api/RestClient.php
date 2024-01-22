@@ -40,7 +40,7 @@ final class RestClient extends AbstractClient
                 $this->logger->info(print_r($result, true));
             }
         } catch (\Exception|ApiException $e) {
-            $this->logger->info(\get_class($e) . " when calling {$endpoint}->{$operation}: " . $e->getMessage());
+            $this->logger->info($e::class . " when calling {$endpoint}->{$operation}: " . $e->getMessage());
             $this->logger->info($e->getTraceAsString());
             $this->logger->info('Input was');
             $this->logger->info(print_r($input, true));
