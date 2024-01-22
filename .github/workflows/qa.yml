@@ -19,6 +19,6 @@ jobs:
           php_version: "8.1"
           php_extensions: ctype curl dom hash iconv intl gd json mbstring openssl session simplexml xml zip zlib pdo_mysql exif
       - name: Php cs fixer
-        run: php ./vendor/bin/php-cs-fixer fix src
+        run: php ./vendor/bin/php-cs-fixer fix --dry-run src
       - name: Phpstan
         run: php ./vendor/bin/phpstan --memory-limit=1G analyse .
