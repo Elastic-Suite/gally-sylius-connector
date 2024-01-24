@@ -42,7 +42,7 @@ class Adapter
         $data = [
             'requestType' => '' !== $search ? 'product_search' : 'product_catalog',
             'localizedCatalog' => $channel->getId() . '_' . $locale,
-            'currentCategoryId' => (string) $taxon->getCode(),
+            'currentCategoryId' => str_replace('/', '_', (string) $taxon->getCode()),
             'search' => $search,
             'currentPage' => $page,
             'pageSize' => $limit,
