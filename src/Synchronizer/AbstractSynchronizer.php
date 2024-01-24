@@ -112,6 +112,7 @@ abstract class AbstractSynchronizer
         if ($this->getIdentity($entity)) {
             // Check if entity already exists.
             $existingEntity = $this->getEntityFromApi($entity);
+
             if (!$existingEntity) {
                 // Create it if needed. Also save it locally for later use.
                 $entity = $this->client->query($this->entityClass, $this->createEntityMethod, $entity);
@@ -129,10 +130,10 @@ abstract class AbstractSynchronizer
         return $this->entityByCode[$this->getIdentity($entity)];
     }
 
-    protected function getEntityFromApi(ModelInterface|string $entity): ?ModelInterface
+    protected function getEntityFromApi(ModelInterface|string|int $entity): ?ModelInterface
     {
         if ($this->allEntityHasBeenFetch) {
-            return $this->entityByCode[\is_string($entity) ? $entity : $this->getIdentity($entity)] ?? null;
+            return $this->entityByCode[\is_scalar($entity) ? $entity : $this->getIdentity($entity)] ?? null;
         }
 
         return $this->fetchEntity($entity);

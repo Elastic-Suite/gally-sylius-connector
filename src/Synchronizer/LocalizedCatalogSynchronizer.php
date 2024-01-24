@@ -30,7 +30,7 @@ class LocalizedCatalogSynchronizer extends AbstractSynchronizer
     public function getIdentity(ModelInterface $entity): string
     {
         /** @var LocalizedCatalog $entity */
-        return $entity->getCode();
+        return (string) $entity->getCode();
     }
 
     public function synchronizeAll(): void
@@ -50,7 +50,7 @@ class LocalizedCatalogSynchronizer extends AbstractSynchronizer
         return $this->createOrUpdateEntity(
             new LocalizedCatalog([
                 'name' => $locale->getName(),
-                'code' => $channel->getId() . '_' . $locale->getCode(),
+                'code' => $channel->getCode() . '_' . $locale->getCode(),
                 'locale' => str_replace('-', '_', $locale->getCode()),
                 'currency' => $channel->getBaseCurrency()->getCode(),
                 'isDefault' => $locale->getId() == $channel->getDefaultLocale()->getId(),
@@ -68,7 +68,7 @@ class LocalizedCatalogSynchronizer extends AbstractSynchronizer
             $this->localizedCatalogByLocale[$entity->getLocale()] = [];
         }
 
-        $this->localizedCatalogByLocale[$entity->getLocale()][$entity->getId()] = $entity;
+        $this->localizedCatalogByLocale[$entity->getLocale()][$entity->getCode()] = $entity;
     }
 
     public function getLocalizedCatalogByLocale(string $localeCode): array

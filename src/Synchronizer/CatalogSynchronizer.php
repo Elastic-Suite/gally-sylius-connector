@@ -57,12 +57,13 @@ class CatalogSynchronizer extends AbstractSynchronizer
     public function getIdentity(ModelInterface $entity): string
     {
         /** @var Catalog $entity */
-        return 'catalog' . $entity->getCode();
+        return $entity->getCode();
     }
 
     public function synchronizeAll(): void
     {
         $this->fetchEntities();
+
         $this->catalogCodes = array_flip($this->getAllEntityCodes());
         $this->localizedCatalogSynchronizer->fetchEntities();
         $this->localizedCatalogCodes = array_flip($this->localizedCatalogSynchronizer->getAllEntityCodes());
@@ -95,7 +96,7 @@ class CatalogSynchronizer extends AbstractSynchronizer
 
         $catalog = $this->createOrUpdateEntity(
             new Catalog([
-                'code' => (string) $channel->getId(),
+                'code' => $channel->getCode(),
                 'name' => $channel->getName(),
             ])
         );
