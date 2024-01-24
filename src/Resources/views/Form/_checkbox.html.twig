@@ -3,6 +3,5 @@
         {{- form_label(form) -}}
         {% set attr = attr|merge({'class': attr.class|default ~ ' ui'}) %}
         {{- form_widget(form, {'attr': attr}) -}}
-        {{- form_errors(form) -}}
     </div>
 {%- endblock sylius_gally_filter_checkbox_row %}
