@@ -39,7 +39,7 @@ class IndexOperation
     {
         /** @var LocalizedCatalog $localizedCatalog */
         $localizedCatalog = $this->localizedCatalogSynchronizer->getByIdentity(
-            $channel->getId() . $locale->getId()
+            $channel->getCode() . $locale->getId()
         );
         $indexData = [
             'entityType' => $entityType,
@@ -56,7 +56,7 @@ class IndexOperation
     {
         /** @var LocalizedCatalog $localizedCatalog */
         $localizedCatalog = $this->localizedCatalogSynchronizer->getByIdentity(
-            $channel->getId() . '_' . $locale->getCode()
+            $channel->getCode() . '_' . $locale->getCode()
         );
 
         $indices = $this->client->query(IndexApi::class, 'getIndexCollection');
