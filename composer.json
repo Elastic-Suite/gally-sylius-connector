@@ -11,7 +11,7 @@
     "require": {
         "php": "^8.0",
         "sylius/sylius": "^1.12",
-        "gally/gally-php-rest-sdk": "dev-perf-sourceField-api"
+        "gally/gally-php-rest-sdk": "lasted version"
     },
     "require-dev": {
         "behat/behat": "^3.6.1",

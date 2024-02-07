@@ -82,7 +82,6 @@ class SourceFieldOptionSynchronizer extends AbstractSynchronizer
         /** @var ProductAttribute[] $attributes */
         $attributes = $this->productAttributeRepository->findAll();
         foreach ($attributes as $attribute) {
-            $options = [];
             if ('select' === $attribute->getType()) {
                 $position = 0;
                 $configuration = $attribute->getConfiguration();
