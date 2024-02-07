@@ -165,7 +165,7 @@ class ProductIndexer extends AbstractIndexer
         foreach ($variant->getOptionValues() as $optionValue) {
             /** @var ProductOptionValueInterface $optionValue */
             $data[$optionValue->getOption()->getCode()][] = [
-                'value' => $optionValue->getValue(),
+                'value' => $optionValue->getCode(),
                 'label' => $optionValue->getTranslation($locale->getCode())->getValue(),
             ];
         }
