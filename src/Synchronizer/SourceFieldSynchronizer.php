@@ -70,43 +70,18 @@ class SourceFieldSynchronizer extends AbstractSynchronizer
 
     public function synchronizeAll(): void
     {
-        $this->sourceFieldCodes = array_flip($this->getAllEntityCodes());
-
         $metadataName = strtolower((new \ReflectionClass(Product::class))->getShortName());
         $metadata = $this->metadataSynchronizer->synchronizeItem(['entity' => $metadataName]);
 
         /** @var ProductAttribute[] $attributes */
         $attributes = $this->productAttributeRepository->findAll();
         foreach ($attributes as $attribute) {
-            $options = [];
-            if ('select' === $attribute->getType()) {
-                $position = 0;
-                $configuration = $attribute->getConfiguration();
-                $choices = $configuration['choices'] ?? [];
-                foreach ($choices as $code => $choice) {
-                    $translations = [];
-                    foreach ($choice ?? [] as $locale => $translation) {
-                        $translations[] = [
-                            'locale' => $locale,
-                            'translation' => $translation,
-                        ];
-                    }
-                    $options[$position] = [
-                        'code' => $code,
-                        'translations' => $translations,
-                        'position' => $position,
-                    ];
-                    ++$position;
-                }
-            }
-
             $this->synchronizeItem([
                 'metadata' => $metadata,
                 'field' => [
                     'code' => $attribute->getCode(),
                     'type' => self::getGallyType($attribute->getType()),
                     'translations' => $attribute->getTranslations(),
-                    'options' => $options,
                 ],
             ]);
         }
@@ -114,48 +89,17 @@ class SourceFieldSynchronizer extends AbstractSynchronizer
         /** @var ProductOption[] $options */
         $options = $this->productOptionRepository->findAll();
         foreach ($options as $option) {
-            $optionValues = [];
-            $position = 0;
-            foreach ($option->getValues() as $value) {
-                $translations = [];
-                foreach ($value->getTranslations() as $translation) {
-                    /** @var ProductOptionValueTranslation $translation */
-                    $translations[] = [
-                        'locale' => $translation->getLocale(),
-                        'translation' => $translation->getValue(),
-                    ];
-                }
-
-                /** @var ProductOptionValueInterface $value */
-                $optionValues[$position] = [
-                    'code' => $value->getCode(),
-                    'translations' => $translations,
-                    'position' => $position,
-                ];
-
-                ++$position;
-            }
-
             $this->synchronizeItem([
                 'metadata' => $metadata,
                 'field' => [
                     'code' => $option->getCode(),
                     'type' => self::getGallyType('select'),
                     'translations' => $option->getTranslations(),
-                    'options' => $optionValues,
                 ],
             ]);
         }
 
         $this->runBulk();
-
-        foreach (array_flip($this->sourceFieldCodes) as $sourceFieldCode) {
-            /** @var SourceFieldSourceFieldRead $sourceField */
-            $sourceField = $this->getEntityFromApi($sourceFieldCode);
-            if (!$sourceField->getIsSystem()) {
-                $this->deleteEntity($sourceField->getId());
-            }
-        }
     }
 
     public function synchronizeItem(array $params): ?ModelInterface
@@ -192,9 +136,38 @@ class SourceFieldSynchronizer extends AbstractSynchronizer
         $sourceField = new SourceFieldSourceFieldWrite($data);
         $this->addEntityToBulk($sourceField);
 
-        unset($this->sourceFieldCodes[$this->getIdentity($sourceField)]);
-
         return $sourceField;
+    }
+
+    public function cleanAll(bool $dryRun = true, bool $quiet = false): void
+    {
+        $this->sourceFieldCodes = array_flip($this->getAllEntityCodes());
+
+        $metadataName = strtolower((new \ReflectionClass(Product::class))->getShortName());
+        $metadata = $this->metadataSynchronizer->synchronizeItem(['entity' => $metadataName]);
+
+        /** @var ProductAttribute[] $attributes */
+        $attributes = $this->productAttributeRepository->findAll();
+        foreach ($attributes as $attribute) {
+            unset($this->sourceFieldCodes['/metadata/' . $metadata->getId() . $attribute->getCode()]);
+        }
+
+        /** @var ProductOption[] $options */
+        $options = $this->productOptionRepository->findAll();
+        foreach ($options as $option) {
+            unset($this->sourceFieldCodes['/metadata/' . $metadata->getId() . $option->getCode()]);
+        }
+
+        foreach (array_flip($this->sourceFieldCodes) as $sourceFieldCode) {
+            /** @var SourceFieldSourceFieldRead $sourceField */
+            $sourceField = $this->getEntityFromApi($sourceFieldCode);
+            if (!$sourceField->getIsSystem() && !$quiet) {
+                print("  Delete sourceField {$sourceField->getMetadata()} {$sourceField->getCode()}\n");
+            }
+            if (!$sourceField->getIsSystem() && !$dryRun) {
+                $this->deleteEntity($sourceField->getId());
+            }
+        }
     }
 
     public static function getGallyType(string $type): string

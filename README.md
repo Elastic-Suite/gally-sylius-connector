@@ -57,7 +57,7 @@
     - Open Sylius Admin, head to Configuration > Gally and configure the Gally endpoint (URL, credentials)
 - Run this commands from your Sylius instance. This commands must be runned only once to synchronize the structure.
     ```shell
-        bin/console gally:structure-sync   # Sync catalog et source field data with gally
+        bin/console gally:structure:sync   # Sync catalog et source field data with gally
     ```
 - Run a full index from Sylius to Gally. This command can be run only once. Afterwards, the modified products are automatically synchronized.
     ```shell
@@ -66,6 +66,10 @@
 - At this step, you should be able to see your product and source field in the Gally backend.
 - They should also appear in your Sylius frontend when searching or browsing categories.
 - And you're done !
+- You can also run the command to clean data that are not present in sylius anymore:
+    ```shell
+        bin/console gally:structure:clean 
+    ```
 
 ## noUiSlider 
 

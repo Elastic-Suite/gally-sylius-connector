@@ -12,5 +12,10 @@
             <argument type="tagged_iterator" tag="gally.entity.indexer"/>
             <tag name="console.command"/>
         </service>
+
+        <service id="Gally\SyliusPlugin\Command\StructureClean">
+            <argument type="tagged_iterator" tag="gally.entity.synchronizer"/>
+            <tag name="console.command"/>
+        </service>
     </services>
 </container>

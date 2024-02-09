@@ -17,11 +17,12 @@ namespace Gally\SyliusPlugin\Command;
 use Gally\SyliusPlugin\Synchronizer\AbstractSynchronizer;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class StructureSync extends Command
+class StructureClean extends Command
 {
-    protected static $defaultName = 'gally:structure:sync';
+    protected static $defaultName = 'gally:structure:clean';
 
     /**
      * @param AbstractSynchronizer[] $synchronizers
@@ -34,21 +35,30 @@ class StructureSync extends Command
 
     protected function configure(): void
     {
-        $this->setDescription('Synchronize sales channels, entity fields with gally data structure.');
+        $this->setDescription('Remove all entity from gally that not exist anymore on sylius side.')
+            ->addOption('force', 'f', InputOption::VALUE_NONE, 'Really remove the listed entity from the gally.')
+            ->addOption('quiet', 'q', InputOption::VALUE_NONE, 'Don\'t list deleted entities.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln('');
+        $isDryRun = !$input->getOption('force');
+        $isQuiet = $input->getOption('quiet');
+
+        if ($isDryRun) {
+            $output->writeln("<error>Running in dry run mode, add -f to really delete entities from Gally.</error>");
+            $output->writeln('');
+        }
+
         foreach ($this->synchronizers as $synchronizer) {
             $time = microtime(true);
-            $message = "<comment>Sync {$synchronizer->getEntityClass()}</comment>";
+            $message = "<comment>Clean {$synchronizer->getEntityClass()}</comment>";
             $output->writeln("$message ...");
-            $synchronizer->synchronizeAll();
+            $synchronizer->cleanAll($isDryRun, $isQuiet);
             $time = number_format(microtime(true) - $time, 2);
-            $output->writeln("\033[1A$message <info>✔</info> ($time)s");
+            $output->writeln("  Cleaned ($time)s\n");
         }
-        $output->writeln('');
 
         return 0;
     }
