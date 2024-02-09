@@ -84,6 +84,14 @@ abstract class AbstractSynchronizer
 
     abstract protected function getIdentity(ModelInterface $entity): string;
 
+    /**
+     * Remove all entity from gally that not exist anymore on sylius side.
+     */
+    public function cleanAll(bool $dryRun = true, bool $quiet = false): void
+    {
+
+    }
+
     protected function buildFetchAllParams(int $page): array
     {
         return [

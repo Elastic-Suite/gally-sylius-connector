@@ -63,10 +63,7 @@ class CatalogSynchronizer extends AbstractSynchronizer
     public function synchronizeAll(): void
     {
         $this->fetchEntities();
-
-        $this->catalogCodes = array_flip($this->getAllEntityCodes());
         $this->localizedCatalogSynchronizer->fetchEntities();
-        $this->localizedCatalogCodes = array_flip($this->localizedCatalogSynchronizer->getAllEntityCodes());
 
         // synchronize all channels where the Gally integration is active
         $channels = $this->channelRepository->findBy(['gallyActive' => 1]);
@@ -74,18 +71,6 @@ class CatalogSynchronizer extends AbstractSynchronizer
         /** @var Channel[] $channels */
         foreach ($channels as $channel) {
             $this->synchronizeItem(['channel' => $channel]);
-        }
-
-        foreach (array_flip($this->localizedCatalogCodes) as $localizedCatalogCode) {
-            /** @var LocalizedCatalogCatalogRead $localizedCatalog */
-            $localizedCatalog = $this->localizedCatalogSynchronizer->getEntityFromApi($localizedCatalogCode);
-            $this->localizedCatalogSynchronizer->deleteEntity($localizedCatalog->getId());
-        }
-
-        foreach (array_flip($this->catalogCodes) as $catalogCode) {
-            /** @var CatalogCatalogRead $catalog */
-            $catalog = $this->getEntityFromApi($catalogCode);
-            $this->deleteEntity($catalog->getId());
         }
     }
 
@@ -108,12 +93,51 @@ class CatalogSynchronizer extends AbstractSynchronizer
                 'locale' => $locale,
                 'catalog' => $catalog,
             ]);
-
-            unset($this->localizedCatalogCodes[$this->localizedCatalogSynchronizer->getIdentity($localizedCatalog)]);
         }
 
-        unset($this->catalogCodes[$this->getIdentity($catalog)]);
-
         return $catalog;
+    }
+
+    public function cleanAll(bool $dryRun = true, bool $quiet = false): void
+    {
+        $this->fetchEntities();
+
+        $this->catalogCodes = array_flip($this->getAllEntityCodes());
+        $this->localizedCatalogSynchronizer->fetchEntities();
+        $this->localizedCatalogCodes = array_flip($this->localizedCatalogSynchronizer->getAllEntityCodes());
+
+        // Synchronize all channels where the Gally integration is active
+        $channels = $this->channelRepository->findBy(['gallyActive' => 1]);
+
+        /** @var Channel[] $channels */
+        foreach ($channels as $channel) {
+            /** @var LocaleInterface $locale */
+            foreach ($channel->getLocales() as $locale) {
+                unset($this->localizedCatalogCodes[$channel->getCode() . '_' . $locale->getCode()]);
+            }
+            unset($this->catalogCodes[$channel->getCode()]);
+        }
+
+        foreach (array_flip($this->localizedCatalogCodes) as $localizedCatalogCode) {
+            /** @var LocalizedCatalogCatalogRead $localizedCatalog */
+            $localizedCatalog = $this->localizedCatalogSynchronizer->getEntityFromApi($localizedCatalogCode);
+            if (!$quiet) {
+                print("  Delete localized catalog {$localizedCatalog->getId()}\n");
+            }
+            if (!$dryRun) {
+                $this->localizedCatalogSynchronizer->deleteEntity($localizedCatalog->getId());
+            }
+        }
+
+        foreach (array_flip($this->catalogCodes) as $catalogCode) {
+            /** @var CatalogCatalogRead $catalog */
+            $catalog = $this->getEntityFromApi($catalogCode);
+            if (!$quiet) {
+                print("  Delete catalog {$catalog->getId()}\n");
+            }
+            if (!$dryRun) {
+                $this->deleteEntity($catalog->getId());
+            }
+        }
     }
 }

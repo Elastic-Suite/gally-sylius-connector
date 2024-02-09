@@ -72,7 +72,6 @@ class SourceFieldOptionSynchronizer extends AbstractSynchronizer
 
     public function synchronizeAll(): void
     {
-        $this->sourceFieldOptionCodes = array_flip($this->getAllEntityCodes());
         $this->sourceFieldSynchronizer->fetchEntities();
 
         $metadataName = strtolower((new \ReflectionClass(Product::class))->getShortName());
@@ -134,12 +133,6 @@ class SourceFieldOptionSynchronizer extends AbstractSynchronizer
         }
 
         $this->runBulk();
-
-        foreach (array_flip($this->sourceFieldOptionCodes) as $sourceFieldOptionCode) {
-            /** @var SourceFieldOptionSourceFieldOptionRead $sourceFieldOption */
-            $sourceFieldOption = $this->getEntityFromApi($sourceFieldOptionCode);
-            $this->deleteEntity($sourceFieldOption->getId());
-        }
     }
 
     public function synchronizeItem(array $params): ?ModelInterface
@@ -172,9 +165,50 @@ class SourceFieldOptionSynchronizer extends AbstractSynchronizer
         $sourceFieldOption = new SourceFieldOptionSourceFieldOptionWrite($data);
         $this->addEntityToBulk($sourceFieldOption);
 
-        unset($this->sourceFieldOptionCodes[$this->getIdentity($sourceFieldOption)]);
-
         return $sourceFieldOption;
+    }
+
+    public function cleanAll(bool $dryRun = true, bool $quiet = false): void
+    {
+        $this->sourceFieldOptionCodes = array_flip($this->getAllEntityCodes());
+        $this->sourceFieldSynchronizer->fetchEntities();
+
+        $metadataName = strtolower((new \ReflectionClass(Product::class))->getShortName());
+        /** @var MetadataMetadataRead $metadata */
+        $metadata = $this->metadataSynchronizer->synchronizeItem(['entity' => $metadataName]);
+
+        /** @var ProductAttribute[] $attributes */
+        $attributes = $this->productAttributeRepository->findAll();
+        foreach ($attributes as $attribute) {
+            if ('select' === $attribute->getType()) {
+                $sourceField = $this->sourceFieldSynchronizer->getEntityByCode($metadata, $attribute->getCode());
+                $configuration = $attribute->getConfiguration();
+                foreach ($configuration['choices'] ?? [] as $code => $choice) {
+                    unset($this->sourceFieldOptionCodes['/source_fields/' . $sourceField->getId() . $code]);
+                }
+            }
+        }
+
+        /** @var ProductOption[] $options */
+        $options = $this->productOptionRepository->findAll();
+        foreach ($options as $option) {
+            $sourceField = $this->sourceFieldSynchronizer->getEntityByCode($metadata, $option->getCode());
+            /** @var ProductOptionValueInterface $value */
+            foreach ($option->getValues() as $value) {
+                unset($this->sourceFieldOptionCodes['/source_fields/' . $sourceField->getId() . $value->getCode()]);
+            }
+        }
+
+        foreach (array_flip($this->sourceFieldOptionCodes) as $sourceFieldOptionCode) {
+            /** @var SourceFieldOptionSourceFieldOptionRead $sourceFieldOption */
+            $sourceFieldOption = $this->getEntityFromApi($sourceFieldOptionCode);
+            if (!$quiet) {
+                print("  Delete sourceFieldOption {$sourceFieldOption->getSourceField()} {$sourceFieldOption->getCode()}\n");
+            }
+            if (!$dryRun) {
+                $this->deleteEntity($sourceFieldOption->getId());
+            }
+        }
     }
 
     public function fetchEntity(ModelInterface $entity): ?ModelInterface
