@@ -122,7 +122,7 @@ class CatalogSynchronizer extends AbstractSynchronizer
             /** @var LocalizedCatalogCatalogRead $localizedCatalog */
             $localizedCatalog = $this->localizedCatalogSynchronizer->getEntityFromApi($localizedCatalogCode);
             if (!$quiet) {
-                print("  Delete localized catalog {$localizedCatalog->getId()}\n");
+                echo "  Delete localized catalog {$localizedCatalog->getId()}\n";
             }
             if (!$dryRun) {
                 $this->localizedCatalogSynchronizer->deleteEntity($localizedCatalog->getId());
@@ -133,7 +133,7 @@ class CatalogSynchronizer extends AbstractSynchronizer
             /** @var CatalogCatalogRead $catalog */
             $catalog = $this->getEntityFromApi($catalogCode);
             if (!$quiet) {
-                print("  Delete catalog {$catalog->getId()}\n");
+                echo "  Delete catalog {$catalog->getId()}\n";
             }
             if (!$dryRun) {
                 $this->deleteEntity($catalog->getId());

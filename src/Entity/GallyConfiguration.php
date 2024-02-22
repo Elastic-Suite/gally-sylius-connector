@@ -28,7 +28,7 @@ class GallyConfiguration implements ResourceInterface, GallyConfigurationInterfa
         return $this->id;
     }
 
-    public function setId(int $id = null): void
+    public function setId(?int $id = null): void
     {
         $this->id = $id;
     }

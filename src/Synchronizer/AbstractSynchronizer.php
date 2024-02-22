@@ -89,7 +89,6 @@ abstract class AbstractSynchronizer
      */
     public function cleanAll(bool $dryRun = true, bool $quiet = false): void
     {
-
     }
 
     protected function buildFetchAllParams(int $page): array
