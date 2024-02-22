@@ -181,6 +181,7 @@ class SourceFieldOptionSynchronizer extends AbstractSynchronizer
         $attributes = $this->productAttributeRepository->findAll();
         foreach ($attributes as $attribute) {
             if ('select' === $attribute->getType()) {
+                /** @var SourceFieldSourceFieldRead $sourceField */
                 $sourceField = $this->sourceFieldSynchronizer->getEntityByCode($metadata, $attribute->getCode());
                 $configuration = $attribute->getConfiguration();
                 foreach ($configuration['choices'] ?? [] as $code => $choice) {
@@ -192,6 +193,7 @@ class SourceFieldOptionSynchronizer extends AbstractSynchronizer
         /** @var ProductOption[] $options */
         $options = $this->productOptionRepository->findAll();
         foreach ($options as $option) {
+            /** @var SourceFieldSourceFieldRead $sourceField */
             $sourceField = $this->sourceFieldSynchronizer->getEntityByCode($metadata, $option->getCode());
             /** @var ProductOptionValueInterface $value */
             foreach ($option->getValues() as $value) {
@@ -203,7 +205,7 @@ class SourceFieldOptionSynchronizer extends AbstractSynchronizer
             /** @var SourceFieldOptionSourceFieldOptionRead $sourceFieldOption */
             $sourceFieldOption = $this->getEntityFromApi($sourceFieldOptionCode);
             if (!$quiet) {
-                print("  Delete sourceFieldOption {$sourceFieldOption->getSourceField()} {$sourceFieldOption->getCode()}\n");
+                echo "  Delete sourceFieldOption {$sourceFieldOption->getSourceField()} {$sourceFieldOption->getCode()}\n";
             }
             if (!$dryRun) {
                 $this->deleteEntity($sourceFieldOption->getId());

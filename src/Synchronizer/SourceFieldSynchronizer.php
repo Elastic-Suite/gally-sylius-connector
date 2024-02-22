@@ -25,8 +25,6 @@ use Gally\SyliusPlugin\Repository\GallyConfigurationRepository;
 use Sylius\Component\Product\Model\Product;
 use Sylius\Component\Product\Model\ProductAttribute;
 use Sylius\Component\Product\Model\ProductOption;
-use Sylius\Component\Product\Model\ProductOptionValueInterface;
-use Sylius\Component\Product\Model\ProductOptionValueTranslation;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 
 /**
@@ -144,6 +142,7 @@ class SourceFieldSynchronizer extends AbstractSynchronizer
         $this->sourceFieldCodes = array_flip($this->getAllEntityCodes());
 
         $metadataName = strtolower((new \ReflectionClass(Product::class))->getShortName());
+        /** @var MetadataMetadataRead $metadata */
         $metadata = $this->metadataSynchronizer->synchronizeItem(['entity' => $metadataName]);
 
         /** @var ProductAttribute[] $attributes */
@@ -162,7 +161,7 @@ class SourceFieldSynchronizer extends AbstractSynchronizer
             /** @var SourceFieldSourceFieldRead $sourceField */
             $sourceField = $this->getEntityFromApi($sourceFieldCode);
             if (!$sourceField->getIsSystem() && !$quiet) {
-                print("  Delete sourceField {$sourceField->getMetadata()} {$sourceField->getCode()}\n");
+                echo "  Delete sourceField {$sourceField->getMetadata()} {$sourceField->getCode()}\n";
             }
             if (!$sourceField->getIsSystem() && !$dryRun) {
                 $this->deleteEntity($sourceField->getId());
