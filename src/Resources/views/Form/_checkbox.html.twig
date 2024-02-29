@@ -3,5 +3,8 @@
         {{- form_label(form) -}}
         {% set attr = attr|merge({'class': attr.class|default ~ ' ui'}) %}
         {{- form_widget(form, {'attr': attr}) -}}
+        {% if has_more_url %}
+            <a class="view-more" data-for="{{ form.vars.id }}" data-href="{{ has_more_url }}">{{ 'gally_sylius.ui.filters.view_more'|trans }}</a>
+        {% endif %}
     </div>
 {%- endblock sylius_gally_filter_checkbox_row %}

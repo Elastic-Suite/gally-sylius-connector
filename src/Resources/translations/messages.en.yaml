@@ -13,6 +13,7 @@ gally_sylius:
       header: Gally configuration
     filters:
       headline: Filters
+      view_more: View more
   form:
     active: Enable Gally
     product_index_batch_size: Product Indexing Batch Size

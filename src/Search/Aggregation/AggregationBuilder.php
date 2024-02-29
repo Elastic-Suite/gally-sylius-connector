@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Gally\SyliusPlugin\Search\Aggregation;
 
+use Sylius\Component\Channel\Model\ChannelInterface as ChannelModel;
 use Sylius\Component\Core\Model\ChannelInterface;
 
 /**
@@ -21,9 +22,7 @@ use Sylius\Component\Core\Model\ChannelInterface;
  */
 class AggregationBuilder
 {
-    private const SHOW_MORE_OPTION = 'gally-show-more';
-
-    public function build(array $rawAggregationData, ChannelInterface $channel): array
+    public function build(array $rawAggregationData, ChannelInterface|ChannelModel $channel): array
     {
         $aggregationCollection = [];
 
@@ -35,11 +34,13 @@ class AggregationBuilder
                     $buckets[] = new AggregationOption($bucket['label'], $bucket['value'], (int) $bucket['count']);
                 }
 
-                if ($data['hasMore']) {
-                    $buckets[] = new AggregationOption(self::SHOW_MORE_OPTION, self::SHOW_MORE_OPTION, 0);
-                }
-
-                $aggregationCollection[] = new Aggregation($data['label'], $data['field'], $data['type'], $buckets);
+                $aggregationCollection[] = new Aggregation(
+                    $data['label'],
+                    $data['field'],
+                    $data['type'],
+                    $buckets,
+                    $data['hasMore']
+                );
             }
         }
 
