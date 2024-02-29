@@ -31,11 +31,27 @@
             <argument type="service" id="Gally\SyliusPlugin\Synchronizer\LocalizedCatalogSynchronizer" />
         </service>
 
+
+        <service id="Gally\SyliusPlugin\Service\FilterConverter" />
+
         <service id="Gally\SyliusPlugin\Controller\AdminGallyController">
             <argument type="service" id="Gally\SyliusPlugin\Repository\GallyConfigurationRepository" />
             <argument type="service" id="Gally\SyliusPlugin\Api\AuthenticationTokenProvider" />
             <argument type="service" id="Gally\SyliusPlugin\Synchronizer\SourceFieldSynchronizer" />
             <argument type="service" id="translator" />
+            <call method="setContainer">
+                <argument type="service" id="service_container" />
+            </call>
+            <tag name="controller.service_arguments" />
+        </service>
+
+        <service id="Gally\SyliusPlugin\Controller\Filter">
+            <argument type="service" id="Gally\SyliusPlugin\Search\Adapter" />
+            <argument type="service" id="sylius.context.channel" />
+            <argument type="service" id="sylius.context.locale" />
+            <argument type="service" id="sylius.repository.taxon" />
+            <argument type="service" id="form.factory" />
+            <argument type="service" id="Gally\SyliusPlugin\Service\FilterConverter" />
             <call method="setContainer">
                 <argument type="service" id="service_container" />
             </call>
@@ -64,11 +80,20 @@
         </service>
 
         <service id="Gally\SyliusPlugin\Grid\Filter\GallyDynamicFilter">
+            <argument type="service" id="Gally\SyliusPlugin\Service\FilterConverter" />
             <tag name="sylius.grid_filter" type="gally_dynamic_filter" form_type="Gally\SyliusPlugin\Form\Type\Filter\GallyDynamicFilterType" />
         </service>
 
         <service id="Gally\SyliusPlugin\Form\Type\Filter\GallyDynamicFilterType" autoconfigure="true">
+            <argument type="service" id="router" />
+            <argument type="service" id="request_stack" />
+            <argument type="service" id="sylius.repository.taxon" />
+            <argument type="service" id="sylius.context.locale" />
             <tag name="kernel.event_listener" event="gally.grid.configure_filter" method="onFilterUpdate" />
+        </service>
+
+        <service id="sylius.form.type.grid_filter.select" class="Sylius\Bundle\GridBundle\Form\Type\Filter\SelectFilterType">
+            <tag name="form.type" />
         </service>
     </services>
 </container>

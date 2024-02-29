@@ -14,7 +14,9 @@ declare(strict_types=1);
 
 namespace Gally\SyliusPlugin\Search;
 
+use Gally\Rest\ApiException;
 use Gally\SyliusPlugin\Api\GraphQlClient;
+use Sylius\Component\Channel\Model\ChannelInterface as ChannelModel;
 use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\TaxonInterface;
 
@@ -30,7 +32,7 @@ class Adapter
     }
 
     public function search(
-        ChannelInterface $channel,
+        ChannelInterface|ChannelModel $channel,
         TaxonInterface $taxon,
         string $locale,
         array $filters = [],
@@ -58,6 +60,32 @@ class Adapter
             $this->client->query($this->getSearchQuery(), $data),
             $page
         );
+    }
+
+    public function viewMoreOption(
+        ChannelInterface|ChannelModel $channel,
+        ?TaxonInterface $taxon,
+        string $locale,
+        string $aggregationField,
+        array $filters = [],
+        string $search = '',
+    ): array {
+        $response = $this->client->query(
+            $this->getViewMoreQuery(),
+            [
+                'aggregation' => $aggregationField,
+                'localizedCatalog' => $channel->getCode() . '_' . $locale,
+                'currentCategoryId' => $taxon ? str_replace('/', '_', (string) $taxon->getCode()) : null,
+                'search' => $search,
+                'filter' => $filters,
+            ]
+        );
+        $data = json_decode($response->getBody()->getContents(), true);
+        if (\array_key_exists('errors', $data)) {
+            throw new ApiException(reset($data['errors'])['message']);
+        }
+
+        return $data['data']['viewMoreProductFacetOptions'];
     }
 
     private function getSearchQuery(): string
@@ -94,6 +122,31 @@ class Adapter
                   hasMore
                   options { count label value }
                 }
+            }
+          }
+        GQL;
+    }
+
+    private function getViewMoreQuery(): string
+    {
+        return <<<GQL
+            query viewMoreProductFacetOptions (
+              \$aggregation: String!,
+              \$localizedCatalog: String!,
+              \$currentCategoryId: String,
+              \$search: String,
+              \$filter: [ProductFieldFilterInput]
+            ) {
+              viewMoreProductFacetOptions (
+                aggregation: \$aggregation,
+                localizedCatalog: \$localizedCatalog,
+                currentCategoryId: \$currentCategoryId,
+                search: \$search,
+                filter: \$filter
+              ) {
+                value
+                label
+                count
             }
           }
         GQL;

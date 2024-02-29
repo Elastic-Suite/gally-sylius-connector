@@ -17,6 +17,7 @@ namespace Gally\SyliusPlugin\Search;
 use Gally\Rest\ApiException;
 use Gally\SyliusPlugin\Search\Aggregation\AggregationBuilder;
 use Psr\Http\Message\ResponseInterface;
+use Sylius\Component\Channel\Model\ChannelInterface as ChannelModel;
 use Sylius\Component\Core\Model\ChannelInterface;
 
 /**
@@ -28,7 +29,7 @@ class ResultBuilder
     {
     }
 
-    public function build(ChannelInterface $channel, ?ResponseInterface $response, int $currentPage): Result
+    public function build(ChannelInterface|ChannelModel $channel, ?ResponseInterface $response, int $currentPage): Result
     {
         $response = $response ? json_decode($response->getBody()->getContents(), true) : null;
 

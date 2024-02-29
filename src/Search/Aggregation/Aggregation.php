@@ -23,7 +23,8 @@ class Aggregation
         private string $label,
         private string $field,
         private string $type,
-        private array $options
+        private array $options,
+        private bool $hasMore,
     ) {
     }
 
@@ -45,5 +46,10 @@ class Aggregation
     public function getOptions(): array
     {
         return $this->options;
+    }
+
+    public function hasMore(): bool
+    {
+        return $this->hasMore;
     }
 }

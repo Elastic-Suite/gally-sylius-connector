@@ -3,6 +3,10 @@
     <div class="four wide column">
         <div class="ui segment">
             <form method="get" action="{{ path('sylius_shop_product_index', {'slug': app.request.attributes.get('slug')}) }}" class="ui loadable form">
+                {# Keep the current search in the query on filtering #}
+                {% if products.parameters.get('criteria').search is defined %}
+                <input type="hidden" name="criteria[search][value]" value="{{ products.parameters.get('criteria').search.value }}" />
+                {% endif %}
                 <div class="ui stackable grid" id="searchbar">
                     <div class="column" id="searchbarTextField">
                         {% for filter in products.definition.enabledFilters %}

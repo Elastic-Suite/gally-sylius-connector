@@ -1,1 +1,7 @@
-# Define your own shop routes here
+#sylius_shop_partial_cart_add_item_ajax:
+gally_filter_view_more_ajax:
+    path: /viewMore/{filterField}
+    methods: [ GET ]
+    defaults:
+        _controller: Gally\SyliusPlugin\Controller\Filter::viewMore
+        _format: json

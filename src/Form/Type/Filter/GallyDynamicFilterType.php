@@ -15,16 +15,29 @@ declare(strict_types=1);
 namespace Gally\SyliusPlugin\Form\Type\Filter;
 
 use Gally\SyliusPlugin\Event\GridFilterUpdateEvent;
+use Gally\SyliusPlugin\Grid\Filter\Type\SelectFilterType;
 use Gally\SyliusPlugin\Search\Aggregation\Aggregation;
 use Gally\SyliusPlugin\Search\Aggregation\AggregationOption;
 use Sylius\Bundle\GridBundle\Form\Type\Filter\BooleanFilterType;
-use Sylius\Bundle\GridBundle\Form\Type\Filter\SelectFilterType;
+use Sylius\Bundle\TaxonomyBundle\Doctrine\ORM\TaxonRepository;
+use Sylius\Component\Grid\Parameters;
+use Sylius\Component\Locale\Context\LocaleContextInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\RangeType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class GallyDynamicFilterType extends AbstractType
 {
+    public function __construct(
+        private UrlGeneratorInterface $router,
+        private RequestStack $requestStack,
+        private TaxonRepository $taxonRepository,
+        private LocaleContextInterface $localeContext,
+    ) {
+    }
+
     /**
      * @var Aggregation[]
      */
@@ -78,16 +91,20 @@ class GallyDynamicFilterType extends AbstractType
                         /** @var AggregationOption $option */
                         $choices[$option->getLabel()] = $option->getId();
                     }
+                    $options = [
+                        'block_prefix' => 'sylius_gally_filter_checkbox',
+                        'label' => $aggregation->getLabel(),
+                        'choices' => $choices,
+                        'expanded' => true,
+                        'multiple' => true,
+                    ];
+                    if ($aggregation->hasMore()) {
+                        $options['has_more_url'] = $this->buildHasMoreUrl($aggregation->getField());
+                    }
                     $builder->add(
                         $aggregation->getField(),
                         SelectFilterType::class,
-                        [
-                            'block_prefix' => 'sylius_gally_filter_checkbox',
-                            'label' => $aggregation->getLabel(),
-                            'choices' => $choices,
-                            'expanded' => true,
-                            'multiple' => true,
-                        ]
+                        $options
                     );
                     break;
                 default:
@@ -99,5 +116,25 @@ class GallyDynamicFilterType extends AbstractType
     public function onFilterUpdate(GridFilterUpdateEvent $event): void
     {
         $this->aggregations = $event->getAggregations();
+    }
+
+    private function buildHasMoreUrl(string $field): string
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        $parameters = new Parameters($request->query->all());
+        $criteria = $parameters->get('criteria', []);
+        $search = (isset($criteria['search'], $criteria['search']['value'])) ? $criteria['search']['value'] : '';
+        unset($criteria['search']);
+        $taxon = $this->taxonRepository->findOneBySlug($request->attributes->get('slug'), $this->localeContext->getLocaleCode());
+
+        return $this->router->generate(
+            'gally_filter_view_more_ajax',
+            [
+                'filterField' => $field,
+                'search' => $search,
+                'filters' => $criteria,
+                'taxon' => $taxon->getId(),
+            ]
+        );
     }
 }
