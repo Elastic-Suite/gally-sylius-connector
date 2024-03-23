@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- Gally version: 1.2.x
+- Gally version: 1.3.x
 - Sylius version: 1.12.x
 
 ## Usage
@@ -18,11 +18,17 @@
     ```yaml
     - { resource: "@GallySyliusPlugin/Resources/config/config.yml" }
     ```
-  - Import routes by creating a file `config/routes/gally_admin.yaml`
+  - Import admin routes by creating a file `config/routes/gally_admin.yaml`
     ```yaml
     gally_admin:
         resource: "@GallySyliusPlugin/Resources/config/admin_routing.yml"
         prefix: /admin
+    ```
+  - Import shop routes by creating a file `config/routes/gally_shop.yaml`
+    ```yaml
+    gally_shop:
+        resource: "@GallySyliusPlugin/Resources/config/shop_routing.yml"
+        prefix: /{_locale}
     ```
    - Implement the `Gally\SyliusPlugin\Model\GallyChannelInterface` and `Gally\SyliusPlugin\Model\GallyChannelTrait` in your Channel Entity `src/App/Entity/Channel/Channel.php`.
     ```php
