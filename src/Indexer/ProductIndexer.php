@@ -88,6 +88,7 @@ class ProductIndexer extends AbstractIndexer
             'id' => "{$product->getId()}",
             'sku' => [$product->getCode()],
             'name' => [$product->getTranslation($locale->getCode())->getName()],
+            'description' => [$product->getTranslation($locale->getCode())->getDescription()],
             'image' => [$this->formatMedia($product) ?: null],
             'price' => $this->formatPrice($variant, $channel),
             'stock' => [
