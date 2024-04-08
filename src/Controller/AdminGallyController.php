@@ -51,8 +51,8 @@ final class AdminGallyController extends AbstractController
 
         return $this->render('@GallySyliusPlugin/Config/_form.html.twig', [
             'connectionForm' => $configForm->createView(),
-            'testForm' => $this->createForm(TestConnectionType::class),
-            'syncForm' => $this->createForm(SyncSourceFieldsType::class),
+            'testForm' => $this->createForm(TestConnectionType::class)->createView(),
+            'syncForm' => $this->createForm(SyncSourceFieldsType::class)->createView(),
         ]);
     }
 
@@ -77,9 +77,9 @@ final class AdminGallyController extends AbstractController
         }
 
         return $this->render('@GallySyliusPlugin/Config/_form.html.twig', [
-            'connectionForm' => $this->createForm(GallyConfigurationType::class, $gallyConfiguration),
-            'testForm' => $testForm,
-            'syncForm' => $this->createForm(SyncSourceFieldsType::class),
+            'connectionForm' => $this->createForm(GallyConfigurationType::class, $gallyConfiguration)->createView(),
+            'testForm' => $testForm->createView(),
+            'syncForm' => $this->createForm(SyncSourceFieldsType::class)->createView(),
         ]);
     }
 
@@ -96,9 +96,9 @@ final class AdminGallyController extends AbstractController
         }
 
         return $this->render('@GallySyliusPlugin/Config/_form.html.twig', [
-            'connectionForm' => $this->createForm(GallyConfigurationType::class, $gallyConfiguration),
-            'testForm' => $this->createForm(TestConnectionType::class),
-            'syncForm' => $syncForm,
+            'connectionForm' => $this->createForm(GallyConfigurationType::class, $gallyConfiguration)->createView(),
+            'testForm' => $this->createForm(TestConnectionType::class)->createView(),
+            'syncForm' => $syncForm->createView(),
         ]);
     }
 }
