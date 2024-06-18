@@ -20,6 +20,7 @@ use Sylius\Component\Core\Calculator\ProductVariantPricesCalculatorInterface;
 use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\ProductInterface;
 use Sylius\Component\Core\Model\ProductVariantInterface;
+use Sylius\Component\Core\Model\TaxonInterface;
 use Sylius\Component\Core\Repository\ProductRepositoryInterface;
 use Sylius\Component\Locale\Model\LocaleInterface;
 use Sylius\Component\Product\Model\ProductOptionValueInterface;
@@ -58,9 +59,14 @@ class ProductIndexer extends AbstractIndexer
         if (!empty($documentIdsToReindex)) {
             $products = $this->productRepository->findBy(['id' => $documentIdsToReindex]);
         } else {
+            $taxon = $channel->getMenuTaxon();
+            if (null === $taxon) {
+                throw new \LogicException('No menu taxon define for channel ' . $channel->getCode());
+            }
+            /** @var TaxonInterface $taxon */
             $queryBuilder = $this->productRepository->createShopListQueryBuilder(
                 $channel,
-                $channel->getMenuTaxon(),
+                $taxon,
                 $locale->getCode(),
                 [],
                 true
@@ -88,6 +94,7 @@ class ProductIndexer extends AbstractIndexer
             'id' => "{$product->getId()}",
             'sku' => [$product->getCode()],
             'name' => [$product->getTranslation($locale->getCode())->getName()],
+            'description' => [$product->getTranslation($locale->getCode())->getDescription()],
             'image' => [$this->formatMedia($product) ?: null],
             'price' => $this->formatPrice($variant, $channel),
             'stock' => [
