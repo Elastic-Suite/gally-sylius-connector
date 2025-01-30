@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Gally\SyliusPlugin\Controller;
 
-use Gally\Rest\ApiException;
 use Gally\SyliusPlugin\Api\AuthenticationTokenProvider;
 use Gally\SyliusPlugin\Form\Type\GallyConfigurationType;
 use Gally\SyliusPlugin\Form\Type\SyncSourceFieldsType;
@@ -71,8 +70,11 @@ final class AdminGallyController extends AbstractController
                     $configuration->getPassword(),
                 );
                 $this->addFlash('success', $this->translator->trans('gally_sylius.ui.test_connection_success'));
-            } catch (ApiException $e) {
-                $this->addFlash('error', $this->translator->trans('gally_sylius.ui.test_connection_failure'));
+            } catch (\Exception $e) {
+                $this->addFlash(
+                    'error',
+                    $this->translator->trans('gally_sylius.ui.test_connection_failure') . ' ' . $e->getMessage()
+                );
             }
         }
 
