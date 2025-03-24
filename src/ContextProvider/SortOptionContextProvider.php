@@ -14,9 +14,7 @@ declare(strict_types=1);
 
 namespace Gally\SyliusPlugin\ContextProvider;
 
-use Gally\Rest\Api\ProductSortingOptionApi;
-use Gally\Rest\Model\ProductSortingOption;
-use Gally\SyliusPlugin\Api\RestClient;
+use Gally\Sdk\Service\SearchManager;
 use Gally\SyliusPlugin\Model\GallyChannelInterface;
 use Sylius\Bundle\UiBundle\ContextProvider\ContextProviderInterface;
 use Sylius\Bundle\UiBundle\Registry\TemplateBlock;
@@ -26,35 +24,60 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SortOptionContextProvider implements ContextProviderInterface
 {
+    private array $translationKeys = [
+        'name.asc' => 'sylius.ui.from_a_to_z',
+        'name.desc' => 'sylius.ui.from_z_to_a',
+        'price__price.asc' => 'sylius.ui.cheapest_first',
+        'price__price.desc' => 'sylius.ui.most_expensive_first',
+    ];
+
     public function __construct(
-        private RestClient $client,
+        private SearchManager $searchManager,
         private RequestStack $requestStack,
         private TranslatorInterface $translator,
-        private ChannelContextInterface $channelContext
+        private ChannelContextInterface $channelContext,
     ) {
     }
 
     public function provide(array $templateContext, TemplateBlock $templateBlock): array
     {
         $currentSortOrder = $this->requestStack->getMainRequest()->get('sorting', []);
+        $criteria = $this->requestStack->getMainRequest()->get('criteria', []);
+        $search = (isset($criteria['search'], $criteria['search']['value'])) ? $criteria['search']['value'] : '';
 
         $templateContext['current_sorting_label'] = '';
-        $templateContext['sort_options'] = [];
+        $templateContext['sort_options'] = [
+            ['field' => 'category__position', 'sorting' => null, 'label' => $this->translator->trans('sylius.ui.by_position')],
+        ];
 
         $channel = $this->channelContext->getChannel();
         if (($channel instanceof GallyChannelInterface) && $channel->getGallyActive()) {
-            $sortingOptions = $this->client->query(ProductSortingOptionApi::class, 'getProductSortingOptionCollection');
-            foreach ($sortingOptions as $option) {
-                /** @var ProductSortingOption $option */
-                $templateContext['sort_options'][] = [
-                    'field' => $option->getCode(),
-                    'sorting' => [$option->getCode() => 'asc'],
-                    'label' => $option->getLabel(),
-                ];
-
-                if (isset($currentSortOrder[$option->getCode()])) {
-                    $templateContext['current_sorting_label'] = $option->getLabel();
+            foreach ($this->searchManager->getProductSortingOptions() as $option) {
+                if (\in_array($option->getCode(), ['category__position', '_score'], true)) {
+                    continue;
                 }
+                foreach (['asc', 'desc'] as $direction) {
+                    $label = \array_key_exists("{$option->getCode()}.$direction", $this->translationKeys)
+                        ? $this->translator->trans($this->translationKeys["{$option->getCode()}.$direction"])
+                        : $option->getDefaultLabel() . ' ' . $this->translator->trans('gally_sylius.ui.sort.direction.' . $direction);
+                    $templateContext['sort_options'][] = [
+                        'field' => $option->getCode(),
+                        'sorting' => [$option->getCode() => $direction],
+                        'label' => $label,
+                    ];
+
+                    if (isset($currentSortOrder[$option->getCode()]) && $currentSortOrder[$option->getCode()] == $direction) {
+                        $templateContext['current_sorting_label'] = $label;
+                    }
+                }
+            }
+
+            if ($search) {
+                $templateContext['sort_options'][] = [
+                    'field' => 'category__position',
+                    'sorting' => null,
+                    'label' => $this->translator->trans('gally_sylius.ui.sort.relevance'),
+                ];
             }
         } else {
             // default Sylius sorting logic (copied from @SyliusShopBundle/Product/Index/_sorting.html.twig template)

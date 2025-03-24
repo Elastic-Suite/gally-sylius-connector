@@ -9,6 +9,7 @@
             <generator strategy="AUTO" />
         </id>
         <field name="baseUrl" type="string" column="base_url" />
+        <field name="checkSSL" type="boolean" column="check_ssl" />
         <field name="userName" type="string" column="username" />
         <field name="password" type="string" column="password" />
     </mapped-superclass>

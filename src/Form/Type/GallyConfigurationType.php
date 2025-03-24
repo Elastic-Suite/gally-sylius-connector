@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Gally\SyliusPlugin\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -25,6 +26,12 @@ class GallyConfigurationType extends AbstractType
     {
         $builder
             ->add('baseUrl', TextType::class)
+            ->add('checkSsl', CheckboxType::class,
+                [
+                    'label' => 'gally_sylius.form.checkSSL',
+                    'required' => false,
+                ]
+            )
             ->add('userName', TextType::class)
             ->add('password', PasswordType::class);
     }

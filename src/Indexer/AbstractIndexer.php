@@ -14,8 +14,11 @@ declare(strict_types=1);
 
 namespace Gally\SyliusPlugin\Indexer;
 
+use Gally\Sdk\Entity\LocalizedCatalog;
+use Gally\Sdk\Entity\Metadata;
+use Gally\Sdk\Service\IndexOperation;
+use Gally\SyliusPlugin\Indexer\Provider\CatalogProvider;
 use Gally\SyliusPlugin\Model\GallyChannelInterface;
-use Gally\SyliusPlugin\Service\IndexOperation;
 use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Locale\Model\LocaleInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
@@ -25,8 +28,12 @@ use Sylius\Component\Resource\Repository\RepositoryInterface;
  */
 abstract class AbstractIndexer
 {
+    /** @var LocalizedCatalog[][] */
+    private array $localizedCatalogByChannelByLocale;
+
     public function __construct(
         protected RepositoryInterface $channelRepository,
+        protected CatalogProvider $catalogProvider,
         protected IndexOperation $indexOperation,
     ) {
     }
@@ -35,41 +42,58 @@ abstract class AbstractIndexer
     {
         /** @var ChannelInterface[] $channels */
         $channels = $this->channelRepository->findAll();
+        $metadata = new Metadata($this->getEntityType());
 
         foreach ($channels as $channel) {
-            if (($channel instanceof GallyChannelInterface) && !$channel->getGallyActive()) {
-                continue;
-            }
-
-            $locales = $channel->getLocales();
-            /** @var LocaleInterface $locale */
-            foreach ($locales as $locale) {
-                if (empty($documentIdsToReindex)) {
-                    $indexName = $this->indexOperation->createIndex($this->getEntityType(), $channel, $locale);
-                } else {
-                    $indexName = $this->indexOperation->getIndexByName($this->getEntityType(), $channel, $locale);
-                }
-
-                /** @var GallyChannelInterface $channel */
-                $batchSize = $this->getBatchSize($this->getEntityType(), $channel);
-                $bulk = [];
-                foreach ($this->getDocumentsToIndex($channel, $locale, $documentIdsToReindex) as $document) {
-                    $bulk[$document['id']] = json_encode($document);
-                    if (\count($bulk) >= $batchSize) {
-                        $this->indexOperation->executeBulk($indexName, $bulk);
-                        $bulk = [];
+            if (($channel instanceof GallyChannelInterface) && $channel->getGallyActive()) {
+                /** @var LocaleInterface $locale */
+                foreach ($channel->getLocales() as $locale) {
+                    $localizedCatalog = $this->getLocalizedCatalogByChannelAndLocale($channel, $locale);
+                    if (!$localizedCatalog) {
+                        throw new \InvalidArgumentException('No localized catalog found for channel ' . $channel->getCode() . ' and locale ' . $locale->getCode() . '. Try to synchronize your structure.');
                     }
-                }
-                if (\count($bulk) > 0) {
-                    $this->indexOperation->executeBulk($indexName, $bulk);
-                }
 
-                if (empty($documentIdsToReindex)) {
-                    $this->indexOperation->refreshIndex($indexName);
-                    $this->indexOperation->installIndex($indexName);
+                    if (empty($documentIdsToReindex)) {
+                        $index = $this->indexOperation->createIndex($metadata, $localizedCatalog);
+                    } else {
+                        $index = $this->indexOperation->getIndexByName($metadata, $localizedCatalog);
+                    }
+
+                    $batchSize = $this->getBatchSize($this->getEntityType(), $channel);
+                    $bulk = [];
+                    foreach ($this->getDocumentsToIndex($channel, $locale, $documentIdsToReindex) as $document) {
+                        $bulk[$document['id']] = json_encode($document);
+                        if (\count($bulk) >= $batchSize) {
+                            $this->indexOperation->executeBulk($index, $bulk);
+                            $bulk = [];
+                        }
+                    }
+                    if (\count($bulk)) {
+                        $this->indexOperation->executeBulk($index, $bulk);
+                    }
+
+                    if (empty($documentIdsToReindex)) {
+                        $this->indexOperation->refreshIndex($index);
+                        $this->indexOperation->installIndex($index);
+                    }
                 }
             }
         }
+    }
+
+    private function getLocalizedCatalogByChannelAndLocale(ChannelInterface $channel, LocaleInterface $locale): ?LocalizedCatalog
+    {
+        if (!isset($this->localizedCatalogByChannelByLocale)) {
+            foreach ($this->catalogProvider->provide() as $localizedCatalog) {
+                $catalogCode = $localizedCatalog->getCatalog()->getCode();
+                if (!isset($this->localizedCatalogByChannelByLocale[$catalogCode])) {
+                    $this->localizedCatalogByChannelByLocale[$catalogCode] = [];
+                }
+                $this->localizedCatalogByChannelByLocale[$catalogCode][$localizedCatalog->getLocale()] = $localizedCatalog;
+            }
+        }
+
+        return $this->localizedCatalogByChannelByLocale[$channel->getCode()][$locale->getCode()] ?? null;
     }
 
     private function getBatchSize(string $entityType, GallyChannelInterface $channel)
@@ -89,6 +113,6 @@ abstract class AbstractIndexer
     abstract public function getDocumentsToIndex(
         ChannelInterface $channel,
         LocaleInterface $locale,
-        array $documentIdsToReindex
+        array $documentIdsToReindex,
     ): iterable;
 }

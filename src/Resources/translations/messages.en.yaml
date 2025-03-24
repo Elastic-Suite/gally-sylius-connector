@@ -14,7 +14,13 @@ gally_sylius:
     filters:
       headline: Filters
       view_more: View more
+    sort:
+        relevance: Relevance
+        direction:
+            asc: ascending
+            desc: descending
   form:
     active: Enable Gally
     product_index_batch_size: Product Indexing Batch Size
     category_index_batch_size: Category Indexing Batch Size
+    checkSSL: Validate the SSL certificate of gally domain

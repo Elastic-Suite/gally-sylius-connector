@@ -26,7 +26,7 @@ class Result
         private int $itemPerPage,
         private string $sortField,
         private string $sortDirection,
-        private array $aggregations
+        private array $aggregations,
     ) {
     }
 

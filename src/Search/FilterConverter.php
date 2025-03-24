@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Gally\SyliusPlugin\Service;
+namespace Gally\SyliusPlugin\Search;
 
 use Gally\SyliusPlugin\Grid\Gally\ExpressionBuilder;
 use Sylius\Component\Grid\Data\ExpressionBuilderInterface;

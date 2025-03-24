@@ -20,7 +20,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Index shopware entities data to Gally.
+ * Index sylius entities data to Gally.
  */
 class Index extends Command
 {
@@ -30,7 +30,7 @@ class Index extends Command
      * @param AbstractIndexer[] $indexers
      */
     public function __construct(
-        private iterable $indexers
+        private iterable $indexers,
     ) {
         parent::__construct();
     }

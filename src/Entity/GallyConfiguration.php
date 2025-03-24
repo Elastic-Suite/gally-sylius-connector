@@ -20,6 +20,7 @@ class GallyConfiguration implements ResourceInterface, GallyConfigurationInterfa
 {
     private ?int $id;
     private string $baseUrl;
+    private bool $checkSSL = true;
     private string $userName;
     private string $password;
 
@@ -43,6 +44,16 @@ class GallyConfiguration implements ResourceInterface, GallyConfigurationInterfa
         $this->baseUrl = $baseUrl;
     }
 
+    public function getCheckSSL(): bool
+    {
+        return $this->checkSSL;
+    }
+
+    public function setCheckSSL(bool $checkSSL): void
+    {
+        $this->checkSSL = $checkSSL;
+    }
+
     public function getUserName(): string
     {
         return $this->userName;
@@ -58,8 +69,10 @@ class GallyConfiguration implements ResourceInterface, GallyConfigurationInterfa
         return $this->password;
     }
 
-    public function setPassword(string $password): void
+    public function setPassword(?string $password): void
     {
-        $this->password = $password;
+        if ($password) {
+            $this->password = $password;
+        }
     }
 }

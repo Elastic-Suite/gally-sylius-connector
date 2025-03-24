@@ -14,13 +14,17 @@ declare(strict_types=1);
 
 namespace Gally\SyliusPlugin\Controller;
 
+use Gally\Sdk\Entity\Metadata;
+use Gally\Sdk\Service\SearchManager;
 use Gally\SyliusPlugin\Form\Type\Filter\GallyDynamicFilterType;
 use Gally\SyliusPlugin\Grid\Filter\Type\SelectFilterType;
-use Gally\SyliusPlugin\Search\Adapter;
-use Gally\SyliusPlugin\Service\FilterConverter;
+use Gally\SyliusPlugin\Indexer\Provider\CatalogProvider;
+use Gally\SyliusPlugin\Search\FilterConverter;
 use Sylius\Bundle\TaxonomyBundle\Doctrine\ORM\TaxonRepository;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
+use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Locale\Context\LocaleContextInterface;
+use Sylius\Component\Taxonomy\Model\Taxon;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,7 +33,8 @@ use Symfony\Component\HttpFoundation\Response;
 final class Filter extends AbstractController
 {
     public function __construct(
-        private Adapter $adapter,
+        private CatalogProvider $catalogProvider,
+        private SearchManager $searchManager,
         private ChannelContextInterface $channelContext,
         private LocaleContextInterface $localeContext,
         private TaxonRepository $taxonRepository,
@@ -51,15 +56,32 @@ final class Filter extends AbstractController
         }
 
         $choices = [];
-        $currentTaxonId = $request->get('taxon');
-        $aggregationOptions = $this->adapter->viewMoreOption(
-            $this->channelContext->getChannel(),
-            $currentTaxonId ? $this->taxonRepository->find($currentTaxonId) : null,
-            $this->localeContext->getLocaleCode(),
-            $filterField,
-            $gallyFilters,
+        /** @var Taxon $currentTaxon */
+        $currentTaxon = $this->taxonRepository->find($request->get('taxon'));
+        /** @var ChannelInterface $currentChannel */
+        $currentChannel = $this->channelContext->getChannel();
+        $currentLocaleCode = $this->localeContext->getLocaleCode();
+        $currentLocale = null;
+        foreach ($currentChannel->getLocales() as $locale) {
+            if ($currentLocaleCode === $locale->getCode()) {
+                $currentLocale = $locale;
+                break;
+            }
+        }
+        $currentLocalizedCatalog = $this->catalogProvider->buildLocalizedCatalog($currentChannel, $currentLocale);
+        $request = new \Gally\Sdk\GraphQl\Request(
+            $currentLocalizedCatalog,
+            new Metadata('product'),
+            false,
+            ['sku', 'source'],
+            1,
+            0,
+            $currentTaxon->getCode(),
             $search,
+            $gallyFilters,
         );
+
+        $aggregationOptions = $this->searchManager->viewMoreProductFilterOption($request, $filterField);
 
         foreach ($aggregationOptions as $option) {
             $choices[$option['label']] = $option['value'];

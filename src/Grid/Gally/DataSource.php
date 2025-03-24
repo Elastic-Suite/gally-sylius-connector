@@ -15,9 +15,8 @@ declare(strict_types=1);
 namespace Gally\SyliusPlugin\Grid\Gally;
 
 use Doctrine\ORM\QueryBuilder;
-use Gally\SyliusPlugin\Search\Adapter;
-use Pagerfanta\Pagerfanta;
-use Sylius\Component\Core\Model\ChannelInterface;
+use Gally\Sdk\Entity\LocalizedCatalog;
+use Gally\Sdk\Service\SearchManager;
 use Sylius\Component\Core\Model\TaxonInterface;
 use Sylius\Component\Grid\Data\DataSourceInterface;
 use Sylius\Component\Grid\Data\ExpressionBuilderInterface;
@@ -31,11 +30,10 @@ final class DataSource implements DataSourceInterface
 
     public function __construct(
         private QueryBuilder $queryBuilder,
-        private Adapter $adapter,
+        private SearchManager $searchManager,
         private EventDispatcherInterface $eventDispatcher,
-        private ChannelInterface $channel,
+        private LocalizedCatalog $currentLocalizedCatalog,
         private TaxonInterface $taxon,
-        private string $locale
     ) {
         $this->expressionBuilder = new ExpressionBuilder();
     }
@@ -54,14 +52,13 @@ final class DataSource implements DataSourceInterface
     {
         $page = (int) $parameters->get('page', 1);
 
-        $paginator = new Pagerfanta(
+        $paginator = new PagerfantaGally(
             new PagerfantaGallyAdapter(
                 $this->queryBuilder,
-                $this->adapter,
+                $this->searchManager,
                 $this->eventDispatcher,
-                $this->channel,
+                $this->currentLocalizedCatalog,
                 $this->taxon,
-                $this->locale,
                 $this->filters,
                 $parameters
             )

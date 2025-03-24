@@ -29,7 +29,7 @@ final class DataProvider implements DataProviderInterface
         private DataSourceProviderInterface $dataSourceProvider,
         private FiltersApplicatorInterface $filtersApplicator,
         private SorterInterface $sorter,
-        private ChannelContextInterface $channelContext
+        private ChannelContextInterface $channelContext,
     ) {
     }
 

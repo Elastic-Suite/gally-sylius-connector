@@ -3,30 +3,59 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
-        <service id="Gally\SyliusPlugin\Indexer\AbstractIndexer" abstract="true">
+        <service id="Gally\SyliusPlugin\Indexer\Provider\CatalogProvider">
             <argument type="service" id="sylius.repository.channel" />
-            <argument type="service" id="Gally\SyliusPlugin\Service\IndexOperation" />
+            <tag name="gally.dataprovider" entity="catalog"/>
+        </service>
+        <service id="Gally\SyliusPlugin\Indexer\Provider\SourceFieldProvider">
+            <argument type="service" id="Gally\SyliusPlugin\Indexer\Provider\CatalogProvider"/>
+            <argument type="service" id="sylius.repository.product_attribute" />
+            <argument type="service" id="sylius.repository.product_option" />
+            <tag name="gally.dataprovider" entity="sourceField"/>
+        </service>
+        <service id="Gally\SyliusPlugin\Indexer\Provider\SourceFieldOptionProvider">
+            <argument type="service" id="Gally\SyliusPlugin\Indexer\Provider\CatalogProvider"/>
+            <argument type="service" id="sylius.repository.product_attribute" />
+            <argument type="service" id="sylius.repository.product_option" />
+            <tag name="gally.dataprovider" entity="sourceFieldOption"/>
         </service>
 
+        <service id="Gally\SyliusPlugin\Indexer\Subscriber\ChannelSubscriber">
+            <argument type="service" id="Gally\SyliusPlugin\Indexer\Provider\CatalogProvider" />
+            <argument type="service" id="Gally\Sdk\Service\StructureSynchonizer" />
+            <tag name="kernel.event_subscriber" />
+        </service>
+        <service id="Gally\SyliusPlugin\Indexer\Subscriber\ProductAttributeSubscriber">
+            <argument type="service" id="Gally\Sdk\Repository\LocalizedCatalogRepository" />
+            <argument type="service" id="Gally\SyliusPlugin\Indexer\Provider\SourceFieldProvider" />
+            <argument type="service" id="Gally\SyliusPlugin\Indexer\Provider\SourceFieldOptionProvider" />
+            <argument type="service" id="Gally\Sdk\Service\StructureSynchonizer" />
+            <tag name="kernel.event_subscriber" />
+        </service>
+
+        <service id="Gally\SyliusPlugin\Indexer\AbstractIndexer" abstract="true">
+            <argument type="service" id="sylius.repository.channel" />
+            <argument type="service" id="Gally\SyliusPlugin\Indexer\Provider\CatalogProvider" />
+            <argument type="service" id="Gally\Sdk\Service\IndexOperation" />
+        </service>
         <service id="Gally\SyliusPlugin\Indexer\CategoryIndexer" parent="Gally\SyliusPlugin\Indexer\AbstractIndexer">
             <argument type="service" id="sylius.repository.taxon" />
             <tag name="gally.entity.indexer" priority="50"/>
         </service>
-
         <service id="Gally\SyliusPlugin\Indexer\ProductIndexer" parent="Gally\SyliusPlugin\Indexer\AbstractIndexer">
             <argument type="service" id="sylius.repository.product" />
             <argument type="service" id="sylius.calculator.product_variant_price" />
             <tag name="gally.entity.indexer" priority="50"/>
         </service>
 
-        <service id="Gally\SyliusPlugin\Indexer\Subscriber\CategorySubscriber">
-            <argument type="service" id="Gally\SyliusPlugin\Indexer\CategoryIndexer" />
-            <tag name="kernel.event_subscriber" />
-        </service>
+<!--        <service id="Gally\SyliusPlugin\Indexer\Subscriber\CategorySubscriber">-->
+<!--            <argument type="service" id="Gally\SyliusPlugin\Indexer\CategoryIndexer" />-->
+<!--            <tag name="kernel.event_subscriber" />-->
+<!--        </service>-->
 
-        <service id="Gally\SyliusPlugin\Indexer\Subscriber\ProductSubscriber">
-            <argument type="service" id="Gally\SyliusPlugin\Indexer\ProductIndexer" />
-            <tag name="kernel.event_subscriber" />
-        </service>
+<!--        <service id="Gally\SyliusPlugin\Indexer\Subscriber\ProductSubscriber">-->
+<!--            <argument type="service" id="Gally\SyliusPlugin\Indexer\ProductIndexer" />-->
+<!--            <tag name="kernel.event_subscriber" />-->
+<!--        </service>-->
     </services>
 </container>

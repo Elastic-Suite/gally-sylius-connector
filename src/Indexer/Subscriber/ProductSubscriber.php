@@ -26,9 +26,6 @@ class ProductSubscriber implements EventSubscriberInterface
     {
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public static function getSubscribedEvents()
     {
         return [

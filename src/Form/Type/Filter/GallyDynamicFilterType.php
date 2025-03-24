@@ -54,7 +54,7 @@ class GallyDynamicFilterType extends AbstractType
                     ];
 
                     foreach ($aggregation->getOptions() as $option) {
-                        /** @var AggregationOption $option */
+                        /* @var AggregationOption $option */
                         if (0 === $attr['min']) {
                             $attr['min'] = $option->getId();
                         }
@@ -88,7 +88,7 @@ class GallyDynamicFilterType extends AbstractType
                 case 'checkbox':
                     $choices = [];
                     foreach ($aggregation->getOptions() as $option) {
-                        /** @var AggregationOption $option */
+                        /* @var AggregationOption $option */
                         $choices[$option->getLabel()] = $option->getId();
                     }
                     $options = [

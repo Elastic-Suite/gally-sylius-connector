@@ -14,15 +14,12 @@ declare(strict_types=1);
 
 namespace Gally\SyliusPlugin\Search\Aggregation;
 
-use Sylius\Component\Channel\Model\ChannelInterface as ChannelModel;
-use Sylius\Component\Core\Model\ChannelInterface;
-
 /**
  * Build aggregation object from gally raw response.
  */
 class AggregationBuilder
 {
-    public function build(array $rawAggregationData, ChannelInterface|ChannelModel $channel): array
+    public static function build(array $rawAggregationData): array
     {
         $aggregationCollection = [];
 
