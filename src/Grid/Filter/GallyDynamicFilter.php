@@ -14,18 +14,25 @@ declare(strict_types=1);
 
 namespace Gally\SyliusPlugin\Grid\Filter;
 
+use Gally\SyliusPlugin\Config\ConfigManager;
 use Gally\SyliusPlugin\Search\FilterConverter;
 use Sylius\Component\Grid\Data\DataSourceInterface;
 use Sylius\Component\Grid\Filtering\FilterInterface;
 
 class GallyDynamicFilter implements FilterInterface
 {
-    public function __construct(private FilterConverter $filterConverter)
-    {
+    public function __construct(
+        private FilterConverter $filterConverter,
+        private ConfigManager $configManager,
+    ) {
     }
 
     public function apply(DataSourceInterface $dataSource, string $name, $data, array $options): void
     {
+        if (!$this->configManager->isGallyEnabled()) {
+            return;
+        }
+
         foreach ($data as $field => $value) {
             $gallyFilter = $this->filterConverter->convert($field, $value);
             if ($gallyFilter) {

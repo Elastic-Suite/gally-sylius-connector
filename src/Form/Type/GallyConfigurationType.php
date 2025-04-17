@@ -26,12 +26,10 @@ class GallyConfigurationType extends AbstractType
     {
         $builder
             ->add('baseUrl', TextType::class)
-            ->add('checkSsl', CheckboxType::class,
-                [
-                    'label' => 'gally_sylius.form.checkSSL',
-                    'required' => false,
-                ]
-            )
+            ->add('checkSsl', CheckboxType::class, [
+                'label' => 'gally_sylius.form.checkSSL',
+                'required' => false,
+            ])
             ->add('userName', TextType::class)
             ->add('password', PasswordType::class);
     }

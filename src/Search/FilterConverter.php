@@ -37,7 +37,7 @@ class FilterConverter
 
         if (str_contains($field, '_slider')) {
             $field = str_replace('_slider', '', $field);
-            $values = explode(';', $value, 2);
+            $values = explode('|', $value, 2);
 
             return $this->expressionBuilder->andX(
                 $this->expressionBuilder->greaterThanOrEqual($field, (int) $values[0]),

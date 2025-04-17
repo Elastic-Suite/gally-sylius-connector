@@ -1,25 +1,26 @@
-$(document).ready(function() {
-    var sliderElement = $('.range-slider');
-    if (sliderElement.length > 0) {
-        var hiddenInput = $(sliderElement.attr('data-input-id'));
-        if (hiddenInput.length > 0) {
-            var min = parseInt(sliderElement.attr('data-min'));
-            var max = parseInt(sliderElement.attr('data-max'));
+document.addEventListener('DOMContentLoaded', () => {
+    var sliderElement = document.querySelector('.range-slider');
+    if (sliderElement) {
+        var inputSelector = sliderElement.getAttribute('data-input-id');
+        var hiddenInput = document.querySelector(inputSelector);
+        if (hiddenInput) {
+            var min = parseInt(sliderElement.getAttribute('data-min'));
+            var max = parseInt(sliderElement.getAttribute('data-max'));
             var valuesForSlider = [];
             for (var i = min; i <= max; i++) {
                 valuesForSlider.push(i);
             }
 
             var start = [valuesForSlider[0], valuesForSlider[valuesForSlider.length - 1]];
-            var value = sliderElement.attr('data-value');
-            if (value !== undefined) {
-                value = value.split(";");
+            var value = sliderElement.getAttribute('data-value');
+            if (value !== null) {
+                value = value.split("|");
                 if (value.length === 2) {
                     start = value;
                 }
             }
 
-            var slider = noUiSlider.create(sliderElement[0], {
+            var slider = noUiSlider.create(sliderElement, {
                 start: start,
                 step: 1,
                 tooltips: true,
@@ -38,7 +39,7 @@ $(document).ready(function() {
                 }
             });
             slider.on('end', function(values) {
-                hiddenInput.val(values[0] + ";" + values[1]);
+                hiddenInput.value = values[0] + "|" + values[1];
             });
         }
     }

@@ -1,0 +1,29 @@
+{% import '@SyliusShop/shared/buttons.html.twig' as buttons %}
+{% if is_gally_enabled() %}
+    {% set products = hookable_metadata.context.products %}
+    <div {{ sylius_test_html_attribute('vertical-filters') }}>
+        <div class="d-flex flex-column">
+            <form method="get" action="{{ path('sylius_shop_product_index', {'slug': app.request.attributes.get('slug')}) }}">
+                {# Keep the current search in the query on filtering #}
+                {% if products.parameters.get('criteria').search is defined %}
+                    <input type="hidden" name="criteria[search][value]" value="{{ products.parameters.get('criteria').search.value }}" />
+                {% endif %}
+                <div class="" id="searchbar">
+                    <div class="column" id="searchbarTextField">
+                        {% for filter in products.definition.enabledFilters %}
+                            {% if filter.type != 'shop_string' %}
+                                {{ sylius_grid_render_filter(products, filter) }}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="ms-auto" id="searchbarButtons">
+                        <div class="ui buttons">
+                            {{ buttons.submit('sylius.ui.search'|trans, 'contact-send', 'tabler:search', 'btn-primary') }}
+                            {{ buttons.secondary(path('sylius_shop_product_index', {'slug': app.request.attributes.get('slug')}), 'sylius.ui.clear'|trans, 'filter-clear', 'tabler:cancel') }}
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endif %}

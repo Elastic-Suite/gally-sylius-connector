@@ -16,14 +16,17 @@ namespace Gally\SyliusPlugin\Command;
 
 use Gally\Sdk\Service\StructureSynchonizer;
 use Gally\SyliusPlugin\Indexer\Provider\ProviderInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand(
+    name: 'gally:structure:sync',
+    description: 'Synchronize sales channels, entity fields with gally data structure.',
+)]
 class StructureSync extends Command
 {
-    protected static $defaultName = 'gally:structure:sync';
-
     /** @var ProviderInterface[] */
     protected array $providers;
     protected array $syncMethod = [
@@ -41,11 +44,6 @@ class StructureSync extends Command
     ) {
         parent::__construct();
         $this->providers = iterator_to_array($providers);
-    }
-
-    protected function configure(): void
-    {
-        $this->setDescription('Synchronize sales channels, entity fields with gally data structure.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
