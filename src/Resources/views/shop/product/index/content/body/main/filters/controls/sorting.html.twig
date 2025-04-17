@@ -1,0 +1,5 @@
+{% if hookable_metadata.context.resources.data.nbResults > 0 %}
+    <div class="dropdown">
+        {% hook 'sorting' %}
+    </div>
+{% endif %}

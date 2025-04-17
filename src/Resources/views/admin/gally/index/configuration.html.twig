@@ -1,0 +1,6 @@
+{% set context = hookable_metadata.context %}
+<div class="container-xl">
+    <div class="grid gap-4">
+        {% hook 'configuration' with { connectionForm: context.connectionForm, testForm: context.testForm, syncForm: context.syncForm } %}
+    </div>
+</div>

@@ -1,0 +1,9 @@
+{% extends '@SyliusAdmin/shared/layout/base.html.twig' %}
+
+{% block title %}
+    {{ 'sylius.ui.dashboard'|trans }} {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    {% hook ['gally_admin.gally.index', 'sylius_admin.common.index'] with { connectionForm, testForm, syncForm } %}
+{% endblock %}

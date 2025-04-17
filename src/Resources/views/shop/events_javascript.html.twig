@@ -1,0 +1,4 @@
+{#todo : make inclusion of scripts compatible with Webpack Encore and with the new strcuture of sylius 2#}
+{% for script in ['nouislider.min.js', 'range-slider.js', 'view-more.js'] %}
+    <script src="{{ asset('bundles/gallysyliusplugin/' ~ script) }}"></script>
+{% endfor %}

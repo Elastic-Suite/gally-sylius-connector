@@ -2,8 +2,8 @@
 
 ## Requirements
 
-- Gally version: 2.0.x
-- Sylius version: 1.12.x
+- Gally version: 2.1.x
+- Sylius version: 2.0.x
 
 ## Usage
 
@@ -50,7 +50,6 @@
         use GallyChannelTrait;
      }
      ```
-    - Copy the templates from `vendor/gally/sylius-plugin/src/Resources/views/SyliusShopBundle/` to `templates/bundles/SyliusShopBundle/`.
     - Copy the bundle assets (Javascript & CSS files):
        - Run `php bin/console assets:install`
        - Run `php bin/console sylius:install:assets`

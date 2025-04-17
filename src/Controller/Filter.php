@@ -97,7 +97,7 @@ final class Filter extends AbstractController
         $form = $this->formFactory->createNamed('criteria')->add('gally', GallyDynamicFilterType::class);
         $form->get('gally')->add($filterField, SelectFilterType::class, $options);
         $form->get('gally')->get($filterField)->setData($filters[$filterField] ?? null);
-        $html = $this->renderView('@GallySyliusPlugin/Grid/Filter/gally_dynamic_filter.html.twig', ['form' => $form->createView()]);
+        $html = $this->renderView('@GallySyliusPlugin/shop/grid/filter/gally_dynamic_filter.html.twig', ['form' => $form->createView()]);
 
         return $this->json(['html' => $html]);
     }

@@ -1,0 +1,36 @@
+#searchbar .view-more {
+    color: rgba(0, 0, 0, 0.87);
+    cursor: pointer;
+}
+
+#searchbar .col-form-label
+{
+    font-weight: bold;
+}
+
+#searchbar .form-label
+{
+    font-weight: bold;
+}
+
+#searchbar .field
+{
+    margin: 0 0 10px 0;
+}
+
+#searchbar .view-more
+{
+    font-size: 0.75em;
+}
+
+#searchbar .form-check-input.is-invalid
+{
+    border-color: var(--bs-body-color);
+}
+
+#searchbar .form-check-input.is-invalid ~ .form-check-label
+{
+    color: var(--bs-body-color);
+}
+
+

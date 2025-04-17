@@ -1,0 +1,44 @@
+{% import '@SyliusAdmin/shared/helper/button.html.twig' as button %}
+
+<div class="card g-col-12 g-col-xl-12">
+    {% set connectionForm = hookable_metadata.context.connectionForm %}
+    {% form_theme connectionForm '@SyliusAdmin/shared/form_theme.html.twig' %}
+    {{ form_start(connectionForm, {'action': path('gally_sylius_config'), 'attr': {'class': 'ui loadable form', 'novalidate': 'novalidate', 'id': connectionForm.vars.id}}) }}
+
+    <div class="card-header"> {{ 'gally_sylius.ui.configuration_header'|trans }} </div>
+
+    <div class="card-body">
+        {{ form_errors(connectionForm) }}
+        <div class="row">
+            <div class="col-12">
+                {{ form_row(connectionForm.baseUrl) }}
+            </div>
+
+            <div class="col-12">
+                {{ form_row(connectionForm.checkSsl) }}
+            </div>
+
+            <div class="col-12">
+                {{ form_row(connectionForm.userName) }}
+            </div>
+
+            <div class="col-12">
+                {{ form_row(connectionForm.password) }}
+            </div>
+
+            <div class="col-12">
+                {{ button.primary(
+                    sylius_test_form_attribute('update-changes-button-gally-connection')|merge({
+                        text: 'sylius.ui.save_changes'|trans,
+                        type: 'submit',
+                        form: connectionForm.vars.id,
+                        icon: 'tabler:device-floppy'
+                    })
+                ) }}
+            </div>
+        </div>
+    </div>
+
+    {{ form_row(connectionForm._token) }}
+    {{ form_end(connectionForm, {'render_rest': false}) }}
+</div>

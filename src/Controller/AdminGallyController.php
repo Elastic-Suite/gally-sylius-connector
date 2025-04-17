@@ -14,9 +14,8 @@ declare(strict_types=1);
 
 namespace Gally\SyliusPlugin\Controller;
 
-use Gally\Sdk\Client\Client;
-use Gally\Sdk\Client\Configuration;
 use Gally\Sdk\Service\StructureSynchonizer;
+use Gally\SyliusPlugin\Config\ConfigManager;
 use Gally\SyliusPlugin\Form\Type\GallyConfigurationType;
 use Gally\SyliusPlugin\Form\Type\SyncSourceFieldsType;
 use Gally\SyliusPlugin\Form\Type\TestConnectionType;
@@ -40,6 +39,7 @@ final class AdminGallyController extends AbstractController
     public function __construct(
         private GallyConfigurationRepository $gallyConfigurationRepository,
         protected StructureSynchonizer $synchonizer,
+        protected ConfigManager $configManager,
         \IteratorAggregate $providers,
         private TranslatorInterface $translator,
     ) {
@@ -59,7 +59,7 @@ final class AdminGallyController extends AbstractController
             $this->addFlash('success', $this->translator->trans('gally_sylius.ui.configuration_saved'));
         }
 
-        return $this->render('@GallySyliusPlugin/Config/_form.html.twig', [
+        return $this->render('@GallySyliusPlugin/admin/gally/index.html.twig', [
             'connectionForm' => $configForm->createView(),
             'testForm' => $this->createForm(TestConnectionType::class)->createView(),
             'syncForm' => $this->createForm(SyncSourceFieldsType::class)->createView(),
@@ -74,15 +74,7 @@ final class AdminGallyController extends AbstractController
 
         if ($testForm->isSubmitted() && $testForm->isValid()) {
             try {
-                $configuration = new Configuration(
-                    $gallyConfiguration->getBaseUrl(),
-                    $gallyConfiguration->getCheckSSL(),
-                    $gallyConfiguration->getUserName(),
-                    $gallyConfiguration->getPassword()
-                );
-                $client = new Client($configuration);
-                $client->get('indices');
-
+                $this->configManager->testCredentials();
                 $this->addFlash('success', $this->translator->trans('gally_sylius.ui.test_connection_success'));
             } catch (\Exception $e) {
                 $this->addFlash(
@@ -92,7 +84,7 @@ final class AdminGallyController extends AbstractController
             }
         }
 
-        return $this->render('@GallySyliusPlugin/Config/_form.html.twig', [
+        return $this->render('@GallySyliusPlugin/admin/gally/index.html.twig', [
             'connectionForm' => $this->createForm(GallyConfigurationType::class, $gallyConfiguration)->createView(),
             'testForm' => $testForm->createView(),
             'syncForm' => $this->createForm(SyncSourceFieldsType::class)->createView(),
@@ -106,14 +98,26 @@ final class AdminGallyController extends AbstractController
         $syncForm->handleRequest($request);
 
         if ($syncForm->isSubmitted() && $syncForm->isValid()) {
-            foreach ($this->syncMethod as $entity => $method) {
-                $this->synchonizer->{$method}($this->providers[$entity]->provide());
+            $validConnection = true;
+            try {
+                $this->configManager->testCredentials();
+            } catch (\Exception $e) {
+                $validConnection = false;
+                $this->addFlash(
+                    'error',
+                    $this->translator->trans('gally_sylius.ui.test_connection_failure') . ' ' . $e->getMessage()
+                );
             }
 
-            $this->addFlash('success', $this->translator->trans('gally_sylius.ui.sync_success'));
+            if ($validConnection) {
+                foreach ($this->syncMethod as $entity => $method) {
+                    $this->synchonizer->{$method}($this->providers[$entity]->provide());
+                }
+                $this->addFlash('success', $this->translator->trans('gally_sylius.ui.sync_success'));
+            }
         }
 
-        return $this->render('@GallySyliusPlugin/Config/_form.html.twig', [
+        return $this->render('@GallySyliusPlugin/admin/gally/index.html.twig', [
             'connectionForm' => $this->createForm(GallyConfigurationType::class, $gallyConfiguration)->createView(),
             'testForm' => $this->createForm(TestConnectionType::class)->createView(),
             'syncForm' => $syncForm->createView(),

@@ -1,0 +1,28 @@
+{% import '@SyliusAdmin/shared/helper/button.html.twig' as button %}
+
+<div class="card g-col-12 g-col-xl-12">
+    {% set syncForm = hookable_metadata.context.syncForm %}
+    {% form_theme syncForm '@SyliusAdmin/shared/form_theme.html.twig' %}
+    {{ form_start(syncForm, {'action': path('gally_sylius_sync'), 'attr': {'class': 'ui loadable form', 'novalidate': 'novalidate', 'id': syncForm.vars.id}}) }}
+
+    <div class="card-header"> {{ 'gally_sylius.ui.sync_header'|trans }} </div>
+
+    <div class="card-body">
+        {{ form_errors(syncForm) }}
+        <div class="row">
+            <div class="col-12">
+                {{ button.primary(
+                    sylius_test_form_attribute('gally-sync-attributes')|merge({
+                        text: 'gally_sylius.ui.btn_sync'|trans,
+                        type: 'submit',
+                        form: syncForm.vars.id,
+                        icon: 'tabler:refresh'
+                    })
+                ) }}
+            </div>
+        </div>
+    </div>
+
+    {{ form_row(syncForm._token) }}
+    {{ form_end(syncForm, {'render_rest': false}) }}
+</div>

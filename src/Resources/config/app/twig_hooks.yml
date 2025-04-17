@@ -1,0 +1,94 @@
+sylius_twig_hooks:
+    hooks:
+        'gally_admin.gally.index':
+            sidebar:
+                template: '@SyliusAdmin/shared/crud/common/sidebar.html.twig'
+                priority: 200
+            navbar:
+                template: '@SyliusAdmin/shared/crud/common/navbar.html.twig'
+                priority: 100
+            content:
+                template: '@SyliusAdmin/shared/crud/common/content.html.twig'
+                priority: 0
+                
+        'gally_admin.gally.index.content':
+            header:
+                template: '@SyliusAdmin/shared/crud/common/content/header.html.twig'
+                priority: 200
+            grid:
+                enabled: false
+            configuration:
+                template: '@GallySyliusPlugin/admin/gally/index/configuration.html.twig'
+                priority: 100
+                
+        'gally_admin.gally.index.content.configuration':
+            connection:
+                template: '@GallySyliusPlugin/admin/gally/index/configuration/connection.html.twig'
+                priority: 30
+            test_connection:
+                template: '@GallySyliusPlugin/admin/gally/index/configuration/test_connection.html.twig'
+                priority: 20
+            sync_source_fields:
+                template: '@GallySyliusPlugin/admin/gally/index/configuration/sync_source_fields.html.twig'
+                priority: 10
+        
+        'gally_admin.gally.index.content.header':
+            breadcrumbs:
+                enabled: false
+            title_block:
+                template: '@SyliusAdmin/shared/crud/common/content/header/title_block.html.twig'
+                priority: 0
+                
+        'gally_admin.gally.index.content.header.title_block':
+            title:
+                template: '@SyliusAdmin/shared/crud/common/content/header/title_block/title.html.twig'
+                configuration:
+                    title: Gally
+                    sylius_test_html_attribute: 'gally-config-header'
+                priority: 100
+            actions:
+                enabled: false
+        
+        'sylius_admin.channel.create.content.form.sections':
+            gally:
+                template: '@GallySyliusPlugin/admin/channel/form/sections/gally.html.twig'
+                priority: 0
+
+        'sylius_admin.channel.update.content.form.sections':
+            gally:
+                template: '@GallySyliusPlugin/admin/channel/form/sections/gally.html.twig'
+                priority: 0
+
+        'sylius_shop.base#stylesheets':
+            gally:
+                template: "@GallySyliusPlugin/shop/events_stylesheets.html.twig"
+                priority: 0
+        
+        'sylius_shop.base#javascripts':
+            gally:
+                template: "@GallySyliusPlugin/shop/events_javascript.html.twig"
+                priority: 0
+
+        'sylius_shop.product.index.content.body.sidebar':
+            gally_filters:
+                template: '@GallySyliusPlugin/shop/product/index/content/body/sidebar/filters.html.twig'
+                priority: 0
+
+        'sylius_shop.product.index.content.body.main.filters.search':
+            filter:
+                template: '@GallySyliusPlugin/shop/product/index/content/body/main/filters/search/filter.html.twig'
+
+        
+        'sylius_shop.product.index.content.body.main.filters.controls':
+            sort:
+                template: '@GallySyliusPlugin/shop/product/index/content/body/main/filters/controls/sorting.html.twig'
+                
+
+        'sylius_shop.product.index.content.body.main.filters.controls.sorting':
+            menu:
+                component: 'gally_shop:product:sorting'
+                props:
+                    template: '@GallySyliusPlugin/shop/product/index/content/body/main/filters/controls/sorting/menu.html.twig'
+                template: ~
+            toggle:
+                enabled: false
