@@ -14,7 +14,8 @@ declare(strict_types=1);
 
 namespace Gally\SyliusPlugin\Indexer;
 
-use Gally\SyliusPlugin\Service\IndexOperation;
+use Gally\Sdk\Service\IndexOperation;
+use Gally\SyliusPlugin\Indexer\Provider\CatalogProvider;
 use Sylius\Component\Attribute\Model\AttributeValueInterface;
 use Sylius\Component\Core\Calculator\ProductVariantPricesCalculatorInterface;
 use Sylius\Component\Core\Model\ChannelInterface;
@@ -37,11 +38,12 @@ class ProductIndexer extends AbstractIndexer
 {
     public function __construct(
         RepositoryInterface $channelRepository,
+        CatalogProvider $catalogProvider,
         IndexOperation $indexOperation,
         private ProductRepositoryInterface $productRepository,
-        private ProductVariantPricesCalculatorInterface $productVariantPriceCalculator
+        private ProductVariantPricesCalculatorInterface $productVariantPriceCalculator,
     ) {
-        parent::__construct($channelRepository, $indexOperation);
+        parent::__construct($channelRepository, $catalogProvider, $indexOperation);
     }
 
     public function getEntityType(): string
@@ -52,7 +54,7 @@ class ProductIndexer extends AbstractIndexer
     public function getDocumentsToIndex(
         ChannelInterface $channel,
         LocaleInterface $locale,
-        array $documentIdsToReindex
+        array $documentIdsToReindex,
     ): iterable {
         $products = [];
 
@@ -170,7 +172,7 @@ class ProductIndexer extends AbstractIndexer
         ];
 
         foreach ($variant->getOptionValues() as $optionValue) {
-            /** @var ProductOptionValueInterface $optionValue */
+            /* @var ProductOptionValueInterface $optionValue */
             $data[$optionValue->getOption()->getCode()][] = [
                 'value' => $optionValue->getCode(),
                 'label' => $optionValue->getTranslation($locale->getCode())->getValue(),

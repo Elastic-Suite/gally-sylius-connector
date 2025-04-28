@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- Gally version: 1.3.x
+- Gally version: 2.0.x
 - Sylius version: 1.12.x
 
 ## Usage

@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Gally\SyliusPlugin\Grid\Filter;
 
-use Gally\SyliusPlugin\Service\FilterConverter;
+use Gally\SyliusPlugin\Search\FilterConverter;
 use Sylius\Component\Grid\Data\DataSourceInterface;
 use Sylius\Component\Grid\Filtering\FilterInterface;
 

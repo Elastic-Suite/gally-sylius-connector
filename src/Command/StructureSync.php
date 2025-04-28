@@ -14,7 +14,8 @@ declare(strict_types=1);
 
 namespace Gally\SyliusPlugin\Command;
 
-use Gally\SyliusPlugin\Synchronizer\AbstractSynchronizer;
+use Gally\Sdk\Service\StructureSynchonizer;
+use Gally\SyliusPlugin\Indexer\Provider\ProviderInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -23,13 +24,23 @@ class StructureSync extends Command
 {
     protected static $defaultName = 'gally:structure:sync';
 
+    /** @var ProviderInterface[] */
+    protected array $providers;
+    protected array $syncMethod = [
+        'catalog' => 'syncAllLocalizedCatalogs',
+        'sourceField' => 'syncAllSourceFields',
+        'sourceFieldOption' => 'syncAllSourceFieldOptions',
+    ];
+
     /**
-     * @param AbstractSynchronizer[] $synchronizers
+     * @param iterable<ProviderInterface> $providers
      */
     public function __construct(
-        private iterable $synchronizers
+        protected StructureSynchonizer $synchonizer,
+        iterable $providers,
     ) {
         parent::__construct();
+        $this->providers = iterator_to_array($providers);
     }
 
     protected function configure(): void
@@ -40,14 +51,16 @@ class StructureSync extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln('');
-        foreach ($this->synchronizers as $synchronizer) {
+
+        foreach ($this->syncMethod as $entity => $method) {
+            $message = "<comment>Sync $entity</comment>";
             $time = microtime(true);
-            $message = "<comment>Sync {$synchronizer->getEntityClass()}</comment>";
             $output->writeln("$message ...");
-            $synchronizer->synchronizeAll();
+            $this->synchonizer->{$method}($this->providers[$entity]->provide());
             $time = number_format(microtime(true) - $time, 2);
             $output->writeln("\033[1A$message <info>✔</info> ($time)s");
         }
+
         $output->writeln('');
 
         return 0;

@@ -14,7 +14,8 @@ declare(strict_types=1);
 
 namespace Gally\SyliusPlugin\Indexer;
 
-use Gally\SyliusPlugin\Service\IndexOperation;
+use Gally\Sdk\Service\IndexOperation;
+use Gally\SyliusPlugin\Indexer\Provider\CatalogProvider;
 use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\TaxonInterface;
 use Sylius\Component\Locale\Model\LocaleInterface;
@@ -31,16 +32,15 @@ use Sylius\Component\Taxonomy\Repository\TaxonRepositoryInterface;
  */
 class CategoryIndexer extends AbstractIndexer
 {
-    private TaxonRepositoryInterface $taxonRepository;
     private $pathCache = [];
 
     public function __construct(
         RepositoryInterface $channelRepository,
+        CatalogProvider $catalogProvider,
         IndexOperation $indexOperation,
-        TaxonRepositoryInterface $taxonRepository
+        private TaxonRepositoryInterface $taxonRepository,
     ) {
-        parent::__construct($channelRepository, $indexOperation);
-        $this->taxonRepository = $taxonRepository;
+        parent::__construct($channelRepository, $catalogProvider, $indexOperation);
     }
 
     public function getEntityType(): string
@@ -51,10 +51,8 @@ class CategoryIndexer extends AbstractIndexer
     public function getDocumentsToIndex(
         ChannelInterface $channel,
         LocaleInterface $locale,
-        array $documentIdsToReindex
+        array $documentIdsToReindex,
     ): iterable {
-        $taxons = [];
-
         if (!empty($documentIdsToReindex)) {
             $taxons = $this->taxonRepository->findBy(['id' => $documentIdsToReindex]);
 

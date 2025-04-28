@@ -17,12 +17,15 @@ namespace Gally\SyliusPlugin\Grid\Gally;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
+use Gally\Sdk\Service\SearchManager;
+use Gally\SyliusPlugin\Indexer\Provider\CatalogProvider;
 use Gally\SyliusPlugin\Model\GallyChannelInterface;
-use Gally\SyliusPlugin\Search\Adapter;
 use Sylius\Bundle\GridBundle\Doctrine\ORM\DataSource as ORMDataSource;
+use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Grid\Data\DataSourceInterface;
 use Sylius\Component\Grid\Data\DriverInterface;
 use Sylius\Component\Grid\Parameters;
+use Sylius\Component\Locale\Model\Locale;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 final class Driver implements DriverInterface
@@ -31,8 +34,9 @@ final class Driver implements DriverInterface
 
     public function __construct(
         private ManagerRegistry $managerRegistry,
-        private Adapter $adapter,
-        private EventDispatcherInterface $eventDispatcher
+        private CatalogProvider $catalogProvider,
+        private SearchManager $searchManager,
+        private EventDispatcherInterface $eventDispatcher,
     ) {
     }
 
@@ -61,15 +65,22 @@ final class Driver implements DriverInterface
 
         $queryBuilder = $repository->{$method}(...$arguments);
 
+        /** @var ChannelInterface $channel */
         $channel = $configuration['repository']['arguments']['channel'];
+        $localeCode = $configuration['repository']['arguments']['locale'];
+
+        /** @var EntityRepository $localeRepository */
+        $localeRepository = $manager->getRepository(Locale::class);
+        $locale = $localeRepository->findOneBy(['code' => $localeCode]);
         if (($channel instanceof GallyChannelInterface) && $channel->getGallyActive()) {
+            $currentLocalizedCatalog = $this->catalogProvider->buildLocalizedCatalog($channel, $locale);
+
             return new DataSource(
                 $queryBuilder,
-                $this->adapter,
+                $this->searchManager,
                 $this->eventDispatcher,
-                $configuration['repository']['arguments']['channel'],
+                $currentLocalizedCatalog,
                 $configuration['repository']['arguments']['taxon'],
-                $configuration['repository']['arguments']['locale']
             );
         }
 

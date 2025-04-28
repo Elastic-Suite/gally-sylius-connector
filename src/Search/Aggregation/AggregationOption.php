@@ -22,7 +22,7 @@ class AggregationOption
     public function __construct(
         private string $label,
         private string $value,
-        private int $count
+        private int $count,
     ) {
     }
 

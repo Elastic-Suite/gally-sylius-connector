@@ -15,11 +15,14 @@ declare(strict_types=1);
 namespace Gally\SyliusPlugin\Grid\Gally;
 
 use Doctrine\ORM\QueryBuilder;
+use Gally\Sdk\Entity\LocalizedCatalog;
+use Gally\Sdk\Entity\Metadata;
+use Gally\Sdk\GraphQl\Request;
+use Gally\Sdk\Service\SearchManager;
 use Gally\SyliusPlugin\Event\GridFilterUpdateEvent;
-use Gally\SyliusPlugin\Search\Adapter;
+use Gally\SyliusPlugin\Search\Aggregation\AggregationBuilder;
 use Gally\SyliusPlugin\Search\Result;
 use Pagerfanta\Adapter\AdapterInterface;
-use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Core\Model\ProductInterface;
 use Sylius\Component\Core\Model\TaxonInterface;
 use Sylius\Component\Grid\Parameters;
@@ -31,13 +34,12 @@ class PagerfantaGallyAdapter implements AdapterInterface
 
     public function __construct(
         private QueryBuilder $queryBuilder,
-        private Adapter $adapter,
+        private SearchManager $searchManager,
         private EventDispatcherInterface $eventDispatcher,
-        private ChannelInterface $channel,
+        private LocalizedCatalog $currentLocalizedCatalog,
         private TaxonInterface $taxon,
-        private string $locale,
         private array $filters,
-        private Parameters $parameters
+        private Parameters $parameters,
     ) {
     }
 
@@ -50,37 +52,50 @@ class PagerfantaGallyAdapter implements AdapterInterface
         return $this->gallyResult->getAggregations();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getNbResults(): int
     {
         if (null === $this->gallyResult) {
-            return 0;
+            return 1;
         }
 
         return $this->gallyResult->getTotalResultCount();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getSlice(int $offset, int $length): iterable
     {
-        $offset = $offset > 0 ? $offset : 1;
-
         $criteria = $this->parameters->get('criteria', []);
         $search = (isset($criteria['search'], $criteria['search']['value'])) ? $criteria['search']['value'] : '';
+        $sorting = $this->parameters->get('sorting', []);
+        $sortField = array_key_first($sorting);
+        $sortDirection = $sorting[$sortField] ?? null;
 
-        $this->gallyResult = $this->adapter->search(
-            $this->channel,
-            $this->taxon,
-            $this->locale,
-            $this->filters,
-            $this->parameters->get('sorting', []),
+        $request = new Request(
+            $this->currentLocalizedCatalog,
+            new Metadata('product'),
+            false,
+            ['sku', 'source'],
+            (int) $this->parameters->get('page', 1),
+            $length,
+            str_replace('/', '_', (string) $this->taxon->getCode()),
             $search,
+            $this->filters,
+            $sortField,
+            $sortDirection
+        );
+        $response = $this->searchManager->search($request);
+        $productNumbers = [];
+        foreach ($response->getCollection() as $productRawData) {
+            $productNumbers[$productRawData['sku']] = $productRawData['source']['children.sku'] ?? [];
+        }
+
+        $this->gallyResult = new Result(
+            $productNumbers,
+            $response->getTotalCount(),
             $offset,
-            $length
+            $response->getItemsPerPage(),
+            $response->getSortField(),
+            $response->getSortDirection(),
+            AggregationBuilder::build($response->getAggregations())
         );
 
         $this->eventDispatcher->dispatch(new GridFilterUpdateEvent($this->gallyResult), 'gally.grid.configure_filter');
@@ -110,7 +125,7 @@ class PagerfantaGallyAdapter implements AdapterInterface
     private function sortProductResults(array $productNumbers, array $products): array
     {
         foreach ($products as $product) {
-            /** @var ProductInterface $product */
+            /* @var ProductInterface $product */
             $productNumbers[$product->getCode()] = $product;
         }
 

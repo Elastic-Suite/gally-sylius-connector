@@ -3,15 +3,51 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
-        <service id="Gally\SyliusPlugin\Search\Adapter">
-            <argument type="service" id="Gally\SyliusPlugin\Api\GraphQlClient" />
-            <argument type="service" id="Gally\SyliusPlugin\Search\ResultBuilder" />
+        <service id="Gally\SyliusPlugin\ContextProvider\GallyEnabledContextProvider">
+            <argument type="service" id="sylius.context.channel" />
+            <tag name="sylius.ui.template_event.context_provider" />
+        </service>
+        <service id="Gally\SyliusPlugin\ContextProvider\SortOptionContextProvider">
+            <argument type="service" id="Gally\Sdk\Service\SearchManager" />
+            <argument type="service" id="request_stack" />
+            <argument type="service" id="translator" />
+            <argument type="service" id="sylius.context.channel" />
+            <tag name="sylius.ui.template_event.context_provider" />
         </service>
 
-        <service id="Gally\SyliusPlugin\Search\Aggregation\AggregationBuilder" />
+        <service id="Gally\SyliusPlugin\Search\FilterConverter" />
 
-        <service id="Gally\SyliusPlugin\Search\ResultBuilder">
-            <argument type="service" id="Gally\SyliusPlugin\Search\Aggregation\AggregationBuilder" />
+        <service id="Gally\SyliusPlugin\Grid\Gally\Driver">
+            <argument type="service" id="doctrine" />
+            <argument type="service" id="Gally\SyliusPlugin\Indexer\Provider\CatalogProvider" />
+            <argument type="service" id="Gally\Sdk\Service\SearchManager" />
+            <argument type="service" id="event_dispatcher" />
+            <tag name="sylius.grid_driver" alias="gally/rest" />
+        </service>
+        <service id="sylius.grid_driver.gally.rest" alias="Gally\SyliusPlugin\Grid\Gally\Driver" />
+
+        <service id="sylius.grid.data_provider" class="Gally\SyliusPlugin\Grid\DataProvider">
+            <argument type="service" id="sylius.grid.data_source_provider" />
+            <argument type="service" id="sylius.grid.filters_applicator" />
+            <argument type="service" id="sylius.grid.sorter" />
+            <argument type="service" id="sylius.context.channel" />
+        </service>
+
+        <service id="Gally\SyliusPlugin\Grid\Filter\GallyDynamicFilter">
+            <argument type="service" id="Gally\SyliusPlugin\Search\FilterConverter" />
+            <tag name="sylius.grid_filter" type="gally_dynamic_filter" form_type="Gally\SyliusPlugin\Form\Type\Filter\GallyDynamicFilterType" />
+        </service>
+
+        <service id="Gally\SyliusPlugin\Form\Type\Filter\GallyDynamicFilterType" autoconfigure="true">
+            <argument type="service" id="router" />
+            <argument type="service" id="request_stack" />
+            <argument type="service" id="sylius.repository.taxon" />
+            <argument type="service" id="sylius.context.locale" />
+            <tag name="kernel.event_listener" event="gally.grid.configure_filter" method="onFilterUpdate" />
+        </service>
+
+        <service id="sylius.form.type.grid_filter.select" class="Sylius\Bundle\GridBundle\Form\Type\Filter\SelectFilterType">
+            <tag name="form.type" />
         </service>
     </services>
 </container>

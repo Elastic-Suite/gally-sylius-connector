@@ -14,12 +14,14 @@ declare(strict_types=1);
 
 namespace Gally\SyliusPlugin\Controller;
 
-use Gally\SyliusPlugin\Api\AuthenticationTokenProvider;
+use Gally\Sdk\Client\Client;
+use Gally\Sdk\Client\Configuration;
+use Gally\Sdk\Service\StructureSynchonizer;
 use Gally\SyliusPlugin\Form\Type\GallyConfigurationType;
 use Gally\SyliusPlugin\Form\Type\SyncSourceFieldsType;
 use Gally\SyliusPlugin\Form\Type\TestConnectionType;
+use Gally\SyliusPlugin\Indexer\Provider\ProviderInterface;
 use Gally\SyliusPlugin\Repository\GallyConfigurationRepository;
-use Gally\SyliusPlugin\Synchronizer\SourceFieldSynchronizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,12 +29,21 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class AdminGallyController extends AbstractController
 {
+    /** @var ProviderInterface[] */
+    protected array $providers;
+    protected array $syncMethod = [
+        'catalog' => 'syncAllLocalizedCatalogs',
+        'sourceField' => 'syncAllSourceFields',
+        'sourceFieldOption' => 'syncAllSourceFieldOptions',
+    ];
+
     public function __construct(
         private GallyConfigurationRepository $gallyConfigurationRepository,
-        private AuthenticationTokenProvider $authenticationTokenProvider,
-        private SourceFieldSynchronizer $sourceFieldSynchronizer,
+        protected StructureSynchonizer $synchonizer,
+        \IteratorAggregate $providers,
         private TranslatorInterface $translator,
     ) {
+        $this->providers = iterator_to_array($providers);
     }
 
     public function renderGallyConfigForm(Request $request): Response
@@ -63,12 +74,15 @@ final class AdminGallyController extends AbstractController
 
         if ($testForm->isSubmitted() && $testForm->isValid()) {
             try {
-                $configuration = $this->gallyConfigurationRepository->getConfiguration();
-                $this->authenticationTokenProvider->getAuthenticationToken(
-                    $configuration->getBaseUrl(),
-                    $configuration->getUserName(),
-                    $configuration->getPassword(),
+                $configuration = new Configuration(
+                    $gallyConfiguration->getBaseUrl(),
+                    $gallyConfiguration->getCheckSSL(),
+                    $gallyConfiguration->getUserName(),
+                    $gallyConfiguration->getPassword()
                 );
+                $client = new Client($configuration);
+                $client->get('indices');
+
                 $this->addFlash('success', $this->translator->trans('gally_sylius.ui.test_connection_success'));
             } catch (\Exception $e) {
                 $this->addFlash(
@@ -92,7 +106,9 @@ final class AdminGallyController extends AbstractController
         $syncForm->handleRequest($request);
 
         if ($syncForm->isSubmitted() && $syncForm->isValid()) {
-            $this->sourceFieldSynchronizer->synchronizeAll();
+            foreach ($this->syncMethod as $entity => $method) {
+                $this->synchonizer->{$method}($this->providers[$entity]->provide());
+            }
 
             $this->addFlash('success', $this->translator->trans('gally_sylius.ui.sync_success'));
         }

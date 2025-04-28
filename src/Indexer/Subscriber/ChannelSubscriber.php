@@ -12,17 +12,20 @@
 
 declare(strict_types=1);
 
-namespace Gally\SyliusPlugin\Synchronizer\Subscriber;
+namespace Gally\SyliusPlugin\Indexer\Subscriber;
 
+use Gally\Sdk\Service\StructureSynchonizer;
+use Gally\SyliusPlugin\Indexer\Provider\CatalogProvider;
 use Gally\SyliusPlugin\Model\GallyChannelInterface;
-use Gally\SyliusPlugin\Synchronizer\CatalogSynchronizer;
+use Sylius\Component\Locale\Model\LocaleInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 final class ChannelSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private CatalogSynchronizer $catalogSynchronizer
+        private CatalogProvider $catalogProvider,
+        private StructureSynchonizer $synchonizer,
     ) {
     }
 
@@ -42,7 +45,11 @@ final class ChannelSubscriber implements EventSubscriberInterface
                 return;
             }
 
-            $this->catalogSynchronizer->synchronizeItem(['channel' => $channel]);
+            /** @var LocaleInterface $locale */
+            foreach ($channel->getLocales() as $locale) {
+                $localizedCatalog = $this->catalogProvider->buildLocalizedCatalog($channel, $locale);
+                $this->synchonizer->syncLocalizedCatalog($localizedCatalog);
+            }
         }
     }
 }

@@ -20,6 +20,10 @@ interface GallyConfigurationInterface
 
     public function setBaseUrl(string $baseUrl): void;
 
+    public function getCheckSSL(): bool;
+
+    public function setCheckSSL(bool $checkSSL): void;
+
     public function getUserName(): string;
 
     public function setUserName(string $userName): void;
