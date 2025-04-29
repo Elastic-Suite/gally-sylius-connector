@@ -107,6 +107,7 @@ final class AdminGallyController extends AbstractController
 
         if ($syncForm->isSubmitted() && $syncForm->isValid()) {
             foreach ($this->syncMethod as $entity => $method) {
+                // @phpstan-ignore-next-line
                 $this->synchonizer->{$method}($this->providers[$entity]->provide());
             }
 

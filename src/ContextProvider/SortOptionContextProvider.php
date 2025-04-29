@@ -72,7 +72,7 @@ class SortOptionContextProvider implements ContextProviderInterface
                 }
             }
 
-            if ($search) {
+            if ((bool) $search) {
                 $templateContext['sort_options'][] = [
                     'field' => 'category__position',
                     'sorting' => null,
@@ -92,7 +92,7 @@ class SortOptionContextProvider implements ContextProviderInterface
             ];
 
             foreach ($templateContext['sort_options'] as $option) {
-                if (empty($templateContext['current_sorting_label'])) {
+                if ('' === $templateContext['current_sorting_label']) {
                     // set first element by default
                     $templateContext['current_sorting_label'] = strtolower($option['label']);
                 } elseif ($option['sorting'] === $currentSortOrder) {

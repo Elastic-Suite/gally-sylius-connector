@@ -53,7 +53,7 @@ class CategoryIndexer extends AbstractIndexer
         LocaleInterface $locale,
         array $documentIdsToReindex,
     ): iterable {
-        if (!empty($documentIdsToReindex)) {
+        if ([] !== $documentIdsToReindex) {
             $taxons = $this->taxonRepository->findBy(['id' => $documentIdsToReindex]);
 
             foreach ($taxons as $taxon) {

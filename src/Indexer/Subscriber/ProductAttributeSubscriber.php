@@ -63,7 +63,7 @@ final class ProductAttributeSubscriber implements EventSubscriberInterface
                             'translation' => $translation,
                         ];
                     }
-                    $defaultLabel = reset($translations)['translation'] ?: $attribute->getCode();
+                    $defaultLabel = reset($translations)['translation'] ?? $attribute->getCode();
 
                     $option = $this->sourceFieldOptionProvider->buildSourceFieldOption(
                         $sourceField,
@@ -82,7 +82,7 @@ final class ProductAttributeSubscriber implements EventSubscriberInterface
             /** @var ProductOptionValueInterface $value */
             foreach ($attribute->getValues() as $value) {
                 $translations = $value->getTranslations();
-                $defaultLabel = reset($translations)['translation'] ?: $value->getCode();
+                $defaultLabel = reset($translations)['translation'] ?? $value->getCode();
                 $option = $this->sourceFieldOptionProvider->buildSourceFieldOption(
                     $sourceField,
                     $value->getCode(),

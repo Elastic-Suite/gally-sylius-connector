@@ -63,6 +63,7 @@ final class Driver implements DriverInterface
             array_values($configuration['repository']['arguments']) : [];
         $method = $configuration['repository']['method'];
 
+        // @phpstan-ignore-next-line
         $queryBuilder = $repository->{$method}(...$arguments);
 
         /** @var ChannelInterface $channel */

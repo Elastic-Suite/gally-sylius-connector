@@ -56,6 +56,7 @@ class StructureSync extends Command
             $message = "<comment>Sync $entity</comment>";
             $time = microtime(true);
             $output->writeln("$message ...");
+            // @phpstan-ignore-next-line
             $this->synchonizer->{$method}($this->providers[$entity]->provide());
             $time = number_format(microtime(true) - $time, 2);
             $output->writeln("\033[1A$message <info>✔</info> ($time)s");

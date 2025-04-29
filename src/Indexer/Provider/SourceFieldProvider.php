@@ -75,7 +75,7 @@ class SourceFieldProvider implements ProviderInterface
         return new SourceField(
             $this->metadataCache[$entity],
             $attribute->getCode(),
-            $type ?: $this->getGallyType($attribute->getType()),
+            $type ?? $this->getGallyType($attribute->getType()),
             $defaultLabel,
             $this->getLabels($translations, $defaultLabel),
         );
@@ -95,7 +95,7 @@ class SourceFieldProvider implements ProviderInterface
         $labels = [];
         foreach ($this->localizedCatalogs as $localizedCatalog) {
             $label = $labelsByLocal[$localizedCatalog->getLocale()] ?? null;
-            if ($label && $label !== $defaultLabel) {
+            if ((bool) $label && $label !== $defaultLabel) {
                 $labels[] = new Label($localizedCatalog, $label);
             }
         }

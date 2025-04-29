@@ -50,7 +50,7 @@ final class Filter extends AbstractController
         $gallyFilters = [];
         foreach ($filters as $field => $value) {
             $gallyFilter = $this->filterConverter->convert($field, $value);
-            if ($gallyFilter) {
+            if ((bool) $gallyFilter) {
                 $gallyFilters[] = $gallyFilter;
             }
         }

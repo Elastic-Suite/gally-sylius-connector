@@ -65,7 +65,7 @@ class SourceFieldOptionProvider implements ProviderInterface
                         ];
                     }
                     $sourceField = new SourceField($metadata, $attribute->getCode(), '', '', []);
-                    $defaultLabel = reset($translations)['translation'] ?: $attribute->getCode();
+                    $defaultLabel = reset($translations)['translation'] ?? $attribute->getCode();
 
                     yield $this->buildSourceFieldOption(
                         $sourceField,
@@ -85,7 +85,7 @@ class SourceFieldOptionProvider implements ProviderInterface
             foreach ($option->getValues() as $value) {
                 $sourceField = new SourceField($metadata, $option->getCode(), '', '', []);
                 $translations = $value->getTranslations();
-                $defaultLabel = reset($translations)['translation'] ?: $value->getCode();
+                $defaultLabel = reset($translations)['translation'] ?? $value->getCode();
 
                 yield $this->buildSourceFieldOption(
                     $sourceField,
