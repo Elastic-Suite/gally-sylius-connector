@@ -5,5 +5,5 @@
 {% endblock %}
 
 {% block body %}
-    {% hook ['gally_admin.config.form', 'sylius_admin.common.index'] with { connectionForm, testForm, syncForm } %}
+    {% hook ['gally_admin.gally.index', 'sylius_admin.common.index'] with { connectionForm, testForm, syncForm } %}
 {% endblock %}
