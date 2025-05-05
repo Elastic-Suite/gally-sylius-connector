@@ -32,6 +32,8 @@ class SourceFieldProvider implements ProviderInterface
 {
     /** @var LocalizedCatalog[] */
     private array $localizedCatalogs = [];
+
+    /** @var \Gally\Sdk\Entity\Metadata[] */
     private array $metadataCache = [];
 
     public function __construct(
@@ -68,27 +70,30 @@ class SourceFieldProvider implements ProviderInterface
             $this->metadataCache[$entity] = new Metadata($entity);
         }
 
-        /** @var Collection<ProductAttributeTranslation|ProductOptionTranslation> $translations */
+        /** @var Collection<string,ProductAttributeTranslation|ProductOptionTranslation> $translations */
         $translations = $attribute->getTranslations();
-        $defaultLabel = $translations->first()->getName();
+        $defaultLabel = $translations->first() ? $translations->first()->getName() : '';
 
+        /** @var \Gally\Sdk\Entity\Label[] $labels */
+        $labels = $this->getLabels($translations, (string) $defaultLabel);
         return new SourceField(
             $this->metadataCache[$entity],
-            $attribute->getCode(),
+            (string) $attribute->getCode(),
+            // @phpstan-ignore-next-line
             $type ?: $this->getGallyType($attribute->getType()),
-            $defaultLabel,
-            $this->getLabels($translations, $defaultLabel),
+            (string) $defaultLabel,
+            $labels,
         );
     }
 
     /**
-     * @param Collection<ProductAttributeTranslation|ProductOptionTranslation> $translations
+     * @param Collection<string, ProductAttributeTranslation|ProductOptionTranslation> $translations
      */
     private function getLabels(Collection $translations, string $defaultLabel): array
     {
         $labelsByLocal = [];
         foreach ($translations as $translation) {
-            $locale = str_replace('-', '_', $translation->getLocale());
+            $locale = str_replace('-', '_', (string) $translation->getLocale());
             $labelsByLocal[$locale] = $translation->getName();
         }
 

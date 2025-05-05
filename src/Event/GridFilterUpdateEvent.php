@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Gally\SyliusPlugin\Event;
 
+use Gally\SyliusPlugin\Search\Aggregation\Aggregation;
 use Gally\SyliusPlugin\Search\Result;
 use Symfony\Contracts\EventDispatcher\Event;
 
@@ -23,6 +24,9 @@ final class GridFilterUpdateEvent extends Event
     {
     }
 
+    /**
+     * @return Aggregation[]
+     */
     public function getAggregations(): array
     {
         return $this->gallyResult->getAggregations();

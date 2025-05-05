@@ -25,6 +25,7 @@ use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
 #[AsTwigComponent]
 class SortOptionComponent
 {
+    /** @var string[] */
     private array $translationKeys = [
         'name.asc' => 'sylius.ui.from_a_to_z',
         'name.desc' => 'sylius.ui.from_z_to_a',
@@ -32,6 +33,7 @@ class SortOptionComponent
         'price__price.desc' => 'sylius.ui.most_expensive_first',
     ];
 
+    /** @var array<string, list<array<string, array<string, string>|string|null>>|string>|null  */
     private ?array $sortData = null;
 
     public function __construct(
@@ -42,16 +44,23 @@ class SortOptionComponent
     ) {
     }
 
+    /**
+     * @return array<string, list<array<string, array<string, string>|string|null>>|string>
+     */
     protected function getSortData(): array
     {
         if (null !== $this->sortData) {
             return $this->sortData;
         }
-
-        $currentSortOrder = $this->requestStack->getMainRequest()->get('sorting', []);
-        $criteria = $this->requestStack->getMainRequest()->get('criteria', []);
+        $currentSortOrder = $this->requestStack->getMainRequest()?->get('sorting', []);
+        /** @var array $currentSortOrder */
+        $currentSortOrder = $currentSortOrder ?? [];
+        $criteria = $this->requestStack->getMainRequest()?->get('criteria', []);
+        /** @var array<string, array<string, string>> $criteria */
+        $criteria = $criteria ?? [];
         $search = (isset($criteria['search'], $criteria['search']['value'])) ? $criteria['search']['value'] : '';
 
+        $sortData = [];
         $sortData['current_sorting_label'] = '';
         $sortData['sort_options'] = [
             ['field' => 'category__position', 'sorting' => null, 'label' => $this->translator->trans('sylius.ui.by_position')],
@@ -117,12 +126,14 @@ class SortOptionComponent
     #[ExposeInTemplate('current_sorting_label')]
     public function currentSortingLabel(): string
     {
-        return $this->getSortData()['current_sorting_label'] ?? '';
+        $currentSortingLabel = $this->getSortData()['current_sorting_label'] ?? '';
+        return is_string($currentSortingLabel) ? $currentSortingLabel : '';
     }
 
     #[ExposeInTemplate('sort_options')]
     public function sortOptions(): array
     {
-        return $this->getSortData()['sort_options'] ?? [];
+        $sortOptions = $this->getSortData()['sort_options'] ?? [];
+        return !is_string($sortOptions) ? $sortOptions : [];
     }
 }

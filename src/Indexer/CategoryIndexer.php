@@ -32,8 +32,15 @@ use Sylius\Component\Taxonomy\Repository\TaxonRepositoryInterface;
  */
 class CategoryIndexer extends AbstractIndexer
 {
-    private $pathCache = [];
+    /** @var string[]  */
+    private array $pathCache = [];
 
+    /**
+     * @param RepositoryInterface $channelRepository
+     * @param CatalogProvider $catalogProvider
+     * @param IndexOperation $indexOperation
+     * @param TaxonRepositoryInterface<TaxonInterface> $taxonRepository
+     */
     public function __construct(
         RepositoryInterface $channelRepository,
         CatalogProvider $catalogProvider,
@@ -71,14 +78,15 @@ class CategoryIndexer extends AbstractIndexer
         } else {
             $menuTaxon = $channel->getMenuTaxon();
 
+            /** @var iterable<TaxonInterface> $taxons */
             $taxons = $this->taxonRepository->createQueryBuilder('o') /* @phpstan-ignore-line */
                 ->where('o.root = :taxon_id')
                 ->andWhere('o.left >= :taxon_left')
                 ->orderBy('o.left', 'ASC')
                 ->getQuery()
                 ->execute([
-                    'taxon_id' => $menuTaxon->getId(),
-                    'taxon_left' => $menuTaxon->getLeft(),
+                    'taxon_id' => $menuTaxon?->getId(),
+                    'taxon_left' => $menuTaxon?->getLeft(),
                 ]);
 
             foreach ($taxons as $taxon) {

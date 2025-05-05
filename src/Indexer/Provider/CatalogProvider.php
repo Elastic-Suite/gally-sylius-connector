@@ -25,6 +25,7 @@ use Sylius\Component\Resource\Repository\RepositoryInterface;
  */
 class CatalogProvider implements ProviderInterface
 {
+    /** @var array<Catalog> */
     private array $catalogCache = [];
 
     public function __construct(
@@ -49,21 +50,21 @@ class CatalogProvider implements ProviderInterface
         }
     }
 
-    public function buildLocalizedCatalog(ChannelInterface $channel, LocaleInterface|string $locale): LocalizedCatalog
+    public function buildLocalizedCatalog(ChannelInterface $channel, LocaleInterface $locale): LocalizedCatalog
     {
-        if (!\array_key_exists($channel->getCode(), $this->catalogCache)) {
+        if (!\array_key_exists((string) $channel->getCode(), $this->catalogCache)) {
             $this->catalogCache[$channel->getCode()] = new Catalog(
-                $channel->getCode(),
-                $channel->getName(),
+                (string) $channel->getCode(),
+                (string) $channel->getName(),
             );
         }
 
         return new LocalizedCatalog(
             $this->catalogCache[$channel->getCode()],
             $channel->getCode() . '_' . $locale->getCode(),
-            $locale->getName(),
-            str_replace('-', '_', $locale->getCode()),
-            $channel->getBaseCurrency()->getCode(),
+            (string) $locale->getName(),
+            str_replace('-', '_', (string) $locale->getCode()),
+            (string) $channel->getBaseCurrency()?->getCode(),
         );
     }
 }

@@ -28,6 +28,9 @@ use Sylius\Component\Core\Model\TaxonInterface;
 use Sylius\Component\Grid\Parameters;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * @implements AdapterInterface<ProductInterface>
+ */
 class PagerfantaGallyAdapter implements AdapterInterface
 {
     private ?Result $gallyResult = null;
@@ -58,36 +61,44 @@ class PagerfantaGallyAdapter implements AdapterInterface
             return 1;
         }
 
-        return $this->gallyResult->getTotalResultCount();
+        return max($this->gallyResult->getTotalResultCount(), 0);
     }
 
     public function getSlice(int $offset, int $length): iterable
     {
+        /** @var array<string, array<string, string>> $criteria */
         $criteria = $this->parameters->get('criteria', []);
         $search = (isset($criteria['search'], $criteria['search']['value'])) ? $criteria['search']['value'] : '';
+        /** @var array<string> $sorting */
         $sorting = $this->parameters->get('sorting', []);
         $sortField = array_key_first($sorting);
         $sortDirection = $sorting[$sortField] ?? null;
+        /** @var int|string $page */
+        $page = $this->parameters->get('page', 1);
 
         $request = new Request(
             $this->currentLocalizedCatalog,
             new Metadata('product'),
             false,
             ['sku', 'source'],
-            (int) $this->parameters->get('page', 1),
+            (int) $page,
             $length,
             str_replace('/', '_', (string) $this->taxon->getCode()),
             $search,
             $this->filters,
-            $sortField,
+            (string) $sortField,
             $sortDirection
         );
         $response = $this->searchManager->search($request);
         $productNumbers = [];
+        /** @var array<string, array<mixed>|string> $productRawData */
         foreach ($response->getCollection() as $productRawData) {
-            $productNumbers[$productRawData['sku']] = $productRawData['source']['children.sku'] ?? [];
+            /** @var string $sku */
+            $sku = $productRawData['sku'];
+            $productNumbers[$sku] = true;
         }
-
+        /** @var array<array<string, array<string, array<string, string>>|string|bool>> $aggregationsData */
+        $aggregationsData  = $response->getAggregations();
         $this->gallyResult = new Result(
             $productNumbers,
             $response->getTotalCount(),
@@ -95,7 +106,7 @@ class PagerfantaGallyAdapter implements AdapterInterface
             $response->getItemsPerPage(),
             $response->getSortField(),
             $response->getSortDirection(),
-            AggregationBuilder::build($response->getAggregations())
+            AggregationBuilder::build($aggregationsData)
         );
 
         $this->eventDispatcher->dispatch(new GridFilterUpdateEvent($this->gallyResult), 'gally.grid.configure_filter');
@@ -114,6 +125,7 @@ class PagerfantaGallyAdapter implements AdapterInterface
         $this->queryBuilder->andWhere('o.code IN (:code)');
         $this->queryBuilder->setParameter('code', array_keys($this->gallyResult->getProductNumbers()));
 
+        /** @var array<ProductInterface> $products */
         $products = $this->queryBuilder->getQuery()->execute();
 
         return $this->sortProductResults($this->gallyResult->getProductNumbers(), $products);
@@ -121,6 +133,8 @@ class PagerfantaGallyAdapter implements AdapterInterface
 
     /**
      * @param ProductInterface[] $products
+     *
+     * @return array<(int|string), ProductInterface>
      */
     private function sortProductResults(array $productNumbers, array $products): array
     {
@@ -129,6 +143,7 @@ class PagerfantaGallyAdapter implements AdapterInterface
             $productNumbers[$product->getCode()] = $product;
         }
 
+        /** @var array<(int|string), ProductInterface> $productNumbers */
         return $productNumbers;
     }
 }

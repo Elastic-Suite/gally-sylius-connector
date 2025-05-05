@@ -33,6 +33,7 @@ class GallyDynamicFilter implements FilterInterface
             return;
         }
 
+        /** @var array<string, mixed> $data */
         foreach ($data as $field => $value) {
             $gallyFilter = $this->filterConverter->convert($field, $value);
             if ($gallyFilter) {

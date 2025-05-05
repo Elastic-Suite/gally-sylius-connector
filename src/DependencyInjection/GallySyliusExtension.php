@@ -33,7 +33,11 @@ final class GallySyliusExtension extends AbstractResourceExtension implements Pr
 
         $loader->load('services.xml');
 
-        $this->registerResources('gally_sylius', $config['driver'], $config['resources'], $container);
+        /** @var string $driver */
+        $driver = $config['driver'];
+        /** @var array $resources */
+        $resources = $config['resources'];
+        $this->registerResources('gally_sylius', $driver, $resources, $container);
     }
 
     public function prepend(ContainerBuilder $container): void

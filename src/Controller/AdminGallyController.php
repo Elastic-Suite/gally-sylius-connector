@@ -16,6 +16,7 @@ namespace Gally\SyliusPlugin\Controller;
 
 use Gally\Sdk\Service\StructureSynchonizer;
 use Gally\SyliusPlugin\Config\ConfigManager;
+use Gally\SyliusPlugin\Entity\GallyConfiguration;
 use Gally\SyliusPlugin\Form\Type\GallyConfigurationType;
 use Gally\SyliusPlugin\Form\Type\SyncSourceFieldsType;
 use Gally\SyliusPlugin\Form\Type\TestConnectionType;
@@ -30,6 +31,8 @@ final class AdminGallyController extends AbstractController
 {
     /** @var ProviderInterface[] */
     protected array $providers;
+
+    /** @var array<string, string>  */
     protected array $syncMethod = [
         'catalog' => 'syncAllLocalizedCatalogs',
         'sourceField' => 'syncAllSourceFields',
@@ -43,7 +46,9 @@ final class AdminGallyController extends AbstractController
         \IteratorAggregate $providers,
         private TranslatorInterface $translator,
     ) {
-        $this->providers = iterator_to_array($providers);
+        /** @var  ProviderInterface[] $providersArray */
+        $providersArray = iterator_to_array($providers);
+        $this->providers = $providersArray;
     }
 
     public function renderGallyConfigForm(Request $request): Response
@@ -53,6 +58,7 @@ final class AdminGallyController extends AbstractController
         $configForm->handleRequest($request);
 
         if ($configForm->isSubmitted() && $configForm->isValid()) {
+            /** @var GallyConfiguration $gallyConfiguration */
             $gallyConfiguration = $configForm->getData();
 
             $this->gallyConfigurationRepository->add($gallyConfiguration);

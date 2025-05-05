@@ -1,7 +1,6 @@
 parameters:
-    level: 5
+    level: max
     reportUnmatchedIgnoredErrors: false
-    treatPhpDocTypesAsCertain: false
     paths:
         - src
 
@@ -10,7 +9,10 @@ parameters:
         - 'src/DependencyInjection/Configuration.php'
 
         # Test dependencies
-        - 'tests/Application/**/**.php'
+        - 'tests/Application/app/**.php'
+        - 'tests/Application/src/**.php'
 
     ignoreErrors:
         - '/Parameter #1 \$configuration of method Symfony\\Component\\DependencyInjection\\Extension\\Extension::processConfiguration\(\) expects Symfony\\Component\\Config\\Definition\\ConfigurationInterface, Symfony\\Component\\Config\\Definition\\ConfigurationInterface\|null given\./'
+        -
+            identifier: missingType.iterableValue

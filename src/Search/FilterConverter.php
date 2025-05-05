@@ -36,6 +36,10 @@ class FilterConverter
         }
 
         if (str_contains($field, '_slider')) {
+            if (!is_string($value)) {
+                return null;
+            }
+
             $field = str_replace('_slider', '', $field);
             $values = explode('|', $value, 2);
 

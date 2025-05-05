@@ -48,7 +48,7 @@ class ProductSubscriber implements EventSubscriberInterface
     {
         $variant = $event->getSubject();
         if ($variant instanceof ProductVariantInterface) {
-            $this->productIndexer->reindex([$variant->getProduct()->getId()]);
+            $this->productIndexer->reindex([$variant->getProduct()?->getId()]);
         }
     }
 }

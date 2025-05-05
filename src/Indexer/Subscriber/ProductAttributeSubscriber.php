@@ -54,6 +54,7 @@ final class ProductAttributeSubscriber implements EventSubscriberInterface
             if ('select' === $attribute->getType()) {
                 $position = 0;
                 $configuration = $attribute->getConfiguration();
+                /** @var array<array<string, string>|null> $choices */
                 $choices = $configuration['choices'] ?? [];
                 foreach ($choices as $code => $choice) {
                     $translations = [];
@@ -63,12 +64,13 @@ final class ProductAttributeSubscriber implements EventSubscriberInterface
                             'translation' => $translation,
                         ];
                     }
-                    $defaultLabel = reset($translations)['translation'] ?: $attribute->getCode();
+                    /** @var ?string $defaultLabel */
+                    $defaultLabel = reset($translations)['translation'] ?? $attribute->getCode();
 
                     $option = $this->sourceFieldOptionProvider->buildSourceFieldOption(
                         $sourceField,
                         $code,
-                        $defaultLabel,
+                        (string) $defaultLabel,
                         $translations,
                         ++$position,
                     );
@@ -81,12 +83,13 @@ final class ProductAttributeSubscriber implements EventSubscriberInterface
             $position = 0;
             /** @var ProductOptionValueInterface $value */
             foreach ($attribute->getValues() as $value) {
+                /** @var list<array<string, string>> $translations */
                 $translations = $value->getTranslations();
-                $defaultLabel = reset($translations)['translation'] ?: $value->getCode();
+                $defaultLabel = reset($translations)['translation'] ?? $value->getCode();
                 $option = $this->sourceFieldOptionProvider->buildSourceFieldOption(
                     $sourceField,
-                    $value->getCode(),
-                    $defaultLabel,
+                    (string) $value->getCode(),
+                    (string) $defaultLabel,
                     $translations,
                     ++$position,
                 );

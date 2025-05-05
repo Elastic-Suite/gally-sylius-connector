@@ -18,6 +18,11 @@ use Sylius\Component\Grid\Data\ExpressionBuilderInterface;
 
 class ExpressionBuilder implements ExpressionBuilderInterface
 {
+    /**
+     * @param array<string, array<array<string, mixed>>> ...$expressions
+     *
+     * @return array
+     */
     public function andX(...$expressions)
     {
         $return = [];

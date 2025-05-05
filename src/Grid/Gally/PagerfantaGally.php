@@ -17,7 +17,11 @@ namespace Gally\SyliusPlugin\Grid\Gally;
 use Pagerfanta\Pagerfanta;
 use Pagerfanta\PagerfantaInterface;
 
-class PagerfantaGally extends Pagerfanta implements PagerfantaInterface
+/**
+ * @template T
+ * @extends Pagerfanta<T>
+ */
+class PagerfantaGally extends Pagerfanta
 {
     private int $currentPage;
 
@@ -25,8 +29,10 @@ class PagerfantaGally extends Pagerfanta implements PagerfantaInterface
      * {@inheritDoc}
      *
      * Save the current page value in order to reapply it after result calculation.
+     *
+     * @phpstan-self-out self<T>
      */
-    public function setCurrentPage(int $currentPage): self
+    public function setCurrentPage(int $currentPage): PagerfantaInterface
     {
         $this->currentPage = $currentPage;
 

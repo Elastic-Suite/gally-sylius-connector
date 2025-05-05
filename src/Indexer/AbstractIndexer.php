@@ -61,6 +61,7 @@ abstract class AbstractIndexer
 
                     $batchSize = $this->getBatchSize($this->getEntityType(), $channel);
                     $bulk = [];
+                    /** @var array $document */
                     foreach ($this->getDocumentsToIndex($channel, $locale, $documentIdsToReindex) as $document) {
                         $bulk[$document['id']] = json_encode($document);
                         if (\count($bulk) >= $batchSize) {
@@ -96,7 +97,7 @@ abstract class AbstractIndexer
         return $this->localizedCatalogByChannelByLocale[$channel->getCode()][$locale->getCode()] ?? null;
     }
 
-    private function getBatchSize(string $entityType, GallyChannelInterface $channel)
+    private function getBatchSize(string $entityType, GallyChannelInterface $channel): int
     {
         switch ($entityType) {
             case 'category':

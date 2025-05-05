@@ -23,6 +23,7 @@ use Gally\Sdk\Entity\SourceFieldOption;
 use Sylius\Component\Product\Model\ProductAttribute;
 use Sylius\Component\Product\Model\ProductOption;
 use Sylius\Component\Product\Model\ProductOptionValueInterface;
+use Sylius\Component\Product\Model\ProductOptionValueTranslation;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 
 /**
@@ -55,6 +56,7 @@ class SourceFieldOptionProvider implements ProviderInterface
             if ('select' === $attribute->getType()) {
                 $position = 0;
                 $configuration = $attribute->getConfiguration();
+                /** @var array<array<string, string>|null> $choices */
                 $choices = $configuration['choices'] ?? [];
                 foreach ($choices as $code => $choice) {
                     $translations = [];
@@ -64,13 +66,14 @@ class SourceFieldOptionProvider implements ProviderInterface
                             'translation' => $translation,
                         ];
                     }
-                    $sourceField = new SourceField($metadata, $attribute->getCode(), '', '', []);
-                    $defaultLabel = reset($translations)['translation'] ?: $attribute->getCode();
+                    $sourceField = new SourceField($metadata, (string) $attribute->getCode(), '', '', []);
+                    /** @var ?string $defaultLabel */
+                    $defaultLabel = reset($translations)['translation'] ?? $attribute->getCode();
 
                     yield $this->buildSourceFieldOption(
                         $sourceField,
                         $code,
-                        $defaultLabel,
+                        (string) $defaultLabel,
                         $translations,
                         ++$position,
                     );
@@ -83,14 +86,16 @@ class SourceFieldOptionProvider implements ProviderInterface
             $position = 0;
             /** @var ProductOptionValueInterface $value */
             foreach ($option->getValues() as $value) {
-                $sourceField = new SourceField($metadata, $option->getCode(), '', '', []);
+                $sourceField = new SourceField($metadata, (string) $option->getCode(), '', '', []);
+                /** @var list<array<string, string>> $translations */
                 $translations = $value->getTranslations();
-                $defaultLabel = reset($translations)['translation'] ?: $value->getCode();
+                /** @var ?string $defaultLabel */
+                $defaultLabel = reset($translations)['translation'] ?? $value->getCode();
 
                 yield $this->buildSourceFieldOption(
                     $sourceField,
-                    $value->getCode(),
-                    $defaultLabel,
+                    (string) $value->getCode(),
+                    (string) $defaultLabel,
                     $translations,
                     ++$position,
                 );
@@ -98,28 +103,45 @@ class SourceFieldOptionProvider implements ProviderInterface
         }
     }
 
+    /**
+     * @param Collection<int, ProductOptionValueTranslation>|list<array<string, string>> $translations
+     */
     public function buildSourceFieldOption(
         SourceField $sourceField,
         string $code,
         string $defaultLabel,
         Collection|array $translations,
-        $position,
+        int $position,
     ): SourceFieldOption {
+
+        /** @var Label[] $labels */
+        $labels = $this->getLabels($translations, $defaultLabel);
         return new SourceFieldOption(
             $sourceField,
             $code,
             $position,
             $defaultLabel,
-            $this->getLabels($translations, $defaultLabel),
+            $labels,
         );
     }
 
+    /**
+     * @param Collection<int, ProductOptionValueTranslation>|list<array<string, string>> $translations
+     */
     protected function getLabels(Collection|array $translations, string $defaultLabel): array
     {
         $labelsByLocal = [];
         foreach ($translations as $translation) {
-            $locale = str_replace('-', '_', \is_object($translation) ? $translation->getLocale() : $translation['locale']);
-            $labelsByLocal[$locale] = \is_object($translation) ? $translation->getValue() : $translation['translation'];
+            $locale = str_replace(
+                '-',
+                '_',
+                $translation instanceof ProductOptionValueTranslation
+                    ? (string) $translation->getLocale()
+                    : $translation['locale']
+            );
+            $labelsByLocal[$locale] = $translation instanceof ProductOptionValueTranslation
+                ? $translation->getValue()
+                : $translation['translation'];
         }
 
         $labels = [];

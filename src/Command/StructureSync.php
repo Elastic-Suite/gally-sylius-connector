@@ -29,6 +29,8 @@ class StructureSync extends Command
 {
     /** @var ProviderInterface[] */
     protected array $providers;
+
+    /** @var array<string, string>  */
     protected array $syncMethod = [
         'catalog' => 'syncAllLocalizedCatalogs',
         'sourceField' => 'syncAllSourceFields',
