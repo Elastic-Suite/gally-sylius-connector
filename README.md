@@ -55,7 +55,7 @@
        - Run `php bin/console sylius:install:assets`
        - Run `php bin/console sylius:theme:assets:install`
     - Run `php bin/console doctrine:migrations:migrate` to update the database schema
-    - Open Sylius Admin, head to Configuration > Gally and configure the Gally endpoint (URL, credentials)
+    - Open Sylius Admin, head to Configuration > Gally and configure the Gally endpoint (URL, credentials), after that enable Gally on your channel (Configuration > Channel > Edit)
 - Run this commands from your Sylius instance. This commands must be runned only once to synchronize the structure.
     ```shell
         bin/console gally:structure:sync   # Sync catalog et source field data with gally
