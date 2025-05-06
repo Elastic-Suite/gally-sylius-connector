@@ -32,13 +32,10 @@ use Sylius\Component\Taxonomy\Repository\TaxonRepositoryInterface;
  */
 class CategoryIndexer extends AbstractIndexer
 {
-    /** @var string[]  */
+    /** @var string[] */
     private array $pathCache = [];
 
     /**
-     * @param RepositoryInterface $channelRepository
-     * @param CatalogProvider $catalogProvider
-     * @param IndexOperation $indexOperation
      * @param TaxonRepositoryInterface<TaxonInterface> $taxonRepository
      */
     public function __construct(

@@ -35,7 +35,7 @@ class TokenCacheManager implements TokenCacheManagerInterface
         }
 
         $token = $this->cache->get(self::CACHE_KEY, $getToken);
-        if (!is_scalar($token) && !is_null($token)) {
+        if (!\is_scalar($token) && null !== $token) {
             $token = '';
         }
 

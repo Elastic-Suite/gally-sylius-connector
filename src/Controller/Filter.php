@@ -68,8 +68,8 @@ final class Filter extends AbstractController
         $currentChannel = $this->channelContext->getChannel();
         $currentLocaleCode = $this->localeContext->getLocaleCode();
         $currentLocale = $currentChannel->getDefaultLocale();
-        if ($currentLocale === null) {
-            throw new \LogicException(sprintf("Missing default locale on channel %s", $currentChannel->getName()));
+        if (null === $currentLocale) {
+            throw new \LogicException(sprintf('Missing default locale on channel %s', $currentChannel->getName()));
         }
 
         foreach ($currentChannel->getLocales() as $locale) {

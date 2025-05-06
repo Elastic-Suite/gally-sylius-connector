@@ -98,7 +98,7 @@ class PagerfantaGallyAdapter implements AdapterInterface
             $productNumbers[$sku] = true;
         }
         /** @var array<array<string, array<string, array<string, string>>|string|bool>> $aggregationsData */
-        $aggregationsData  = $response->getAggregations();
+        $aggregationsData = $response->getAggregations();
         $this->gallyResult = new Result(
             $productNumbers,
             $response->getTotalCount(),

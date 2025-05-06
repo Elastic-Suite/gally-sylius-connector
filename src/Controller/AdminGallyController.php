@@ -32,7 +32,7 @@ final class AdminGallyController extends AbstractController
     /** @var ProviderInterface[] */
     protected array $providers;
 
-    /** @var array<string, string>  */
+    /** @var array<string, string> */
     protected array $syncMethod = [
         'catalog' => 'syncAllLocalizedCatalogs',
         'sourceField' => 'syncAllSourceFields',
@@ -46,7 +46,7 @@ final class AdminGallyController extends AbstractController
         \IteratorAggregate $providers,
         private TranslatorInterface $translator,
     ) {
-        /** @var  ProviderInterface[] $providersArray */
+        /** @var ProviderInterface[] $providersArray */
         $providersArray = iterator_to_array($providers);
         $this->providers = $providersArray;
     }

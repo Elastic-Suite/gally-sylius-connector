@@ -20,9 +20,9 @@ use Gally\SyliusPlugin\Search\Aggregation\Aggregation;
 use Gally\SyliusPlugin\Search\Aggregation\AggregationOption;
 use Sylius\Bundle\GridBundle\Form\Type\Filter\BooleanFilterType;
 use Sylius\Bundle\TaxonomyBundle\Doctrine\ORM\TaxonRepository;
-use Sylius\Component\Taxonomy\Model\TaxonInterface;
 use Sylius\Component\Grid\Parameters;
 use Sylius\Component\Locale\Context\LocaleContextInterface;
+use Sylius\Component\Taxonomy\Model\TaxonInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\RangeType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -125,7 +125,7 @@ class GallyDynamicFilterType extends AbstractType
     private function buildHasMoreUrl(string $field): string
     {
         $request = $this->requestStack->getCurrentRequest();
-        /** @var  array<string, mixed> $queryParameters */
+        /** @var array<string, mixed> $queryParameters */
         $queryParameters = $request?->query ? $request->query->all() : [];
         $parameters = new Parameters($queryParameters);
         /** @var array<string, array<string, mixed>> $criteria */
@@ -133,7 +133,7 @@ class GallyDynamicFilterType extends AbstractType
         $search = (isset($criteria['search'], $criteria['search']['value'])) ? $criteria['search']['value'] : '';
         unset($criteria['search']);
         /** @var string $slug */
-        $slug = $request?->attributes->get('slug') ??  '';
+        $slug = $request?->attributes->get('slug') ?? '';
         $taxon = $this->taxonRepository->findOneBySlug($slug, $this->localeContext->getLocaleCode());
 
         return $this->router->generate(

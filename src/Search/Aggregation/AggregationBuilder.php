@@ -21,6 +21,7 @@ class AggregationBuilder
 {
     /**
      * @param array<array<string, array<string, array<string, string>>|string|bool>> $rawAggregationData
+     *
      * @return array<Aggregation>
      */
     public static function build(array $rawAggregationData): array
@@ -37,7 +38,7 @@ class AggregationBuilder
                     }
                 }
 
-                if (is_string($data['label']) && is_string($data['field']) && is_string($data['type']) && (is_string($data['hasMore']) || is_bool($data['hasMore']))) {
+                if (\is_string($data['label']) && \is_string($data['field']) && \is_string($data['type']) && (\is_string($data['hasMore']) || \is_bool($data['hasMore']))) {
                     $aggregationCollection[] = new Aggregation(
                         $data['label'],
                         $data['field'],

@@ -113,9 +113,9 @@ class SourceFieldOptionProvider implements ProviderInterface
         Collection|array $translations,
         int $position,
     ): SourceFieldOption {
-
         /** @var Label[] $labels */
         $labels = $this->getLabels($translations, $defaultLabel);
+
         return new SourceFieldOption(
             $sourceField,
             $code,

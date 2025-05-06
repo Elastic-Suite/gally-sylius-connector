@@ -76,6 +76,7 @@ class SourceFieldProvider implements ProviderInterface
 
         /** @var \Gally\Sdk\Entity\Label[] $labels */
         $labels = $this->getLabels($translations, (string) $defaultLabel);
+
         return new SourceField(
             $this->metadataCache[$entity],
             (string) $attribute->getCode(),

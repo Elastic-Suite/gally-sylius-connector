@@ -81,8 +81,8 @@ final class Driver implements DriverInterface
         /** @var EntityRepository<Locale> $localeRepository */
         $localeRepository = $manager->getRepository(Locale::class);
         $locale = $localeRepository->findOneBy(['code' => $localeCode]) ?: $channel->getDefaultLocale();
-        if ($locale === null) {
-            throw new \LogicException(sprintf("Missing default locale on channel %s", $channel->getName()));
+        if (null === $locale) {
+            throw new \LogicException(sprintf('Missing default locale on channel %s', $channel->getName()));
         }
         if (($channel instanceof GallyChannelInterface) && $channel->getGallyActive()) {
             $currentLocalizedCatalog = $this->catalogProvider->buildLocalizedCatalog($channel, $locale);

@@ -19,6 +19,7 @@ use Pagerfanta\PagerfantaInterface;
 
 /**
  * @template T
+ *
  * @extends Pagerfanta<T>
  */
 class PagerfantaGally extends Pagerfanta

@@ -33,7 +33,7 @@ class SortOptionComponent
         'price__price.desc' => 'sylius.ui.most_expensive_first',
     ];
 
-    /** @var array<string, list<array<string, array<string, string>|string|null>>|string>|null  */
+    /** @var array<string, list<array<string, array<string, string>|string|null>>|string>|null */
     private ?array $sortData = null;
 
     public function __construct(
@@ -127,13 +127,15 @@ class SortOptionComponent
     public function currentSortingLabel(): string
     {
         $currentSortingLabel = $this->getSortData()['current_sorting_label'] ?? '';
-        return is_string($currentSortingLabel) ? $currentSortingLabel : '';
+
+        return \is_string($currentSortingLabel) ? $currentSortingLabel : '';
     }
 
     #[ExposeInTemplate('sort_options')]
     public function sortOptions(): array
     {
         $sortOptions = $this->getSortData()['sort_options'] ?? [];
-        return !is_string($sortOptions) ? $sortOptions : [];
+
+        return !\is_string($sortOptions) ? $sortOptions : [];
     }
 }

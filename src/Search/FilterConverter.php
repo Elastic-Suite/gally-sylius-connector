@@ -36,7 +36,7 @@ class FilterConverter
         }
 
         if (str_contains($field, '_slider')) {
-            if (!is_string($value)) {
+            if (!\is_string($value)) {
                 return null;
             }
 

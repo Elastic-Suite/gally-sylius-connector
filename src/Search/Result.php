@@ -23,7 +23,7 @@ class Result
 {
     /**
      * @param array<string, true> $productNumbers
-     * @param Aggregation[] $aggregations
+     * @param Aggregation[]       $aggregations
      */
     public function __construct(
         private array $productNumbers,

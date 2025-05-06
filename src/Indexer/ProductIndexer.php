@@ -150,7 +150,7 @@ class ProductIndexer extends AbstractIndexer
                         $data[$field] = [];
                     }
 
-                    if (is_array($data[$field])) {
+                    if (\is_array($data[$field])) {
                         $data[$field][] = $value;
                     }
                 }
