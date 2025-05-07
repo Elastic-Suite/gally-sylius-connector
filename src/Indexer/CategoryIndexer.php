@@ -17,9 +17,9 @@ namespace Gally\SyliusPlugin\Indexer;
 use Gally\Sdk\Service\IndexOperation;
 use Gally\SyliusPlugin\Indexer\Provider\CatalogProvider;
 use Sylius\Component\Core\Model\ChannelInterface;
-use Sylius\Component\Core\Model\TaxonInterface;
 use Sylius\Component\Locale\Model\LocaleInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
+use Sylius\Component\Taxonomy\Model\TaxonInterface;
 use Sylius\Component\Taxonomy\Model\TaxonTranslationInterface;
 use Sylius\Component\Taxonomy\Repository\TaxonRepositoryInterface;
 
@@ -57,33 +57,44 @@ class CategoryIndexer extends AbstractIndexer
         LocaleInterface $locale,
         array $documentIdsToReindex,
     ): iterable {
-        if (!empty($documentIdsToReindex)) {
-            $taxons = $this->taxonRepository->findBy(['id' => $documentIdsToReindex]);
+        $menuTaxon = $channel->getMenuTaxon();
+        if (null === $menuTaxon) {
+            return [];
+        }
 
-            foreach ($taxons as $taxon) {
+        if (!empty($documentIdsToReindex)) {
+            $taxons = [];
+            $allTaxons = $this->taxonRepository->findBy(['id' => $documentIdsToReindex]);
+
+            foreach ($allTaxons as $taxon) {
                 /** @var TaxonInterface $taxon */
+                if (!($taxon->getLeft() >= $menuTaxon->getLeft() && $taxon->getRight() <= $menuTaxon->getRight())) {
+                    continue;
+                }
                 $path = (string) $taxon->getCode();
 
                 $parent = $taxon->getParent();
-                while (null !== $parent) {
+                while (null !== $parent && $menuTaxon->getId() !== $taxon->getId()) {
                     $path = $parent->getCode() . '/' . $path;
+                    if ($parent->getId() === $menuTaxon->getId()) {
+                        break;
+                    }
                     $parent = $parent->getParent();
                 }
 
                 $this->pathCache[$taxon->getCode()] = $path;
+                $taxons[] = $taxon;
             }
         } else {
-            $menuTaxon = $channel->getMenuTaxon();
-
             /** @var iterable<TaxonInterface> $taxons */
             $taxons = $this->taxonRepository->createQueryBuilder('o') /* @phpstan-ignore-line */
-                ->where('o.root = :taxon_id')
                 ->andWhere('o.left >= :taxon_left')
+                ->andWhere('o.right <= :taxon_right')
                 ->orderBy('o.left', 'ASC')
                 ->getQuery()
                 ->execute([
-                    'taxon_id' => $menuTaxon?->getId(),
-                    'taxon_left' => $menuTaxon?->getLeft(),
+                    'taxon_left' => $menuTaxon->getLeft(),
+                    'taxon_right' => $menuTaxon->getRight(),
                 ]);
 
             foreach ($taxons as $taxon) {
@@ -100,21 +111,21 @@ class CategoryIndexer extends AbstractIndexer
             /** @var TaxonInterface $taxon */
             $taxonTranslation = $taxon->getTranslation($locale->getCode());
 
-            yield $this->formatTaxon($taxon, $taxonTranslation);
+            yield $this->formatTaxon($taxon, $taxonTranslation, $menuTaxon);
         }
     }
 
-    private function formatTaxon(TaxonInterface $taxon, TaxonTranslationInterface $translation): array
+    private function formatTaxon(TaxonInterface $taxon, TaxonTranslationInterface $translation, TaxonInterface $menuTaxon): array
     {
         $parentId = '';
-        if (null !== $taxon->getParent()) {
+        if (null !== $taxon->getParent() && $menuTaxon->getId() !== $taxon->getId()) {
             $parentId = str_replace('/', '_', (string) $taxon->getParent()->getCode());
         }
 
         return [
             'id' => str_replace('/', '_', (string) $taxon->getCode()),
             'parentId' => $parentId,
-            'level' => $taxon->getLevel() + 1,
+            'level' => $taxon->getLevel() + 1 - $menuTaxon->getLevel(),
             'path' => $this->pathCache[$taxon->getCode()],
             'name' => $translation->getName(),
         ];

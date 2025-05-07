@@ -113,13 +113,13 @@ class ProductIndexer extends AbstractIndexer
 
         foreach ($product->getAttributes() as $attributeValue) {
             /** @var AttributeValueInterface $attributeValue */
-            if ($attributeValue->getLocaleCode() !== $locale->getCode()) {
+            $attribute = $attributeValue->getAttribute();
+            if ($attributeValue->getLocaleCode() !== $locale->getCode() || null === $attribute?->getCode()) {
                 continue;
             }
 
-            $attribute = $attributeValue->getAttribute();
             $attributeValue = $attributeValue->getValue();
-            if ('select' === $attribute?->getType()) {
+            if ('select' === $attribute->getType()) {
                 if (!\is_array($attributeValue)) {
                     $attributeValue = [$attributeValue];
                 }
@@ -137,7 +137,7 @@ class ProductIndexer extends AbstractIndexer
                 }
             }
 
-            $data[$attribute?->getCode()] = $attributeValue;
+            $data[$attribute->getCode()] = $attributeValue;
         }
 
         while ($variants->current()) {
@@ -178,8 +178,12 @@ class ProductIndexer extends AbstractIndexer
         ];
 
         foreach ($variant->getOptionValues() as $optionValue) {
+            if (null === $optionValue->getOption()) {
+                continue;
+            }
+
             /* @var ProductOptionValueInterface $optionValue */
-            $data[$optionValue->getOption()?->getCode()][] = [
+            $data[$optionValue->getOption()->getCode()][] = [
                 'value' => $optionValue->getCode(),
                 'label' => $optionValue->getTranslation($locale->getCode())->getValue(),
             ];

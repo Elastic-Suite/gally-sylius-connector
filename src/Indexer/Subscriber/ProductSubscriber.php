@@ -47,8 +47,8 @@ class ProductSubscriber implements EventSubscriberInterface
     public function onVariantUpdate(GenericEvent $event): void
     {
         $variant = $event->getSubject();
-        if ($variant instanceof ProductVariantInterface) {
-            $this->productIndexer->reindex([$variant->getProduct()?->getId()]);
+        if ($variant instanceof ProductVariantInterface && null !== $variant->getProduct()) {
+            $this->productIndexer->reindex([$variant->getProduct()->getId()]);
         }
     }
 }
