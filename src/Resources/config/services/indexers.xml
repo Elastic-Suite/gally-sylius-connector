@@ -48,14 +48,14 @@
             <tag name="gally.entity.indexer" priority="50"/>
         </service>
 
-<!--        <service id="Gally\SyliusPlugin\Indexer\Subscriber\CategorySubscriber">-->
-<!--            <argument type="service" id="Gally\SyliusPlugin\Indexer\CategoryIndexer" />-->
-<!--            <tag name="kernel.event_subscriber" />-->
-<!--        </service>-->
+        <service id="Gally\SyliusPlugin\Indexer\Subscriber\CategorySubscriber">
+            <argument type="service" id="Gally\SyliusPlugin\Indexer\CategoryIndexer" />
+            <tag name="kernel.event_subscriber" />
+        </service>
 
-<!--        <service id="Gally\SyliusPlugin\Indexer\Subscriber\ProductSubscriber">-->
-<!--            <argument type="service" id="Gally\SyliusPlugin\Indexer\ProductIndexer" />-->
-<!--            <tag name="kernel.event_subscriber" />-->
-<!--        </service>-->
+        <service id="Gally\SyliusPlugin\Indexer\Subscriber\ProductSubscriber">
+            <argument type="service" id="Gally\SyliusPlugin\Indexer\ProductIndexer" />
+            <tag name="kernel.event_subscriber" />
+        </service>
     </services>
 </container>

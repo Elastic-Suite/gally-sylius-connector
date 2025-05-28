@@ -2,8 +2,8 @@
 
 ## Requirements
 
-- Gally version: 2.0.x
-- Sylius version: 1.12.x
+- Gally version: 2.1.x
+- Sylius version: 2.0.x
 
 ## Usage
 
@@ -50,13 +50,12 @@
         use GallyChannelTrait;
      }
      ```
-    - Copy the templates from `vendor/gally/sylius-plugin/src/Resources/views/SyliusShopBundle/` to `templates/bundles/SyliusShopBundle/`.
     - Copy the bundle assets (Javascript & CSS files):
        - Run `php bin/console assets:install`
        - Run `php bin/console sylius:install:assets`
        - Run `php bin/console sylius:theme:assets:install`
-    - Run `php bin/console doctrine:migrations:diff` and `php bin/console doctrine:migrations:migrate` to update the database schema
-    - Open Sylius Admin, head to Configuration > Gally and configure the Gally endpoint (URL, credentials)
+    - Run `php bin/console doctrine:migrations:migrate` to update the database schema
+    - Open Sylius Admin, head to Configuration > Gally and configure the Gally endpoint (URL, credentials), after that enable Gally on your channel (Configuration > Channel > Edit)
 - Run this commands from your Sylius instance. This commands must be runned only once to synchronize the structure.
     ```shell
         bin/console gally:structure:sync   # Sync catalog et source field data with gally

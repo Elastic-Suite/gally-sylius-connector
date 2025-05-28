@@ -1,0 +1,21 @@
+<div class="card g-col-12 g-col-xl-6">
+    <div class="card-header">
+        <div class="card-title">{{ 'gally_sylius.ui.channel.header'|trans }}</div>
+    </div>
+
+    <div class="card-body">
+        <div class="row">
+            {{ form_errors(hookable_metadata.context.form) }}
+
+            <div class="col-12">
+                {{ form_row(hookable_metadata.context.form.gallyActive, sylius_test_form_attribute('gally-active')) }}
+            </div>
+            <div class="col-12">
+                {{ form_row(hookable_metadata.context.form.gallyProductIndexBatchSize, sylius_test_form_attribute('gally-product-index-batch-size')) }}
+            </div>
+            <div class="col-12">
+                {{ form_row(hookable_metadata.context.form.gallyCategoryIndexBatchSize, sylius_test_form_attribute('gally-category-index-batch-size')) }}
+            </div>
+        </div>
+    </div>
+</div>

@@ -32,6 +32,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class Filter extends AbstractController
 {
+    /**
+     * @param TaxonRepository<Taxon> $taxonRepository
+     */
     public function __construct(
         private CatalogProvider $catalogProvider,
         private SearchManager $searchManager,
@@ -45,8 +48,11 @@ final class Filter extends AbstractController
 
     public function viewMore(Request $request, string $filterField): Response
     {
+        /** @var string|null $search */
         $search = $request->get('search');
-        $filters = $request->get('filters')['gally'] ?? [];
+        /** @var array<string, array<string, mixed>>|null $requestFilters */
+        $requestFilters = $request->get('filters');
+        $filters = $requestFilters['gally'] ?? [];
         $gallyFilters = [];
         foreach ($filters as $field => $value) {
             $gallyFilter = $this->filterConverter->convert($field, $value);
@@ -61,7 +67,11 @@ final class Filter extends AbstractController
         /** @var ChannelInterface $currentChannel */
         $currentChannel = $this->channelContext->getChannel();
         $currentLocaleCode = $this->localeContext->getLocaleCode();
-        $currentLocale = null;
+        $currentLocale = $currentChannel->getDefaultLocale();
+        if (null === $currentLocale) {
+            throw new \LogicException(sprintf('Missing default locale on channel %s', $currentChannel->getName()));
+        }
+
         foreach ($currentChannel->getLocales() as $locale) {
             if ($currentLocaleCode === $locale->getCode()) {
                 $currentLocale = $locale;
@@ -83,8 +93,11 @@ final class Filter extends AbstractController
 
         $aggregationOptions = $this->searchManager->viewMoreProductFilterOption($request, $filterField);
 
+        /** @var array<string, string>$option */
         foreach ($aggregationOptions as $option) {
-            $choices[$option['label']] = $option['value'];
+            if (isset($option['label'])) {
+                $choices[$option['label']] = $option['value'] ?? '';
+            }
         }
 
         $options = [
@@ -97,7 +110,7 @@ final class Filter extends AbstractController
         $form = $this->formFactory->createNamed('criteria')->add('gally', GallyDynamicFilterType::class);
         $form->get('gally')->add($filterField, SelectFilterType::class, $options);
         $form->get('gally')->get($filterField)->setData($filters[$filterField] ?? null);
-        $html = $this->renderView('@GallySyliusPlugin/Grid/Filter/gally_dynamic_filter.html.twig', ['form' => $form->createView()]);
+        $html = $this->renderView('@GallySyliusPlugin/shop/grid/filter/gally_dynamic_filter.html.twig', ['form' => $form->createView()]);
 
         return $this->json(['html' => $html]);
     }

@@ -26,5 +26,5 @@ sylius_grid:
           type: gally_dynamic_filter
   templates:
     filter:
-      gally_dynamic_filter: '@GallySyliusPlugin/Grid/Filter/gally_dynamic_filter.html.twig'
+      gally_dynamic_filter: '@GallySyliusPlugin/shop/grid/filter/gally_dynamic_filter.html.twig'
 

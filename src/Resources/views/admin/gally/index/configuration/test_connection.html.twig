@@ -1,0 +1,27 @@
+{% import '@SyliusAdmin/shared/helper/button.html.twig' as button %}
+<div class="card g-col-12 g-col-xl-12">
+    {% set testForm = hookable_metadata.context.testForm %}
+    {% form_theme testForm '@SyliusAdmin/shared/form_theme.html.twig' %}
+    {{ form_start(testForm, {'action': path('gally_sylius_test'), 'attr': {'class': 'ui loadable form', 'novalidate': 'novalidate', 'id': testForm.vars.id}}) }}
+
+    <div class="card-header"> {{ 'gally_sylius.ui.test_connection_header'|trans }} </div>
+
+    <div class="card-body">
+        {{ form_errors(testForm) }}
+        <div class="row">
+            <div class="col-12">
+                {{ button.primary(
+                    sylius_test_form_attribute('gally-test-connection')|merge({
+                        text: 'gally_sylius.ui.btn_test'|trans,
+                        type: 'submit',
+                        form: testForm.vars.id,
+                        icon: 'tabler:plug'
+                    })
+                ) }}
+            </div>
+        </div>
+    </div>
+
+    {{ form_row(testForm._token) }}
+    {{ form_end(testForm, {'render_rest': false}) }}
+</div>

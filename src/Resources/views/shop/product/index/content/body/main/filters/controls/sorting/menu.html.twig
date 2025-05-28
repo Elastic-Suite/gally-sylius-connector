@@ -1,0 +1,16 @@
+{% set route = app.request.attributes.get('_route') %}
+{% set route_parameters = app.request.attributes.all('_route_params')|merge(app.request.query.all) %}
+{% set criteria = app.request.query.all('criteria') %}
+
+<div class="dropdown-menu dropdown-menu-end ">
+    {% for option in sort_options %}
+        {% set path = path(route, route_parameters|merge({sorting: option.sorting, 'criteria': criteria})) %}
+        <a class="dropdown-item" href="{{ path }}" data-text="{{ option.label|lower }}">{{ option.label }}</a>
+    {% endfor %}
+</div>
+
+<button type="button" class="btn btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+    <span class="text-black-50">{{ 'sylius.ui.sort'|trans }}: </span>{{ current_sorting_label }}
+</button>
+
+

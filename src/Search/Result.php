@@ -14,11 +14,17 @@ declare(strict_types=1);
 
 namespace Gally\SyliusPlugin\Search;
 
+use Gally\SyliusPlugin\Search\Aggregation\Aggregation;
+
 /**
  * Gally result.
  */
 class Result
 {
+    /**
+     * @param array<string, true> $productNumbers
+     * @param Aggregation[]       $aggregations
+     */
     public function __construct(
         private array $productNumbers,
         private int $totalResultCount,
@@ -41,13 +47,16 @@ class Result
     /**
      * Get product numbers from gally response.
      *
-     * @return string[]
+     * @return array<string, true>
      */
     public function getProductNumbers(): array
     {
         return $this->productNumbers;
     }
 
+    /**
+     * @return Aggregation[]
+     */
     public function getAggregations(): array
     {
         return $this->aggregations;

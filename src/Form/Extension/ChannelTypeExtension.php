@@ -17,7 +17,7 @@ namespace Gally\SyliusPlugin\Form\Extension;
 use Sylius\Bundle\ChannelBundle\Form\Type\ChannelType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 final class ChannelTypeExtension extends AbstractTypeExtension
@@ -29,10 +29,10 @@ final class ChannelTypeExtension extends AbstractTypeExtension
                 'required' => true,
                 'label' => 'gally_sylius.form.active',
             ])
-            ->add('gallyProductIndexBatchSize', TextType::class, [
+            ->add('gallyProductIndexBatchSize', IntegerType::class, [
                 'label' => 'gally_sylius.form.product_index_batch_size',
             ])
-            ->add('gallyCategoryIndexBatchSize', TextType::class, [
+            ->add('gallyCategoryIndexBatchSize', IntegerType::class, [
                 'label' => 'gally_sylius.form.category_index_batch_size',
             ]);
     }

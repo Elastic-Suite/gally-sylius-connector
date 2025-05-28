@@ -1,0 +1,7 @@
+{% set products = hookable_metadata.context.products %}
+
+{% for filter in products.definition.enabledFilters %}
+    {% if filter.type == 'shop_string' %}
+        {{ sylius_grid_render_filter(products, filter) }}
+    {% endif %}
+{% endfor %}

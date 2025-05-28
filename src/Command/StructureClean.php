@@ -14,15 +14,17 @@ declare(strict_types=1);
 
 namespace Gally\SyliusPlugin\Command;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand(
+    name: 'gally:structure:clean',
+)]
 class StructureClean extends StructureSync
 {
-    protected static $defaultName = 'gally:structure:clean';
-
     protected function configure(): void
     {
         $this->setDescription('Remove all entity from gally that not exist anymore on sylius side.')

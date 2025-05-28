@@ -19,25 +19,34 @@ namespace Gally\SyliusPlugin\Search\Aggregation;
  */
 class AggregationBuilder
 {
+    /**
+     * @param array<array<string, array<string, array<string, string>>|string|bool>> $rawAggregationData
+     *
+     * @return array<Aggregation>
+     */
     public static function build(array $rawAggregationData): array
     {
         $aggregationCollection = [];
 
         foreach ($rawAggregationData as $data) {
-            if ($data['count']) {
+            if (isset($data['count'])) {
                 $buckets = [];
 
-                foreach ($data['options'] as $bucket) {
-                    $buckets[] = new AggregationOption($bucket['label'], $bucket['value'], (int) $bucket['count']);
+                if (is_iterable($data['options'])) {
+                    foreach ($data['options'] as $bucket) {
+                        $buckets[] = new AggregationOption($bucket['label'], $bucket['value'], (int) $bucket['count']);
+                    }
                 }
 
-                $aggregationCollection[] = new Aggregation(
-                    $data['label'],
-                    $data['field'],
-                    $data['type'],
-                    $buckets,
-                    $data['hasMore']
-                );
+                if (\is_string($data['label']) && \is_string($data['field']) && \is_string($data['type']) && (\is_string($data['hasMore']) || \is_bool($data['hasMore']))) {
+                    $aggregationCollection[] = new Aggregation(
+                        $data['label'],
+                        $data['field'],
+                        $data['type'],
+                        $buckets,
+                        (bool) $data['hasMore']
+                    );
+                }
             }
         }
 

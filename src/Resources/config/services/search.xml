@@ -3,18 +3,6 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
-        <service id="Gally\SyliusPlugin\ContextProvider\GallyEnabledContextProvider">
-            <argument type="service" id="sylius.context.channel" />
-            <tag name="sylius.ui.template_event.context_provider" />
-        </service>
-        <service id="Gally\SyliusPlugin\ContextProvider\SortOptionContextProvider">
-            <argument type="service" id="Gally\Sdk\Service\SearchManager" />
-            <argument type="service" id="request_stack" />
-            <argument type="service" id="translator" />
-            <argument type="service" id="sylius.context.channel" />
-            <tag name="sylius.ui.template_event.context_provider" />
-        </service>
-
         <service id="Gally\SyliusPlugin\Search\FilterConverter" />
 
         <service id="Gally\SyliusPlugin\Grid\Gally\Driver">
@@ -35,6 +23,7 @@
 
         <service id="Gally\SyliusPlugin\Grid\Filter\GallyDynamicFilter">
             <argument type="service" id="Gally\SyliusPlugin\Search\FilterConverter" />
+            <argument type="service" id="Gally\SyliusPlugin\Config\ConfigManager" />
             <tag name="sylius.grid_filter" type="gally_dynamic_filter" form_type="Gally\SyliusPlugin\Form\Type\Filter\GallyDynamicFilterType" />
         </service>
 

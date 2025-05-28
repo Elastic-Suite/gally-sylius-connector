@@ -22,6 +22,7 @@ use Sylius\Bundle\GridBundle\Form\Type\Filter\BooleanFilterType;
 use Sylius\Bundle\TaxonomyBundle\Doctrine\ORM\TaxonRepository;
 use Sylius\Component\Grid\Parameters;
 use Sylius\Component\Locale\Context\LocaleContextInterface;
+use Sylius\Component\Taxonomy\Model\TaxonInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\RangeType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -30,6 +31,9 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class GallyDynamicFilterType extends AbstractType
 {
+    /**
+     * @param TaxonRepository<TaxonInterface> $taxonRepository
+     */
     public function __construct(
         private UrlGeneratorInterface $router,
         private RequestStack $requestStack,
@@ -121,11 +125,16 @@ class GallyDynamicFilterType extends AbstractType
     private function buildHasMoreUrl(string $field): string
     {
         $request = $this->requestStack->getCurrentRequest();
-        $parameters = new Parameters($request->query->all());
+        /** @var array<string, mixed> $queryParameters */
+        $queryParameters = $request?->query ? $request->query->all() : [];
+        $parameters = new Parameters($queryParameters);
+        /** @var array<string, array<string, mixed>> $criteria */
         $criteria = $parameters->get('criteria', []);
         $search = (isset($criteria['search'], $criteria['search']['value'])) ? $criteria['search']['value'] : '';
         unset($criteria['search']);
-        $taxon = $this->taxonRepository->findOneBySlug($request->attributes->get('slug'), $this->localeContext->getLocaleCode());
+        /** @var string $slug */
+        $slug = $request?->attributes->get('slug') ?? '';
+        $taxon = $this->taxonRepository->findOneBySlug($slug, $this->localeContext->getLocaleCode());
 
         return $this->router->generate(
             'gally_filter_view_more_ajax',
@@ -133,7 +142,7 @@ class GallyDynamicFilterType extends AbstractType
                 'filterField' => $field,
                 'search' => $search,
                 'filters' => $criteria,
-                'taxon' => $taxon->getId(),
+                'taxon' => $taxon?->getId(),
             ]
         );
     }

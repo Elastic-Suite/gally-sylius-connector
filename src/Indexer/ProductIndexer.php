@@ -36,6 +36,9 @@ use Sylius\Component\Resource\Repository\RepositoryInterface;
  */
 class ProductIndexer extends AbstractIndexer
 {
+    /**
+     * @param ProductRepositoryInterface<ProductInterface> $productRepository
+     */
     public function __construct(
         RepositoryInterface $channelRepository,
         CatalogProvider $catalogProvider,
@@ -56,9 +59,7 @@ class ProductIndexer extends AbstractIndexer
         LocaleInterface $locale,
         array $documentIdsToReindex,
     ): iterable {
-        $products = [];
-
-        if (!empty($documentIdsToReindex)) {
+        if ([] !== $documentIdsToReindex) {
             $products = $this->productRepository->findBy(['id' => $documentIdsToReindex]);
         } else {
             $taxon = $channel->getMenuTaxon();
@@ -69,13 +70,13 @@ class ProductIndexer extends AbstractIndexer
             $queryBuilder = $this->productRepository->createShopListQueryBuilder(
                 $channel,
                 $taxon,
-                $locale->getCode(),
+                (string) $locale->getCode(),
                 [],
                 true
             );
             $products = $queryBuilder->getQuery()->execute();
         }
-
+        /** @var iterable $products */
         foreach ($products as $product) {
             /** @var ProductInterface $product */
             if (!$product->isEnabled()) {
@@ -92,12 +93,14 @@ class ProductIndexer extends AbstractIndexer
         /** @var ProductVariantInterface $variant */
         $variant = $variants->first();
 
+        /** @var int|string $productId */
+        $productId = $product->getId();
         $data = [
-            'id' => "{$product->getId()}",
+            'id' => (string) $productId,
             'sku' => [$product->getCode()],
             'name' => [$product->getTranslation($locale->getCode())->getName()],
             'description' => [$product->getTranslation($locale->getCode())->getDescription()],
-            'image' => [$this->formatMedia($product) ?: null],
+            'image' => ['' !== $this->formatMedia($product) ? $this->formatMedia($product) : null],
             'price' => $this->formatPrice($variant, $channel),
             'stock' => [
                 'status' => $variant->isInStock(),
@@ -110,17 +113,18 @@ class ProductIndexer extends AbstractIndexer
 
         foreach ($product->getAttributes() as $attributeValue) {
             /** @var AttributeValueInterface $attributeValue */
-            if ($attributeValue->getLocaleCode() !== $locale->getCode()) {
+            $attribute = $attributeValue->getAttribute();
+            if ($attributeValue->getLocaleCode() !== $locale->getCode() || null === $attribute?->getCode()) {
                 continue;
             }
 
-            $attribute = $attributeValue->getAttribute();
             $attributeValue = $attributeValue->getValue();
             if ('select' === $attribute->getType()) {
                 if (!\is_array($attributeValue)) {
                     $attributeValue = [$attributeValue];
                 }
 
+                /** @var array<array<array>> $attributeConfiguration */
                 $attributeConfiguration = $attribute->getConfiguration();
                 foreach ($attributeValue as $key => $value) {
                     $translations = $attributeConfiguration['choices'][$value] ?? [];
@@ -146,7 +150,9 @@ class ProductIndexer extends AbstractIndexer
                         $data[$field] = [];
                     }
 
-                    $data[$field][] = $value;
+                    if (\is_array($data[$field])) {
+                        $data[$field][] = $value;
+                    }
                 }
             }
 
@@ -156,22 +162,26 @@ class ProductIndexer extends AbstractIndexer
         // Remove empty values
         return array_filter(
             $data,
-            fn ($item, $key) => \in_array($key, ['stock'], true) || !\is_array($item) || !empty(array_filter($item)),
+            fn ($item, $key) => \in_array($key, ['stock'], true) || !\is_array($item) || [] !== array_filter($item),
             \ARRAY_FILTER_USE_BOTH
         );
     }
 
     private function formatVariant(ProductVariantInterface $variant, ChannelInterface $channel, LocaleInterface $locale): array
     {
-        /** @var ProductInterface $parent */
+        /** @var ?ProductInterface $parent */
         $parent = $variant->getProduct();
         $data = [
             'children.sku' => [$variant->getCode()],
             'children.name' => [$variant->getTranslation($locale->getCode())->getName()],
-            'childen.image' => [$parent ? $this->formatMedia($parent) : null],
+            'childen.image' => [null !== $parent ? $this->formatMedia($parent) : null],
         ];
 
         foreach ($variant->getOptionValues() as $optionValue) {
+            if (null === $optionValue->getOption()) {
+                continue;
+            }
+
             /* @var ProductOptionValueInterface $optionValue */
             $data[$optionValue->getOption()->getCode()][] = [
                 'value' => $optionValue->getCode(),
@@ -182,7 +192,7 @@ class ProductIndexer extends AbstractIndexer
         // Remove empty values
         return array_filter(
             $data,
-            fn ($item, $key) => \in_array($key, ['stock'], true) || !\is_array($item) || !empty(array_filter($item)),
+            fn ($item, $key) => \in_array($key, ['stock'], true) || [] !== array_filter($item),
             \ARRAY_FILTER_USE_BOTH
         );
     }
@@ -218,7 +228,7 @@ class ProductIndexer extends AbstractIndexer
             }
         }
 
-        return $image->getPath();
+        return $image->getPath() ?? '';
     }
 
     private function formatCategories(ProductInterface $product): array

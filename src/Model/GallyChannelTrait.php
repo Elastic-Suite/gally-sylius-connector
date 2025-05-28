@@ -16,6 +16,7 @@ namespace Gally\SyliusPlugin\Model;
 
 use Doctrine\ORM\Mapping as ORM;
 
+// @phpstan-ignore-next-line
 trait GallyChannelTrait
 {
     #[ORM\Column(name: 'gally_active', type: 'boolean')]

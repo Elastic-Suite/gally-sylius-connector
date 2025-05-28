@@ -6,6 +6,8 @@
         <import resource="services/commands.xml"/>
         <import resource="services/indexers.xml"/>
         <import resource="services/search.xml"/>
+        <import resource="services/twig.xml"/>
+        <import resource="services/twig/component/product.xml"/>
     </imports>
 
     <parameters>
@@ -26,6 +28,7 @@
         <service id="Gally\SyliusPlugin\Controller\AdminGallyController">
             <argument type="service" id="Gally\SyliusPlugin\Repository\GallyConfigurationRepository" />
             <argument type="service" id="Gally\Sdk\Service\StructureSynchonizer" />
+            <argument type="service" id="Gally\SyliusPlugin\Config\ConfigManager" />
             <argument type="tagged_iterator" tag="gally.dataprovider" index-by="entity"/>
             <argument type="service" id="translator" />
             <call method="setContainer">
@@ -54,6 +57,11 @@
 
         <service id="gally.listener.admin.menu_builder" class="Gally\SyliusPlugin\Listener\AdminMenuListener">
             <tag name="kernel.event_listener" event="sylius.menu.admin.main" method="addAdminMenuItems"/>
+        </service>
+
+        <service id="Gally\SyliusPlugin\Config\ConfigManager">
+            <argument type="service" id="Gally\SyliusPlugin\Repository\GallyConfigurationRepository" />
+            <argument type="service" id="sylius.context.channel" />
         </service>
     </services>
 </container>

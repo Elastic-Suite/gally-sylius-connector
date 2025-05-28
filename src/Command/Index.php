@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Gally\SyliusPlugin\Command;
 
 use Gally\SyliusPlugin\Indexer\AbstractIndexer;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -22,10 +23,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Index sylius entities data to Gally.
  */
+#[AsCommand(
+    name: 'gally:index',
+    description: 'Index taxon and product entities.',
+)]
 class Index extends Command
 {
-    protected static $defaultName = 'gally:index';
-
     /**
      * @param AbstractIndexer[] $indexers
      */
@@ -33,11 +36,6 @@ class Index extends Command
         private iterable $indexers,
     ) {
         parent::__construct();
-    }
-
-    protected function configure(): void
-    {
-        $this->setDescription('Index taxon and product entities.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

@@ -1,0 +1,8 @@
+{% form_theme form with [
+    '@SyliusShop/form/theme.html.twig',
+    '@GallySyliusPlugin/shop/form/checkbox.html.twig',
+    '@GallySyliusPlugin/shop/form/range_widget.html.twig'
+] %}
+
+{% set label = 'gally_sylius.ui.filters.headline'|trans %}
+{{ form_row(form, {'label': label }) }}

@@ -19,6 +19,9 @@ namespace Gally\SyliusPlugin\Search\Aggregation;
  */
 class Aggregation
 {
+    /**
+     * @param AggregationOption[] $options
+     */
     public function __construct(
         private string $label,
         private string $field,
@@ -43,6 +46,9 @@ class Aggregation
         return $this->type;
     }
 
+    /**
+     * @return AggregationOption[]
+     */
     public function getOptions(): array
     {
         return $this->options;

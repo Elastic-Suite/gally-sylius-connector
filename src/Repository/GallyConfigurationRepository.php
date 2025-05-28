@@ -24,6 +24,7 @@ final class GallyConfigurationRepository extends EntityRepository implements Gal
 
     public function getConfiguration(): GallyConfiguration
     {
+        /** @var ?GallyConfiguration $gallyConfig */
         $gallyConfig = $this->createQueryBuilder('o')
             ->getQuery()
             ->getOneOrNullResult();

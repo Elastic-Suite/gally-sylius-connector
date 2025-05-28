@@ -34,6 +34,11 @@ class TokenCacheManager implements TokenCacheManagerInterface
             $this->cache->delete(self::CACHE_KEY);
         }
 
-        return $this->cache->get(self::CACHE_KEY, $getToken);
+        $token = $this->cache->get(self::CACHE_KEY, $getToken);
+        if (!\is_scalar($token) && null !== $token) {
+            $token = '';
+        }
+
+        return (string) $token;
     }
 }

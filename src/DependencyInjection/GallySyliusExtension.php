@@ -14,13 +14,17 @@ declare(strict_types=1);
 
 namespace Gally\SyliusPlugin\DependencyInjection;
 
+use Sylius\Bundle\CoreBundle\DependencyInjection\PrependDoctrineMigrationsTrait;
 use Sylius\Bundle\ResourceBundle\DependencyInjection\Extension\AbstractResourceExtension;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 
-final class GallySyliusExtension extends AbstractResourceExtension
+final class GallySyliusExtension extends AbstractResourceExtension implements PrependExtensionInterface
 {
+    use PrependDoctrineMigrationsTrait;
+
     /** @psalm-suppress UnusedVariable */
     public function load(array $configs, ContainerBuilder $container): void
     {
@@ -29,6 +33,33 @@ final class GallySyliusExtension extends AbstractResourceExtension
 
         $loader->load('services.xml');
 
-        $this->registerResources('gally_sylius', $config['driver'], $config['resources'], $container);
+        /** @var string $driver */
+        $driver = $config['driver'];
+        /** @var array $resources */
+        $resources = $config['resources'];
+        $this->registerResources('gally_sylius', $driver, $resources, $container);
+    }
+
+    public function prepend(ContainerBuilder $container): void
+    {
+        $this->prependDoctrineMigrations($container);
+    }
+
+    protected function getMigrationsNamespace(): string
+    {
+        return 'Gally\SyliusPlugin\Migrations';
+    }
+
+    protected function getMigrationsDirectory(): string
+    {
+        return '@GallySyliusPlugin/Migrations';
+    }
+
+    /** @return string[] */
+    protected function getNamespacesOfMigrationsExecutedBefore(): array
+    {
+        return [
+            'Sylius\Bundle\CoreBundle\Migrations',
+        ];
     }
 }

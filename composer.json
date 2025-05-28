@@ -10,8 +10,8 @@
     "license": "OSL-3.0",
     "require": {
         "php": "^8.0",
-        "sylius/sylius": "^1.12",
-        "gally/gally-php-rest-sdk": "feat-new-sdk-dev"
+        "sylius/sylius": "^2.0",
+        "gally/gally-php-rest-sdk": "2.1.0"
     },
     "require-dev": {
         "behat/behat": "^3.6.1",
@@ -42,7 +42,7 @@
         "symfony/flex": "^2.2.2",
         "symfony/intl": "^5.4 || ^6.0",
         "symfony/web-profiler-bundle": "^5.4 || ^6.0",
-        "vimeo/psalm": "5.9.0"
+        "vimeo/psalm": "6.10.3"
     },
     "conflict": {
         "symfony/framework-bundle": "6.2.8"
