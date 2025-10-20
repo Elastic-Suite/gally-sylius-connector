@@ -31,6 +31,7 @@
             <argument type="service" id="Gally\SyliusPlugin\Config\ConfigManager" />
             <argument type="tagged_iterator" tag="gally.dataprovider" index-by="entity"/>
             <argument type="service" id="translator" />
+            <argument type="service" id="Gally\SyliusPlugin\Config\TokenCacheManager" />
             <call method="setContainer">
                 <argument type="service" id="service_container" />
             </call>

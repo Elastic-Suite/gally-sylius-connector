@@ -31,7 +31,7 @@ class TokenCacheManager implements TokenCacheManagerInterface
     public function getToken(callable $getToken, bool $useCache = true): string
     {
         if (!$useCache) {
-            $this->cache->delete(self::CACHE_KEY);
+            $this->clearCache();
         }
 
         $token = $this->cache->get(self::CACHE_KEY, $getToken);
@@ -40,5 +40,10 @@ class TokenCacheManager implements TokenCacheManagerInterface
         }
 
         return (string) $token;
+    }
+
+    public function clearCache(): void
+    {
+        $this->cache->delete(self::CACHE_KEY);
     }
 }
