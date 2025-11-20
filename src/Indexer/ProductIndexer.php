@@ -90,8 +90,11 @@ class ProductIndexer extends AbstractIndexer
     private function formatProduct(ProductInterface $product, ChannelInterface $channel, LocaleInterface $locale): array
     {
         $variants = $product->getVariants();
-        /** @var ProductVariantInterface $variant */
+        /** @var ProductVariantInterface|false $variant */
         $variant = $variants->first();
+        if (false === $variant) {
+            return [];
+        }
 
         /** @var int|string $productId */
         $productId = $product->getId();
