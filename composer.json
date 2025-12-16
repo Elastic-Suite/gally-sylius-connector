@@ -10,7 +10,7 @@
     "license": "OSL-3.0",
     "require": {
         "php": "^8.0",
-        "gally/gally-php-sdk": "2.2.0",
+        "gally/gally-php-sdk": "2.2.1",
         "sylius/grid-bundle": "^1.14.1",
         "sylius/sylius": "^2.0"
     },
