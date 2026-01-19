@@ -61,11 +61,13 @@
                     {% set product_sku = product['sku'] %}
                     {% set product_slug = product['slug'] %}
                     {% set product_price = product['price'][0]['price'] %}
-                    {% set image_path = product['image']|imagine_filter('gally_shop_product_autocomplete_thumbnail') %}
+                    {% set image_path = product['image']|default('') %}
 
                     <a href="{{ path('sylius_shop_product_show', {'slug': product_slug, '_locale': app.request.locale}) }}"
                        class="link-reset col-md-6 mb-3 d-block">
-                        <img class="rounded float-start me-2" src="{{ image_path }}" alt="{{ 'sylius.ui.product'|trans }} {{ product_name }} {{ 'sylius.ui.image'|trans }}" />
+                        {% if image_path is not empty %}
+                        <img class="rounded float-start me-2" src="{{ image_path|imagine_filter('gally_shop_product_autocomplete_thumbnail') }}" alt="{{ 'sylius.ui.product'|trans }} {{ product_name }} {{ 'sylius.ui.image'|trans }}" />
+                        {% endif %}
                         <p class="mb-1"><strong>{{ product_name }}</strong></p>
                         <p class=""><small class="text-body-secondary">{{ money.convertAndFormat(100 * product_price) }}</small></p>
                     </a>
