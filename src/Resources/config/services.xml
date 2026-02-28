@@ -25,7 +25,7 @@
             </argument>
         </service>
 
-        <service id="Gally\SyliusPlugin\Controller\AdminGallyController">
+        <service id="Gally\SyliusPlugin\Controller\Admin\GallyController">
             <argument type="service" id="Gally\SyliusPlugin\Repository\GallyConfigurationRepository" />
             <argument type="service" id="Gally\Sdk\Service\StructureSynchonizer" />
             <argument type="service" id="Gally\SyliusPlugin\Config\ConfigManager" />

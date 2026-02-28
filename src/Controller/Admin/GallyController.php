@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Gally\SyliusPlugin\Controller;
+namespace Gally\SyliusPlugin\Controller\Admin;
 
 use Gally\Sdk\Service\StructureSynchonizer;
 use Gally\SyliusPlugin\Config\ConfigManager;
@@ -28,7 +28,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-final class AdminGallyController extends AbstractController
+final class GallyController extends AbstractController
 {
     /** @var ProviderInterface[] */
     protected array $providers;
