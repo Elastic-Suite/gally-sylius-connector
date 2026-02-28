@@ -2,17 +2,17 @@
 gally_sylius_config:
     path: /gally/config
     defaults:
-        _controller: Gally\SyliusPlugin\Controller\AdminGallyController::renderGallyConfigForm
+        _controller: Gally\SyliusPlugin\Controller\Admin\GallyController::renderGallyConfigForm
         name: ~
 
 gally_sylius_test:
     path: /gally/test-connection
     defaults:
-        _controller: Gally\SyliusPlugin\Controller\AdminGallyController::renderTestConnectionForm
+        _controller: Gally\SyliusPlugin\Controller\Admin\GallyController::renderTestConnectionForm
         name: ~
 
 gally_sylius_sync:
     path: /gally/sync-fields
     defaults:
-        _controller: Gally\SyliusPlugin\Controller\AdminGallyController::renderSyncFieldsForm
+        _controller: Gally\SyliusPlugin\Controller\Admin\GallyController::renderSyncFieldsForm
         name: ~
