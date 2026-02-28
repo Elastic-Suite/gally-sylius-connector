@@ -27,10 +27,10 @@
         </service>
         <service id="sylius.grid_driver.gally.rest" alias="Gally\SyliusPlugin\Grid\Gally\Driver" />
 
-        <service id="sylius.grid.data_provider" class="Gally\SyliusPlugin\Grid\DataProvider">
+        <service id="Gally\SyliusPlugin\Grid\DataProvider" decorates="sylius.grid.data_provider">
+            <argument type="service" id=".inner" />
             <argument type="service" id="sylius.grid.data_source_provider" />
             <argument type="service" id="sylius.grid.filters_applicator" />
-            <argument type="service" id="sylius.grid.sorter" />
             <argument type="service" id="sylius.context.channel" />
         </service>
 
