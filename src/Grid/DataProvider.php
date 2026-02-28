@@ -21,14 +21,13 @@ use Sylius\Component\Grid\Data\DataSourceProviderInterface;
 use Sylius\Component\Grid\Definition\Grid;
 use Sylius\Component\Grid\Filtering\FiltersApplicatorInterface;
 use Sylius\Component\Grid\Parameters;
-use Sylius\Component\Grid\Sorting\SorterInterface;
 
 final class DataProvider implements DataProviderInterface
 {
     public function __construct(
+        private DataProviderInterface $dataProvider,
         private DataSourceProviderInterface $dataSourceProvider,
         private FiltersApplicatorInterface $filtersApplicator,
-        private SorterInterface $sorter,
         private ChannelContextInterface $channelContext,
     ) {
     }
@@ -46,13 +45,6 @@ final class DataProvider implements DataProviderInterface
             }
         }
 
-        // by default use Sylius' implementation of the data provider
-        $dataProvider = new \Sylius\Component\Grid\Data\DataProvider(
-            $this->dataSourceProvider,
-            $this->filtersApplicator,
-            $this->sorter,
-        );
-
-        return $dataProvider->getData($grid, $parameters);
+        return $this->dataProvider->getData($grid, $parameters);
     }
 }
