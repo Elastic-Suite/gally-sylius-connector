@@ -38,7 +38,7 @@
             <tag name="controller.service_arguments" />
         </service>
 
-        <service id="Gally\SyliusPlugin\Controller\Filter">
+        <service id="Gally\SyliusPlugin\Controller\Shop\FilterController">
             <argument type="service" id="Gally\SyliusPlugin\Indexer\Provider\CatalogProvider" />
             <argument type="service" id="Gally\Sdk\Service\SearchManager" />
             <argument type="service" id="sylius.context.channel" />
