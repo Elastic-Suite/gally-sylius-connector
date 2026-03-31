@@ -19,6 +19,7 @@ use Gally\Sdk\Entity\Metadata;
 use Gally\Sdk\GraphQl\Request;
 use Gally\Sdk\Service\SearchManager;
 use Gally\SyliusPlugin\Event\GridFilterUpdateEvent;
+use Gally\SyliusPlugin\Grid\Gally\GallyAdapterInterface;
 use Gally\SyliusPlugin\Indexer\Provider\CatalogProvider;
 use Gally\SyliusPlugin\Search\Aggregation\AggregationBuilder;
 use Gally\SyliusPlugin\Search\Result;
@@ -30,9 +31,14 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 /**
  * @implements AdapterInterface<ProductInterface>
  */
-class SearchAdapter implements AdapterInterface
+class SearchAdapter implements AdapterInterface, GallyAdapterInterface
 {
     private ?Result $gallyResult = null;
+
+    public function getGallyResult(): ?Result
+    {
+        return $this->gallyResult;
+    }
 
     public function __construct(
         private QueryBuilder $queryBuilder,
@@ -40,7 +46,7 @@ class SearchAdapter implements AdapterInterface
         private CatalogProvider $catalogProvider,
         private EventDispatcherInterface $eventDispatcher,
         private Parameters $parameters,
-        private array $filters
+        private array $filters,
     ) {
     }
 
@@ -99,7 +105,9 @@ class SearchAdapter implements AdapterInterface
             $response->getItemsPerPage(),
             $response->getSortField(),
             $response->getSortDirection(),
-            AggregationBuilder::build($aggregationsData)
+            AggregationBuilder::build($aggregationsData),
+            $this->filters,
+            $search,
         );
 
         $this->eventDispatcher->dispatch(new GridFilterUpdateEvent($this->gallyResult), 'gally.grid.configure_filter');
@@ -125,7 +133,7 @@ class SearchAdapter implements AdapterInterface
             $productNumbers[$product->getCode()] = $product;
         }
 
-        /** @var array<(int|string), ProductInterface> $productNumbers */
+        /* @var array<(int|string), ProductInterface> $productNumbers */
         return $productNumbers;
     }
 }

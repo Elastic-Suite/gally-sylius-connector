@@ -54,6 +54,45 @@
        - Run `php bin/console assets:install`
        - Run `php bin/console sylius:install:assets`
        - Run `php bin/console sylius:theme:assets:install`
+
+    - **Alternative: install assets via Webpack Encore (recommended for Sylius 2.x)**
+      - Add the plugin as a npm dependency in your app's `package.json`:
+        ```json
+        {
+          "dependencies": {
+            "@gally/sylius-plugin": "file:vendor/gally/sylius-plugin"
+          }
+        }
+        ```
+        > **Development only:** if you are working on the plugin sources directly (i.e. pointing to
+        > `file:packages/GallyPlugin` instead of `file:vendor/gally/sylius-plugin`), you must also add
+        > a `postinstall` script to build the `@gally/sdk` dist files, which are not pre-compiled on the GitHub branch:
+        > ```json
+        > {
+        >   "scripts": {
+        >     "postinstall": "cd node_modules/@gally/sdk && yarn install"
+        >   }
+        > }
+        > ```
+      - Add the Gally shop entry point and the SDK IIFE copy in your app's `webpack.config.js`:
+        ```js
+        Encore
+            // ... your existing shop config
+            .addEntry('gally-shop-entry', './vendor/gally/sylius-plugin/src/Resources/assets/shop/entrypoint.js')
+            .copyFiles({
+                from: './node_modules/@gally/sdk/dist/browser/iife',
+                to: 'gally/[name].[ext]',
+                pattern: /gally-sdk\.global\.js/,
+            })
+        ;
+        ```
+        > The `copyFiles()` call exposes `gally-sdk.global.js` as a standalone IIFE script
+        > (available as `window.GallySDK`) for use in Twig templates via `{{ asset('build/app/shop/gally/gally-sdk.global.js') }}`.
+      - Install JS dependencies and build assets:
+        ```shell
+        yarn install
+        yarn build
+        ```
     - Run `php bin/console doctrine:migrations:migrate` to update the database schema
     - Open Sylius Admin, head to Configuration > Gally and configure the Gally endpoint (URL, credentials), after that enable Gally on your channel (Configuration > Channel > Edit)
 - Run this commands from your Sylius instance. This commands must be runned only once to synchronize the structure.

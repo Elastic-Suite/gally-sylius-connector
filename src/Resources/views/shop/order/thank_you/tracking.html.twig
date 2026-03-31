@@ -1,0 +1,32 @@
+{% if is_gally_enabled() and is_gally_tracking_enabled() %}
+    {% set order = hookable_metadata.context.order %}
+
+    <script>
+        window.gallyEvent.push({
+            eventType: 'order',
+            metadataCode: 'product',
+            localizedCatalogCode: '{{ gally.localizedCatalog.code }}',
+            payload: JSON.stringify({
+                order: {
+                    order_id: '{{ order.id }}',
+                    total: {{ order.total / 100 }}
+                },
+                items: [
+                    {% for item in order.items %}
+                    {% set variant = item.variant %}
+                    {% set product = variant is not null ? variant.product : null %}
+                    {
+                        entityCode: '{{ product is not null ? product.code : 'UNKNOWN' }}',
+                        child_sku: '{{ variant is not null ? variant.code : (product is not null ? product.code : 'UNKNOWN') }}',
+                        order: {
+                            price: {{ item.discountedUnitPrice / 100 }},
+                            qty: {{ item.quantity }},
+                            row_total: {{ item.total / 100 }},
+                        }
+                    },
+                    {% endfor %}
+                ],
+            }),
+        })
+    </script>
+{% endif %}

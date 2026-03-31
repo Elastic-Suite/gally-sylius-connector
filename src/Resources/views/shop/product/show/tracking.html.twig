@@ -1,0 +1,12 @@
+{% if is_gally_enabled() and is_gally_tracking_enabled() %}
+    {% set product = hookable_metadata.context.product %}
+
+    <script>
+        window.gallyEvent.push({
+            eventType: 'view',
+            metadataCode: 'product',
+            localizedCatalogCode: '{{ gally.localizedCatalog.code }}',
+            entityCode: '{{ product.code }}',
+        })
+    </script>
+{% endif %}

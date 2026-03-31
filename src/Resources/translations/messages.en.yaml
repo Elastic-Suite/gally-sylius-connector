@@ -11,6 +11,11 @@ gally_sylius:
     sync_success: Attribute sync successful!
     channel:
       header: Gally configuration
+      section:
+        general: "General"
+        indexing: "Indexing"
+        autocomplete: "Autocomplete"
+        tracking: "Tracking"
     filters:
       headline: Filters
       view_more: View more
@@ -31,9 +36,14 @@ gally_sylius:
     product_index_batch_size: Product Indexing Batch Size
     category_index_batch_size: Category Indexing Batch Size
     checkSSL: Validate the SSL certificate of gally domain
-    gally_autocomplete_product_max_size: Autocomplete Product Max Size
-    gally_autocomplete_category_max_size: Autocomplete Category Max Size
-    gally_autocomplete_attribute_max_size: Autocomplete Attribute Max Size
+    autocomplete_product_max_size: Autocomplete Product Max Size
+    autocomplete_category_max_size: Autocomplete Category Max Size
+    autocomplete_attribute_max_size: Autocomplete Attribute Max Size
+    tracking_active: Enable tracking
+    use_sylius_endpoint_tracking: "Use Sylius endpoint for tracking"
+    use_sylius_endpoint_tracking_help: "Use Sylius endpoint instead of Gally GraphQL API for tracking ?"
+    vid_cookie_lifetime: "Vid cookie lifetime (seconds)"
+    uid_cookie_lifetime: "Uid cookie lifetime (seconds)"
 
     header:
       query:
@@ -43,5 +53,6 @@ gally_sylius:
   autocomplete:
     products_title: Products
     view_all_search_results: View all search results
+    term_suggestions_title: Search terms
     categories_title: Categories
     attributes_title: Attributes

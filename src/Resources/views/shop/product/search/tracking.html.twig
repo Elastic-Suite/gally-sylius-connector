@@ -1,0 +1,40 @@
+{% if is_gally_enabled() and is_gally_tracking_enabled() %}
+    {% set resources    = hookable_metadata.context.resources %}
+    {% set gallyResult  = resources.data.gallyResult %}
+
+    <script>
+        window.gallyEvent.push({
+            eventType: 'search',
+            metadataCode: 'product',
+            localizedCatalogCode: '{{ gally.localizedCatalog.code }}',
+            payload: JSON.stringify({
+                search_query: {
+                    is_spellchecked: false,
+                    query_text: '{{ gallyResult ? gallyResult.queryText : '' }}',
+                },
+                product_list: {
+                    item_count: {{ resources.data.nbResults }},
+                    current_page: {{ resources.data.currentPage }},
+                    page_count: {{ resources.data.nbPages }},
+                    sort_order: '{{ gallyResult ? gallyResult.sortField : 'position' }}',
+                    sort_direction: '{{ gallyResult ? gallyResult.sortDirection : 'asc' }}',
+                    filters: {{ gallyResult ? gallyResult.appliedFilters|json_encode_safe|raw : '[]' }},
+                },
+            }),
+        })
+        {% if resources.data.nbResults > 0  %}
+            window.gallyEvent.push({
+                eventType: 'display',
+                metadataCode: 'product',
+                localizedCatalogCode: '{{ gally.localizedCatalog.code }}',
+                payload: JSON.stringify({
+                    items: [
+                        {% for product in resources.data %}
+                        { entityCode: '{{ product.code }}', display: { position: {{ loop.index0 }} } },
+                        {% endfor %}
+                    ],
+                }),
+            })
+        {% endif %}
+    </script>
+{% endif %}
