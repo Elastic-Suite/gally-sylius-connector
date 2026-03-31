@@ -31,9 +31,14 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 /**
  * @implements AdapterInterface<ProductInterface>
  */
-class PagerfantaGallyAdapter implements AdapterInterface
+class PagerfantaGallyAdapter implements AdapterInterface, GallyAdapterInterface
 {
     private ?Result $gallyResult = null;
+
+    public function getGallyResult(): ?Result
+    {
+        return $this->gallyResult;
+    }
 
     public function __construct(
         private QueryBuilder $queryBuilder,
@@ -106,7 +111,9 @@ class PagerfantaGallyAdapter implements AdapterInterface
             $response->getItemsPerPage(),
             $response->getSortField(),
             $response->getSortDirection(),
-            AggregationBuilder::build($aggregationsData)
+            AggregationBuilder::build($aggregationsData),
+            $this->filters,
+            $search,
         );
 
         $this->eventDispatcher->dispatch(new GridFilterUpdateEvent($this->gallyResult), 'gally.grid.configure_filter');
@@ -143,7 +150,14 @@ class PagerfantaGallyAdapter implements AdapterInterface
             $productNumbers[$product->getCode()] = $product;
         }
 
-        /** @var array<(int|string), ProductInterface> $productNumbers */
+        // clean up products sent from Gally that do not exist in Sylius anymore
+        foreach ($productNumbers as $code => $product) {
+            if (!\is_object($product)) {
+                unset($productNumbers[$code]);
+            }
+        }
+
+        /* @var array<(int|string), ProductInterface> $productNumbers */
         return $productNumbers;
     }
 }

@@ -93,6 +93,7 @@ class SearchController extends AbstractController
                         'products' => $products->getCollection(),
                         'categories' => $this->getCategoryAutocomplete($query, $currentChannel),
                         'attributes' => $this->getAttributeAutocomplete($products, $currentChannel),
+                        'termSuggestions' => $this->getTermSuggestionsAutocomplete($products),
                         'query' => $query, $this->generateUrl('gally_search_result_page', ['query' => $query]),
                     ]
                 ),
@@ -155,5 +156,18 @@ class SearchController extends AbstractController
         }
 
         return $attributes;
+    }
+
+    private function getTermSuggestionsAutocomplete(GallyResponse $products): array
+    {
+        $termSuggestions = [];
+        foreach ($products->getTermSuggestions()['terms'] ?? [] as $termSuggestion) {
+            $termSuggestions[] = [
+                'term' => $termSuggestion['term'],
+                'resultCount' => (int) round((float) $termSuggestion['resultCount']),
+            ];
+        }
+
+        return $termSuggestions;
     }
 }

@@ -50,11 +50,9 @@ const gallySearchFormHandler = function () {
             }
 
             if (gallySearchResult.querySelector('.results .products')) {
-              console.log('has product');
               gallySearchResult.parentElement.classList.add('start-0');
               gallySearchResult.parentElement.style.width = '100%';
             } else {
-              console.log('no has product');
               gallySearchResult.parentElement.classList.remove('start-0');
               gallySearchResult.parentElement.style.width = 'auto';
             }

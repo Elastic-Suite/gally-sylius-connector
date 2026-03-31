@@ -1,14 +1,31 @@
 {% import "@SyliusShop/shared/macro/money.html.twig" as money %}
 {% if categories|length or attributes|length or products|length %}
 <div class="row">
-    {% if categories|length or attributes|length %}
+    {% if termSuggestions|length or categories|length or attributes|length %}
         {% if products|length %}
         <div class="col-md-3 pe-2">
         {% else %}
         <div class="col-md-12 pe-2">
         {% endif %}
 
+        {% if termSuggestions|length %}
+            <h6 class="mb-3">{{ 'gally_sylius.autocomplete.term_suggestions_title'|trans }}</h6>
+            {% for termSuggestion in termSuggestions %}
+                {% set search_url = path('gally_search_result_page', {
+                    '_locale': app.request.locale,
+                    'query': termSuggestion['term']
+                }) %}
+
+                <a href="{{ search_url }}" class="mb-1 link-reset d-block">
+                    <span>{{ termSuggestion['term'] }}</span><br/>
+                </a>
+            {% endfor %}
+        {% endif %}
+
         {% if categories|length %}
+            {% if termSuggestions|length %}
+            <hr/>
+            {% endif %}
             <h6 class="mb-3">{{ 'gally_sylius.autocomplete.categories_title'|trans }}</h6>
             {% for categorie in categories %}
                 {% set categorie_name = categorie['name'] %}

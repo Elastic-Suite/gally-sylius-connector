@@ -33,7 +33,7 @@ final class SearchDriver implements DriverInterface
         private SearchManager $searchManager,
         private CatalogProvider $catalogProvider,
         private EventDispatcherInterface $eventDispatcher,
-        private ManagerRegistry $managerRegistry
+        private ManagerRegistry $managerRegistry,
     ) {
     }
 

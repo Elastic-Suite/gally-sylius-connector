@@ -90,7 +90,7 @@ class SourceFieldProvider implements ProviderInterface
         $translations = $attribute->getTranslations();
         $defaultLabel = $translations->first() ? $translations->first()->getName() : '';
 
-        /** @var \Gally\Sdk\Entity\Label[] $labels */
+        /** @var Label[] $labels */
         $labels = $this->getLabels($translations, (string) $defaultLabel);
 
         return new SourceField(

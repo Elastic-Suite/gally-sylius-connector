@@ -1,4 +1,10 @@
 #sylius_shop_partial_cart_add_item_ajax:
+gally_tracking_graphql_proxy:
+    path: /gally/graphql
+    methods: [ POST ]
+    defaults:
+        _controller: Gally\SyliusPlugin\Controller\Shop\TrackingController::graphqlProxy
+
 gally_filter_view_more_ajax:
     path: /viewMore/{filterField}
     methods: [ GET ]

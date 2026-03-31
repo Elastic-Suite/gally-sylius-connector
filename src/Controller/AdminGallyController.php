@@ -85,7 +85,7 @@ final class AdminGallyController extends AbstractController
             try {
                 $this->configManager->testCredentials();
                 $this->addFlash('success', $this->translator->trans('gally_sylius.ui.test_connection_success'));
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $this->addFlash(
                     'error',
                     $this->translator->trans('gally_sylius.ui.test_connection_failure') . ' ' . $e->getMessage()
@@ -110,7 +110,7 @@ final class AdminGallyController extends AbstractController
             $validConnection = true;
             try {
                 $this->configManager->testCredentials();
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $validConnection = false;
                 $this->addFlash(
                     'error',

@@ -36,13 +36,36 @@ final class ChannelTypeExtension extends AbstractTypeExtension
                 'label' => 'gally_sylius.form.category_index_batch_size',
             ])
             ->add('gallyAutocompleteProductMaxSize', IntegerType::class, [
-                'label' => 'gally_sylius.form.gally_autocomplete_product_max_size',
+                'label' => 'gally_sylius.form.autocomplete_product_max_size',
             ])
             ->add('gallyAutocompleteCategoryMaxSize', IntegerType::class, [
-                'label' => 'gally_sylius.form.gally_autocomplete_category_max_size',
+                'label' => 'gally_sylius.form.autocomplete_category_max_size',
             ])
             ->add('gallyAutocompleteAttributeMaxSize', IntegerType::class, [
-                'label' => 'gally_sylius.form.gally_autocomplete_attribute_max_size',
+                'label' => 'gally_sylius.form.autocomplete_attribute_max_size',
+            ])
+            ->add('gallyTrackingActive', CheckboxType::class, [
+                'label' => 'gally_sylius.form.tracking_active',
+                'required' => false,
+            ])
+            ->add('gallyUseSyliusEndpointTracking', CheckboxType::class, [
+                'label' => 'gally_sylius.form.use_sylius_endpoint_tracking',
+                'required' => false,
+                'help' => 'gally_sylius.form.use_sylius_endpoint_tracking_help',
+            ])
+            ->add('gallyUidCookieLifetime', IntegerType::class, [
+                'label' => 'gally_sylius.form.uid_cookie_lifetime',
+                'required' => false,
+                'attr' => [
+                    'min' => 0,
+                ],
+            ])
+            ->add('gallyVidCookieLifetime', IntegerType::class, [
+                'label' => 'gally_sylius.form.vid_cookie_lifetime',
+                'required' => false,
+                'attr' => [
+                    'min' => 0,
+                ],
             ]);
     }
 

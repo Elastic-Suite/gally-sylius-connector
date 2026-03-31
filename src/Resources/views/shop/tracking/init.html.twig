@@ -1,0 +1,18 @@
+{% if is_gally_enabled() %}
+{#todo: in package.json set the right tag for "@gally/sdk": "Elastic-Suite/gally-ts-sdk#master" and update yarn.lock#}
+{# demo: tester un parcours complet, tester graphql proxy #}
+
+    <script>
+        const gallyOptions = {
+            sdkUrl: '{{ asset('build/app/shop/gally/gally-sdk.global.js') }}',
+            baseUri: '{{ gally.trackingBaseUrl }}',
+            uidCookieMaxAge: {{ sylius.channel.gallyUidCookieLifetime }},
+            vidCookieMaxAge: {{ sylius.channel.gallyVidCookieLifetime }},
+        }
+        ;(function(w,d,o){
+            if(w.gallyEvent)return
+            w.gallyEvent={push:function(i){try{const r=localStorage.getItem('gally-event-queue'),c=r?JSON.parse(r):[];c.push(i);localStorage.setItem('gally-event-queue',JSON.stringify(c))}catch(_){}}}
+            const g=d.createElement('script'),s=d.scripts[0];g.async=1;g.src=o.sdkUrl;g.onload=function(){w.gallyEvent.init(o)};s.parentNode.insertBefore(g,s)
+        })(window,document,gallyOptions)
+    </script>
+{% endif %}

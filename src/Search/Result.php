@@ -24,6 +24,7 @@ class Result
     /**
      * @param array<string, true> $productNumbers
      * @param Aggregation[]       $aggregations
+     * @param array<mixed>        $appliedFilters Raw ExpressionBuilder filters
      */
     public function __construct(
         private array $productNumbers,
@@ -33,7 +34,47 @@ class Result
         private string $sortField,
         private string $sortDirection,
         private array $aggregations,
+        private array $appliedFilters = [],
+        private string $queryText = '',
     ) {
+    }
+
+    /**
+     * Transform raw ExpressionBuilder filters into tracking format [{name, value}].
+     *
+     * @param array<mixed> $filters
+     *
+     * @return array<array{name: string, value: string}>
+     */
+    public static function buildTrackingFilters(array $filters): array
+    {
+        $result = [];
+        foreach ($filters as $expression) {
+            if (!\is_array($expression)) {
+                continue;
+            }
+            foreach ($expression as $field => $operators) {
+                if (!\is_string($field) || !\is_array($operators)) {
+                    continue;
+                }
+                if (isset($operators['in'])) {
+                    // Checkbox: one entry per selected value
+                    foreach ((array) $operators['in'] as $value) {
+                        $result[] = ['name' => $field, 'value' => (string) $value];
+                    }
+                } elseif (isset($operators['eq'])) {
+                    // Boolean: true → 1, false → 0
+                    $result[] = ['name' => $field, 'value' => $operators['eq'] ? '1' : '0'];
+                } elseif (isset($operators['gte']) || isset($operators['lte'])) {
+                    // Slider: min-max format
+                    $min = isset($operators['gte']) ? (string) $operators['gte'] : '';
+                    $max = isset($operators['lte']) ? (string) $operators['lte'] : '';
+                    $result[] = ['name' => $field, 'value' => "{$min}-{$max}"];
+                }
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -80,5 +121,18 @@ class Result
     public function getSortDirection(): string
     {
         return $this->sortDirection;
+    }
+
+    /**
+     * @return array<array{name: string, value: string}>
+     */
+    public function getAppliedFilters(): array
+    {
+        return self::buildTrackingFilters($this->appliedFilters);
+    }
+
+    public function getQueryText(): string
+    {
+        return $this->queryText;
     }
 }

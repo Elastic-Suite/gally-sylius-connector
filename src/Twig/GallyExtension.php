@@ -17,23 +17,45 @@ namespace Gally\SyliusPlugin\Twig;
 use Gally\SyliusPlugin\Config\ConfigManager;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
+use Twig\TwigFilter;
 
-class GallyEnabledExtension extends AbstractExtension
+class GallyExtension extends AbstractExtension
 {
     public function __construct(
         private ConfigManager $configManager,
     ) {
     }
 
+    public function getFilters(): array
+    {
+        return [
+            new TwigFilter('json_encode_safe', [$this, 'jsonEncodeSafe']),
+        ];
+    }
+
     public function getFunctions(): array
     {
         return [
             new TwigFunction('is_gally_enabled', [$this, 'isGallyEnabled']),
+            new TwigFunction('is_gally_tracking_enabled', [$this, 'isTrackingEnabled']),
         ];
+    }
+
+    public function isTrackingEnabled(): bool
+    {
+        return $this->configManager->isTrackingEnabled();
     }
 
     public function isGallyEnabled(): bool
     {
         return $this->configManager->isGallyEnabled();
+    }
+
+    public function jsonEncodeSafe($data): string
+    {
+        return json_encode(
+            $data,
+            JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES
+        );
     }
 }

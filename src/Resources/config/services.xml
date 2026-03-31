@@ -8,6 +8,7 @@
         <import resource="services/search.xml"/>
         <import resource="services/twig.xml"/>
         <import resource="services/twig/component/product.xml"/>
+        <import resource="services/tracking.xml"/>
     </imports>
 
     <parameters>

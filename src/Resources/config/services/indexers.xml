@@ -25,6 +25,7 @@
         <service id="Gally\SyliusPlugin\Indexer\Subscriber\ChannelSubscriber">
             <argument type="service" id="Gally\SyliusPlugin\Indexer\Provider\CatalogProvider" />
             <argument type="service" id="Gally\Sdk\Service\StructureSynchonizer" />
+            <argument type="service" id="Gally\SyliusPlugin\Config\ConfigManager" />
             <tag name="kernel.event_subscriber" />
         </service>
         <service id="Gally\SyliusPlugin\Indexer\Subscriber\ProductAttributeSubscriber">
