@@ -72,7 +72,7 @@ class SourceFieldOptionProvider implements ProviderInterface
 
                     yield $this->buildSourceFieldOption(
                         $sourceField,
-                        $code,
+                        (string) $code,
                         (string) $defaultLabel,
                         $translations,
                         ++$position,
