@@ -56,6 +56,7 @@ final class ProductAttributeSubscriber implements EventSubscriberInterface
                 $configuration = $attribute->getConfiguration();
                 /** @var array<array<string, string>|null> $choices */
                 $choices = $configuration['choices'] ?? [];
+                $options = [];
                 foreach ($choices as $code => $choice) {
                     $translations = [];
                     foreach ($choice ?? [] as $locale => $translation) {
@@ -67,34 +68,35 @@ final class ProductAttributeSubscriber implements EventSubscriberInterface
                     /** @var ?string $defaultLabel */
                     $defaultLabel = reset($translations)['translation'] ?? $attribute->getCode();
 
-                    $option = $this->sourceFieldOptionProvider->buildSourceFieldOption(
+                    $options[] = $this->sourceFieldOptionProvider->buildSourceFieldOption(
                         $sourceField,
                         $code,
                         (string) $defaultLabel,
                         $translations,
                         ++$position,
                     );
-                    $this->structureSynchonizer->syncSourceFieldOption($option);
                 }
+                $this->structureSynchonizer->syncAllSourceFieldOptions($options);
             }
         } elseif ($attribute instanceof ProductOptionInterface) {
             $sourceField = $this->sourceFieldProvider->buildSourceField('product', $attribute, 'select');
             $this->structureSynchonizer->syncSourceField($sourceField);
             $position = 0;
+            $options = [];
             /** @var ProductOptionValueInterface $value */
             foreach ($attribute->getValues() as $value) {
                 /** @var list<array<string, string>> $translations */
                 $translations = $value->getTranslations();
                 $defaultLabel = reset($translations)['translation'] ?? $value->getCode();
-                $option = $this->sourceFieldOptionProvider->buildSourceFieldOption(
+                $options[] = $this->sourceFieldOptionProvider->buildSourceFieldOption(
                     $sourceField,
                     (string) $value->getCode(),
                     (string) $defaultLabel,
                     $translations,
                     ++$position,
                 );
-                $this->structureSynchonizer->syncSourceFieldOption($option);
             }
+            $this->structureSynchonizer->syncAllSourceFieldOptions($options);
         }
     }
 }
