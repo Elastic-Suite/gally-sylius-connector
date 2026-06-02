@@ -143,6 +143,13 @@ class PagerfantaGallyAdapter implements AdapterInterface
             $productNumbers[$product->getCode()] = $product;
         }
 
+        // clean up products sent from Gally that do not exist in Sylius anymore
+        foreach ($productNumbers as $code => $product) {
+            if (!\is_object($product)) {
+                unset($productNumbers[$code]);
+            }
+        }
+
         /** @var array<(int|string), ProductInterface> $productNumbers */
         return $productNumbers;
     }
