@@ -49,7 +49,6 @@ trait GallyChannelTrait
     #[ORM\Column(name: 'gally_vid_cookie_lifetime', type: 'integer', options: ['default' => 31536000])]
     protected $gallyVidCookieLifetime = 31536000;
 
-
     public function getGallyActive(): bool
     {
         return $this->gallyActive;

@@ -51,7 +51,7 @@ interface GallyChannelInterface extends ChannelInterface
     public function setGallyUseSyliusEndpointTracking(bool $gallyUseSyliusEndpointTracking): void;
 
     public function getGallyUidCookieLifetime(): int;
-    
+
     public function setGallyUidCookieLifetime(int $gallyUidCookieLifetime): void;
 
     public function getGallyVidCookieLifetime(): int;

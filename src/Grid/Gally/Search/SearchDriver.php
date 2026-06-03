@@ -44,13 +44,17 @@ final class SearchDriver implements DriverInterface
         }
 
         /** @var ObjectManager $manager */
-        $manager = $this->managerRegistry->getManagerForClass($configuration['class']); // @phpstan-ignore-line
+        // @phpstan-ignore argument.type
+        $manager = $this->managerRegistry->getManagerForClass($configuration['class']);
 
         /** @var ProductRepositoryInterface $repository */
-        $repository = $manager->getRepository($configuration['class']); // @phpstan-ignore-line
+        // @phpstan-ignore argument.type
+        $repository = $manager->getRepository($configuration['class']);
 
-        $method = $configuration['repository']['method']; // @phpstan-ignore-line
-        $arguments = isset($configuration['repository']['arguments']) ? array_values($configuration['repository']['arguments']) : []; // @phpstan-ignore-line
+        // @phpstan-ignore offsetAccess.nonOffsetAccessible
+        $method = $configuration['repository']['method'];
+        // @phpstan-ignore offsetAccess.nonOffsetAccessible, argument.type
+        $arguments = isset($configuration['repository']['arguments']) ? array_values($configuration['repository']['arguments']) : [];
 
         return new SearchDataSource(
             $repository->{$method}(...$arguments),

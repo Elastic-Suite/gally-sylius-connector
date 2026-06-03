@@ -17,10 +17,10 @@ namespace Gally\SyliusPlugin\Twig;
 use Gally\Sdk\Entity\LocalizedCatalog;
 use Gally\SyliusPlugin\Entity\GallyConfiguration;
 use Gally\SyliusPlugin\Indexer\Provider\CatalogProvider;
+use Gally\SyliusPlugin\Model\GallyChannelInterface;
 use Gally\SyliusPlugin\Repository\GallyConfigurationRepository;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Gally\SyliusPlugin\Model\GallyChannelInterface;
 
 class GallyContext
 {
@@ -51,7 +51,7 @@ class GallyContext
             $graphqlUrl = $this->urlGenerator->generate(
                 'gally_tracking_graphql_proxy',
                 [],
-                UrlGeneratorInterface::ABSOLUTE_URL,    
+                UrlGeneratorInterface::ABSOLUTE_URL,
             );
 
             return str_replace('/graphql', '', $graphqlUrl);
