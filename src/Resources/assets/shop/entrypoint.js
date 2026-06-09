@@ -1,1 +1,1 @@
-import '@gally/sdk';
+import '@elastic-suite/gally-sdk';
