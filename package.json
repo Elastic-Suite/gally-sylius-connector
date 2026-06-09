@@ -1,9 +1,9 @@
 {
   "name": "@gally/sylius-plugin",
-  "version": "1.0.0",
+  "version": "2.3.0",
   "license": "OSL-3.0",
   "dependencies": {
-    "@gally/sdk": "Elastic-Suite/gally-ts-sdk#master",
+    "@elastic-suite/gally-sdk": "2.2.2-alpha.0",
     "file-loader": "^6.2.0"
   }
 }
