@@ -85,9 +85,10 @@ final class ProductAttributeSubscriber implements EventSubscriberInterface
             $options = [];
             /** @var ProductOptionValueInterface $value */
             foreach ($attribute->getValues() as $value) {
-                /** @var list<array<string, string>> $translations */
+                /** @var \Doctrine\Common\Collections\Collection<int, \Sylius\Component\Product\Model\ProductOptionValueTranslation> $translations */
                 $translations = $value->getTranslations();
-                $defaultLabel = reset($translations)['translation'] ?? $value->getCode();
+                $firstTranslation = $translations->first();
+                $defaultLabel = false !== $firstTranslation ? $firstTranslation->getValue() : (string) $value->getCode();
                 $options[] = $this->sourceFieldOptionProvider->buildSourceFieldOption(
                     $sourceField,
                     (string) $value->getCode(),

@@ -86,13 +86,14 @@ class SortOptionComponent
                         'label' => $label,
                     ];
 
-                    if (isset($currentSortOrder[$option->getCode()]) && $currentSortOrder[$option->getCode()] == $direction) {
+                    /** @var array<string, string> $currentSortOrder */
+                    if (isset($currentSortOrder[$option->getCode()]) && $currentSortOrder[$option->getCode()] === $direction) {
                         $sortData['current_sorting_label'] = $label;
                     }
                 }
             }
 
-            if ($search) {
+            if ('' !== $search) {
                 $sortData['sort_options']['category__position'] = [
                     'field' => 'category__position',
                     'sorting' => null,
@@ -100,7 +101,7 @@ class SortOptionComponent
                 ];
             }
 
-            if (empty($sortData['current_sorting_label'])) {
+            if ('' === $sortData['current_sorting_label']) {
                 // set first element by default
                 $sortData['current_sorting_label'] = reset($sortData['sort_options'])['label'];
             }
@@ -117,7 +118,7 @@ class SortOptionComponent
             ];
 
             foreach ($sortData['sort_options'] as $option) {
-                if (empty($sortData['current_sorting_label'])) {
+                if ('' === $sortData['current_sorting_label']) {
                     // set first element by default
                     $sortData['current_sorting_label'] = strtolower($option['label']);
                 } elseif ($option['sorting'] === $currentSortOrder) {

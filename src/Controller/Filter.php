@@ -56,14 +56,14 @@ final class Filter extends AbstractController
         $gallyFilters = [];
         foreach ($filters as $field => $value) {
             $gallyFilter = $this->filterConverter->convert($field, $value);
-            if ($gallyFilter) {
+            if (null !== $gallyFilter) {
                 $gallyFilters[] = $gallyFilter;
             }
         }
 
         $choices = [];
         /** @var ?Taxon $currentTaxon */
-        $currentTaxon = $request->get('taxon') ? $this->taxonRepository->find($request->get('taxon')) : null;
+        $currentTaxon = null !== $request->get('taxon') ? $this->taxonRepository->find($request->get('taxon')) : null;
         /** @var ChannelInterface $currentChannel */
         $currentChannel = $this->channelContext->getChannel();
         $currentLocaleCode = $this->localeContext->getLocaleCode();

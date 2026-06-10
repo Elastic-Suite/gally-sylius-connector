@@ -47,10 +47,9 @@ class TrackingProxyService
             // Extract and validate tracking event data (whitelist approach)
             $trackingEvents = $this->extractTrackingEvents($payload);
 
-            if (empty($trackingEvents)) {
+            if ([] === $trackingEvents) {
                 throw new \InvalidArgumentException('No valid tracking events found in payload');
             }
-
             $gallyConfiguration = $this->gallyConfigurationRepository->getConfiguration();
             $gallyBaseUrl = $gallyConfiguration->getBaseUrl();
             $graphqlUrl = rtrim($gallyBaseUrl, '/') . '/graphql';
@@ -112,7 +111,7 @@ class TrackingProxyService
 
         // Extract events from variables (input0, input1, input2, etc.)
         foreach ($payload['variables'] as $key => $value) {
-            if (preg_match('/^input\d+$/', $key) && \is_array($value)) {
+            if (1 === preg_match('/^input\\d+$/', $key) && \is_array($value)) {
                 $trackingEvents[] = $this->validateTrackingEventData($value);
             }
         }
@@ -125,7 +124,7 @@ class TrackingProxyService
 
         // Security: Re-index array to ensure sequential indices 0,1,2...
         // This guarantees we control all variable names ($input0, $input1, etc.)
-        return array_values($trackingEvents);
+        return array_values($trackingEvents); // @phpstan-ignore arrayValues.list
     }
 
     /**

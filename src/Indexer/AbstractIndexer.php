@@ -49,11 +49,11 @@ abstract class AbstractIndexer
                 /** @var LocaleInterface $locale */
                 foreach ($channel->getLocales() as $locale) {
                     $localizedCatalog = $this->getLocalizedCatalogByChannelAndLocale($channel, $locale);
-                    if (!$localizedCatalog) {
+                    if (null === $localizedCatalog) {
                         throw new \InvalidArgumentException('No localized catalog found for channel ' . $channel->getCode() . ' and locale ' . $locale->getCode() . '. Try to synchronize your structure.');
                     }
 
-                    if (empty($documentIdsToReindex)) {
+                    if ([] === $documentIdsToReindex) {
                         $index = $this->indexOperation->createIndex($metadata, $localizedCatalog);
                     } else {
                         $index = $this->indexOperation->getIndexByName($metadata, $localizedCatalog);
@@ -63,17 +63,18 @@ abstract class AbstractIndexer
                     $bulk = [];
                     /** @var array $document */
                     foreach ($this->getDocumentsToIndex($channel, $locale, $documentIdsToReindex) as $document) {
+                        /** @var array{id: int|string} $document */
                         $bulk[$document['id']] = json_encode($document);
                         if (\count($bulk) >= $batchSize) {
                             $this->indexOperation->executeBulk($index, $bulk);
                             $bulk = [];
                         }
                     }
-                    if (\count($bulk)) {
+                    if (\count($bulk) > 0) {
                         $this->indexOperation->executeBulk($index, $bulk);
                     }
 
-                    if (empty($documentIdsToReindex)) {
+                    if ([] === $documentIdsToReindex) {
                         $this->indexOperation->refreshIndex($index);
                         $this->indexOperation->installIndex($index);
                     }

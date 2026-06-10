@@ -139,9 +139,10 @@ class PagerfantaGallyAdapter implements AdapterInterface, GallyAdapterInterface
     }
 
     /**
-     * @param ProductInterface[] $products
+     * @param array<string, true> $productNumbers
+     * @param ProductInterface[]  $products
      *
-     * @return array<(int|string), ProductInterface>
+     * @return array<int|string, ProductInterface>
      */
     private function sortProductResults(array $productNumbers, array $products): array
     {
@@ -157,7 +158,7 @@ class PagerfantaGallyAdapter implements AdapterInterface, GallyAdapterInterface
             }
         }
 
-        /* @var array<(int|string), ProductInterface> $productNumbers */
+        /** @var array<int|string, ProductInterface> $productNumbers */
         return $productNumbers;
     }
 }

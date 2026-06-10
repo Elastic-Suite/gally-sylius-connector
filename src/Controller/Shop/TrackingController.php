@@ -36,7 +36,7 @@ class TrackingController extends AbstractController
         try {
             $payload = json_decode($request->getContent(), true);
 
-            if (!$payload || !\is_array($payload)) {
+            if (null === $payload || !\is_array($payload)) {
                 return new JsonResponse([
                     'errors' => [
                         ['message' => 'Invalid JSON payload'],

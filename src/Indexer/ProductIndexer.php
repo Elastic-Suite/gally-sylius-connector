@@ -115,7 +115,7 @@ class ProductIndexer extends AbstractIndexer
         foreach ($product->getAttributes() as $attributeValue) {
             /** @var AttributeValueInterface $attributeValue */
             $attribute = $attributeValue->getAttribute();
-            if ($attributeValue->getLocaleCode() !== $locale->getCode() || null === $attribute?->getCode()) {
+            if ($attributeValue->getLocaleCode() !== $locale->getCode() || null === $attribute || null === $attribute->getCode()) {
                 continue;
             }
 
@@ -128,7 +128,8 @@ class ProductIndexer extends AbstractIndexer
                 /** @var array<array<array>> $attributeConfiguration */
                 $attributeConfiguration = $attribute->getConfiguration();
                 foreach ($attributeValue as $key => $value) {
-                    $translations = $attributeConfiguration['choices'][$value] ?? [];
+                    // @phpstan-ignore cast.string
+                    $translations = $attributeConfiguration['choices'][(string) $value] ?? [];
                     $label = $translations[$locale->getCode()] ?? '';
 
                     $attributeValue[$key] = [
@@ -163,7 +164,7 @@ class ProductIndexer extends AbstractIndexer
         // Remove empty values
         return array_filter(
             $data,
-            fn ($item, $key) => \in_array($key, ['stock'], true) || !\is_array($item) || [] !== array_filter($item),
+            fn ($item, $key) => \in_array($key, ['stock'], true) || !\is_array($item) || [] !== array_filter($item, fn ($v) => null !== $v && false !== $v && '' !== $v),
             \ARRAY_FILTER_USE_BOTH
         );
     }
@@ -193,7 +194,7 @@ class ProductIndexer extends AbstractIndexer
         // Remove empty values
         return array_filter(
             $data,
-            fn ($item, $key) => \in_array($key, ['stock'], true) || [] !== array_filter($item),
+            fn ($item, $key) => \in_array($key, ['stock'], true) || [] !== array_filter($item, fn ($v) => null !== $v && '' !== $v),
             \ARRAY_FILTER_USE_BOTH
         );
     }
@@ -224,6 +225,7 @@ class ProductIndexer extends AbstractIndexer
         $image = $product->getImagesByType('thumbnail')->first();
         if (false === $image) {
             $image = $product->getImages()->first();
+            // @phpstan-ignore notIdentical.alwaysTrue
             if (false === $image) {
                 return '';
             }

@@ -68,7 +68,7 @@ class GallyDynamicFilterType extends AbstractType
                     }
 
                     // raise the max limit to make sure the most expensive product will be part of the filtering
-                    ++$attr['max'];
+                    $attr['max'] = (int) $attr['max'] + 1;
 
                     $builder->add(
                         $aggregation->getField() . '_' . $aggregation->getType(),
@@ -126,12 +126,12 @@ class GallyDynamicFilterType extends AbstractType
     {
         $request = $this->requestStack->getCurrentRequest();
         /** @var array<string, mixed> $queryParameters */
-        $queryParameters = $request?->query ? $request->query->all() : [];
+        $queryParameters = null !== $request?->query ? $request->query->all() : [];
         $parameters = new Parameters($queryParameters);
         /** @var array<string, array<string, mixed>> $criteria */
         $criteria = $parameters->get('criteria', []);
         $query = $parameters->get('query', null);
-        $search = $query ?: ((isset($criteria['search'], $criteria['search']['value'])) ? $criteria['search']['value'] : '');
+        $search = (\is_string($query) && '' !== $query) ? $query : ((isset($criteria['search'], $criteria['search']['value'])) ? $criteria['search']['value'] : '');
         unset($criteria['search']);
         /** @var string $slug */
         $slug = $request?->attributes->get('slug') ?? '';

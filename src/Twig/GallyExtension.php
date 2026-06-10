@@ -51,11 +51,11 @@ class GallyExtension extends AbstractExtension
         return $this->configManager->isGallyEnabled();
     }
 
-    public function jsonEncodeSafe($data): string
+    public function jsonEncodeSafe(mixed $data): string
     {
-        return json_encode(
-            $data,
-            \JSON_HEX_TAG | \JSON_HEX_AMP | \JSON_HEX_APOS | \JSON_HEX_QUOT | \JSON_UNESCAPED_SLASHES
-        );
+        $flags = \JSON_HEX_TAG | \JSON_HEX_AMP | \JSON_HEX_APOS | \JSON_HEX_QUOT | \JSON_UNESCAPED_SLASHES;
+        $encoded = json_encode($data, $flags);
+
+        return false !== $encoded ? $encoded : '';
     }
 }
