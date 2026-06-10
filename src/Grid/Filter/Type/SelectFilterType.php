@@ -35,6 +35,7 @@ final class SelectFilterType extends AbstractType
 
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
-        $view->vars['has_more_url'] = $options['has_more_url'] ?? null;
+        // @phpstan-ignore offsetAccess.nonOffsetAccessible
+        $view->vars['has_more_url'] = \array_key_exists('has_more_url', $options) ? $options['has_more_url'] : null;
     }
 }

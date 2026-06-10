@@ -120,6 +120,7 @@ final class GallyController extends AbstractController
 
             if ($validConnection) {
                 foreach ($this->syncMethod as $entity => $method) {
+                    // @phpstan-ignore method.dynamicName
                     $this->synchonizer->{$method}($this->providers[$entity]->provide());
                 }
                 $this->addFlash('success', $this->translator->trans('gally_sylius.ui.sync_success'));

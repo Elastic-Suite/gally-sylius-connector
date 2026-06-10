@@ -62,7 +62,7 @@ class CategoryIndexer extends AbstractIndexer
             return [];
         }
 
-        if (!empty($documentIdsToReindex)) {
+        if ([] !== $documentIdsToReindex) {
             $taxons = [];
             $allTaxons = $this->taxonRepository->findBy(['id' => $documentIdsToReindex]);
 
@@ -86,8 +86,10 @@ class CategoryIndexer extends AbstractIndexer
                 $taxons[] = $taxon;
             }
         } else {
+            /** @var \Doctrine\ORM\QueryBuilder $qb */
+            $qb = $this->taxonRepository->createQueryBuilder('o'); // @phpstan-ignore-line
             /** @var iterable<TaxonInterface> $taxons */
-            $taxons = $this->taxonRepository->createQueryBuilder('o') /* @phpstan-ignore-line */
+            $taxons = $qb
                 ->andWhere('o.left >= :taxon_left')
                 ->andWhere('o.right <= :taxon_right')
                 ->orderBy('o.left', 'ASC')
@@ -125,7 +127,7 @@ class CategoryIndexer extends AbstractIndexer
         return [
             'id' => str_replace('/', '_', (string) $taxon->getCode()),
             'parentId' => $parentId,
-            'level' => $taxon->getLevel() + 1 - $menuTaxon->getLevel(),
+            'level' => ($taxon->getLevel() ?? 0) + 1 - ($menuTaxon->getLevel() ?? 0),
             'path' => $this->pathCache[$taxon->getCode()],
             'name' => $translation->getName(),
             'slug' => $translation->getSlug(),

@@ -61,7 +61,7 @@ class SearchAdapter implements AdapterInterface, GallyAdapterInterface
 
     public function getSlice(int $offset, int $length): iterable
     {
-        /** @var array $criteria */
+        /** @var array<string, array<string, string>> $criteria */
         $criteria = $this->parameters->get('criteria', []);
         /** @var string $search */
         $search = $this->parameters->get('query', $criteria['search']['value'] ?? '');
@@ -122,9 +122,10 @@ class SearchAdapter implements AdapterInterface, GallyAdapterInterface
     }
 
     /**
-     * @param ProductInterface[] $products
+     * @param array<string, true> $productNumbers
+     * @param ProductInterface[]  $products
      *
-     * @return array<(int|string), ProductInterface>
+     * @return array<int|string, ProductInterface>
      */
     private function sortProductResults(array $productNumbers, array $products): array
     {
@@ -133,7 +134,14 @@ class SearchAdapter implements AdapterInterface, GallyAdapterInterface
             $productNumbers[$product->getCode()] = $product;
         }
 
-        /* @var array<(int|string), ProductInterface> $productNumbers */
+        // clean up products sent from Gally that do not exist in Sylius anymore
+        foreach ($productNumbers as $code => $product) {
+            if (!\is_object($product)) {
+                unset($productNumbers[$code]);
+            }
+        }
+
+        /** @var array<int|string, ProductInterface> $productNumbers */
         return $productNumbers;
     }
 }

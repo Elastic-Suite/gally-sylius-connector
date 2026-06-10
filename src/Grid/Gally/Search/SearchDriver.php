@@ -19,7 +19,6 @@ use Doctrine\Persistence\ObjectManager;
 use Gally\Sdk\Service\SearchManager;
 use Gally\SyliusPlugin\Grid\Gally\Search\DataSource as SearchDataSource;
 use Gally\SyliusPlugin\Indexer\Provider\CatalogProvider;
-use Sylius\Component\Core\Repository\ProductRepositoryInterface;
 use Sylius\Component\Grid\Data\DataSourceInterface;
 use Sylius\Component\Grid\Data\DriverInterface;
 use Sylius\Component\Grid\Parameters;
@@ -44,11 +43,10 @@ final class SearchDriver implements DriverInterface
         }
 
         /** @var ObjectManager $manager */
-        // @phpstan-ignore argument.type
+        // @phpstan-ignore argument.type, argument.templateType, missingType.generics
         $manager = $this->managerRegistry->getManagerForClass($configuration['class']);
 
-        /** @var ProductRepositoryInterface $repository */
-        // @phpstan-ignore argument.type
+        // @phpstan-ignore argument.type, argument.templateType, missingType.generics, varTag.type
         $repository = $manager->getRepository($configuration['class']);
 
         // @phpstan-ignore offsetAccess.nonOffsetAccessible
@@ -56,8 +54,12 @@ final class SearchDriver implements DriverInterface
         // @phpstan-ignore offsetAccess.nonOffsetAccessible, argument.type
         $arguments = isset($configuration['repository']['arguments']) ? array_values($configuration['repository']['arguments']) : [];
 
+        /** @var \Doctrine\ORM\QueryBuilder $queryBuilder */
+        // @phpstan-ignore argument.type, method.dynamicName
+        $queryBuilder = $repository->{$method}(...$arguments);
+
         return new SearchDataSource(
-            $repository->{$method}(...$arguments),
+            $queryBuilder,
             $this->searchManager,
             $this->catalogProvider,
             $this->eventDispatcher

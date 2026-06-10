@@ -60,15 +60,19 @@ class Result
                 if (isset($operators['in'])) {
                     // Checkbox: one entry per selected value
                     foreach ((array) $operators['in'] as $value) {
+                        if (!\is_scalar($value) && null !== $value) {
+                            continue;
+                        }
                         $result[] = ['name' => $field, 'value' => (string) $value];
                     }
                 } elseif (isset($operators['eq'])) {
                     // Boolean: true → 1, false → 0
-                    $result[] = ['name' => $field, 'value' => $operators['eq'] ? '1' : '0'];
+                    $eqValue = (bool) $operators['eq'];
+                    $result[] = ['name' => $field, 'value' => $eqValue ? '1' : '0'];
                 } elseif (isset($operators['gte']) || isset($operators['lte'])) {
                     // Slider: min-max format
-                    $min = isset($operators['gte']) ? (string) $operators['gte'] : '';
-                    $max = isset($operators['lte']) ? (string) $operators['lte'] : '';
+                    $min = isset($operators['gte']) && \is_scalar($operators['gte']) ? (string) $operators['gte'] : '';
+                    $max = isset($operators['lte']) && \is_scalar($operators['lte']) ? (string) $operators['lte'] : '';
                     $result[] = ['name' => $field, 'value' => "{$min}-{$max}"];
                 }
             }

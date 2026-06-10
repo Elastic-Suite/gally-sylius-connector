@@ -71,7 +71,7 @@ class GallyConfiguration implements ResourceInterface, GallyConfigurationInterfa
 
     public function setPassword(?string $password): void
     {
-        if ($password) {
+        if (null !== $password && '' !== $password) {
             $this->password = $password;
         }
     }

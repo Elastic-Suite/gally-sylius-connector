@@ -36,10 +36,10 @@ class SearchController extends AbstractController
 
     public function getForm(Request $renderRequest, RequestStack $requestStack): Response
     {
-        /** @var string $query */
+        /** @var string|null $query */
         $query = $requestStack->getMainRequest()?->get('query');
-        if (empty($query)) {
-            /** @var array $query */
+        if (null === $query || '' === $query) {
+            /** @var array<string, array<string, string>> $query */
             $query = $requestStack->getMainRequest()?->get('criteria', []);
             $query = $query['search']['value'] ?? '';
         }
@@ -115,6 +115,7 @@ class SearchController extends AbstractController
 
     private function getCategoryAutocomplete(string $query, GallyChannelInterface $channel): array
     {
+        /** @var array<int, array<string, string>> $categories */
         $categories = $this->finder
             ->getAutocompleteResults(
                 $query,
@@ -125,6 +126,7 @@ class SearchController extends AbstractController
             ->getCollection();
 
         foreach ($categories as &$category) {
+            /** @var array<string, string> $category */
             $category['path'] = implode(
                 ' > ',
                 array_map(
@@ -141,7 +143,9 @@ class SearchController extends AbstractController
     {
         $attributes = [];
         $count = 0;
-        foreach ($products->getAggregations() as $aggregation) {
+        /** @var array<int, array{field: string, label: string, options: array<int, array{label: string}>}> $aggregations */
+        $aggregations = $products->getAggregations();
+        foreach ($aggregations as $aggregation) {
             foreach ($aggregation['options'] as $option) {
                 $attributes[] = [
                     'field' => $aggregation['field'],
@@ -161,7 +165,9 @@ class SearchController extends AbstractController
     private function getTermSuggestionsAutocomplete(GallyResponse $products): array
     {
         $termSuggestions = [];
-        foreach ($products->getTermSuggestions()['terms'] ?? [] as $termSuggestion) {
+        /** @var array{terms?: array<int, array{term: string, resultCount: string}>} $rawSuggestions */
+        $rawSuggestions = $products->getTermSuggestions();
+        foreach ($rawSuggestions['terms'] ?? [] as $termSuggestion) {
             $termSuggestions[] = [
                 'term' => $termSuggestion['term'],
                 'resultCount' => (int) round((float) $termSuggestion['resultCount']),
