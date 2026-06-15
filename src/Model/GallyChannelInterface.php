@@ -41,4 +41,20 @@ interface GallyChannelInterface extends ChannelInterface
     public function getGallyAutocompleteAttributeMaxSize(): int;
 
     public function setGallyAutocompleteAttributeMaxSize(int $gallyAutocompleteAttributeMaxSize): void;
+
+    public function getGallyTrackingActive(): bool;
+
+    public function setGallyTrackingActive(bool $gallyTrackingActive): void;
+
+    public function getGallyUseSyliusEndpointTracking(): bool;
+
+    public function setGallyUseSyliusEndpointTracking(bool $gallyUseSyliusEndpointTracking): void;
+
+    public function getGallyUidCookieLifetime(): int;
+
+    public function setGallyUidCookieLifetime(int $gallyUidCookieLifetime): void;
+
+    public function getGallyVidCookieLifetime(): int;
+
+    public function setGallyVidCookieLifetime(int $gallyVidCookieLifetime): void;
 }

@@ -19,15 +19,14 @@ use Sylius\Component\Grid\Data\ExpressionBuilderInterface;
 class ExpressionBuilder implements ExpressionBuilderInterface
 {
     /**
-     * @param array<string, array<array<string, mixed>>> ...$expressions
-     *
      * @return array
      */
-    public function andX(...$expressions)
+    public function andX(mixed ...$expressions)
     {
         $return = [];
 
         foreach ($expressions as $filter) {
+            /** @var array<string, array<string, mixed>> $filter */
             foreach ($filter as $key => $value) {
                 if (!isset($return[$key])) {
                     $return[$key] = $value;

@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Gally\SyliusPlugin\Indexer\Subscriber;
 
 use Gally\Sdk\Service\StructureSynchonizer;
+use Gally\SyliusPlugin\Config\ConfigManager;
 use Gally\SyliusPlugin\Indexer\Provider\CatalogProvider;
 use Gally\SyliusPlugin\Model\GallyChannelInterface;
 use Sylius\Component\Locale\Model\LocaleInterface;
@@ -26,6 +27,7 @@ final class ChannelSubscriber implements EventSubscriberInterface
     public function __construct(
         private CatalogProvider $catalogProvider,
         private StructureSynchonizer $synchonizer,
+        private ConfigManager $configManager,
     ) {
     }
 
@@ -45,10 +47,19 @@ final class ChannelSubscriber implements EventSubscriberInterface
                 return;
             }
 
-            /** @var LocaleInterface $locale */
-            foreach ($channel->getLocales() as $locale) {
-                $localizedCatalog = $this->catalogProvider->buildLocalizedCatalog($channel, $locale);
-                $this->synchonizer->syncLocalizedCatalog($localizedCatalog);
+            $validConnection = true;
+            try {
+                $this->configManager->testCredentials();
+            } catch (\Throwable $e) {
+                $validConnection = false;
+            }
+
+            if ($validConnection) {
+                /** @var LocaleInterface $locale */
+                foreach ($channel->getLocales() as $locale) {
+                    $localizedCatalog = $this->catalogProvider->buildLocalizedCatalog($channel, $locale);
+                    $this->synchonizer->syncLocalizedCatalog($localizedCatalog);
+                }
             }
         }
     }

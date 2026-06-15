@@ -34,7 +34,7 @@ class StructureClean extends StructureSync
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln('');
-        $isDryRun = !$input->getOption('force');
+        $isDryRun = !((bool) $input->getOption('force'));
 
         if ($isDryRun) {
             $output->writeln('<error>Running in dry run mode, add -f to really delete entities from Gally.</error>');
@@ -45,6 +45,7 @@ class StructureClean extends StructureSync
             $message = "<comment>Sync $entity</comment>";
             $time = microtime(true);
             $output->writeln("$message ...");
+            // @phpstan-ignore method.dynamicName
             $this->synchonizer->{$method}(
                 $this->providers[$entity]->provide(),
                 true,

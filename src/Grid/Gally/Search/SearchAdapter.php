@@ -19,6 +19,7 @@ use Gally\Sdk\Entity\Metadata;
 use Gally\Sdk\GraphQl\Request;
 use Gally\Sdk\Service\SearchManager;
 use Gally\SyliusPlugin\Event\GridFilterUpdateEvent;
+use Gally\SyliusPlugin\Grid\Gally\GallyAdapterInterface;
 use Gally\SyliusPlugin\Indexer\Provider\CatalogProvider;
 use Gally\SyliusPlugin\Search\Aggregation\AggregationBuilder;
 use Gally\SyliusPlugin\Search\Result;
@@ -30,9 +31,14 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 /**
  * @implements AdapterInterface<ProductInterface>
  */
-class SearchAdapter implements AdapterInterface
+class SearchAdapter implements AdapterInterface, GallyAdapterInterface
 {
     private ?Result $gallyResult = null;
+
+    public function getGallyResult(): ?Result
+    {
+        return $this->gallyResult;
+    }
 
     public function __construct(
         private QueryBuilder $queryBuilder,
@@ -40,7 +46,7 @@ class SearchAdapter implements AdapterInterface
         private CatalogProvider $catalogProvider,
         private EventDispatcherInterface $eventDispatcher,
         private Parameters $parameters,
-        private array $filters
+        private array $filters,
     ) {
     }
 
@@ -55,7 +61,7 @@ class SearchAdapter implements AdapterInterface
 
     public function getSlice(int $offset, int $length): iterable
     {
-        /** @var array $criteria */
+        /** @var array<string, array<string, string>> $criteria */
         $criteria = $this->parameters->get('criteria', []);
         /** @var string $search */
         $search = $this->parameters->get('query', $criteria['search']['value'] ?? '');
@@ -99,7 +105,9 @@ class SearchAdapter implements AdapterInterface
             $response->getItemsPerPage(),
             $response->getSortField(),
             $response->getSortDirection(),
-            AggregationBuilder::build($aggregationsData)
+            AggregationBuilder::build($aggregationsData),
+            $this->filters,
+            $search,
         );
 
         $this->eventDispatcher->dispatch(new GridFilterUpdateEvent($this->gallyResult), 'gally.grid.configure_filter');
@@ -114,9 +122,10 @@ class SearchAdapter implements AdapterInterface
     }
 
     /**
-     * @param ProductInterface[] $products
+     * @param array<string, true> $productNumbers
+     * @param ProductInterface[]  $products
      *
-     * @return array<(int|string), ProductInterface>
+     * @return array<int|string, ProductInterface>
      */
     private function sortProductResults(array $productNumbers, array $products): array
     {
@@ -125,7 +134,14 @@ class SearchAdapter implements AdapterInterface
             $productNumbers[$product->getCode()] = $product;
         }
 
-        /** @var array<(int|string), ProductInterface> $productNumbers */
+        // clean up products sent from Gally that do not exist in Sylius anymore
+        foreach ($productNumbers as $code => $product) {
+            if (!\is_object($product)) {
+                unset($productNumbers[$code]);
+            }
+        }
+
+        /** @var array<int|string, ProductInterface> $productNumbers */
         return $productNumbers;
     }
 }

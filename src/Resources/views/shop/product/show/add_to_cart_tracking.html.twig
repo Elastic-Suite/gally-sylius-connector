@@ -1,0 +1,66 @@
+{% if is_gally_enabled() and is_gally_tracking_enabled() %}
+    {% set product = hookable_metadata.context.product %}
+
+    <script>
+        (function () {
+            const form = document.querySelector('[data-live-action-param="addToCart"]')?.closest('form');
+            if (!form) return;
+
+            // Build variant data with their option values
+            const variants = [
+                {% for variant in product.variants %}
+                {
+                    id: {{ variant.id }},
+                    code: '{{ variant.code }}',
+                    optionValues: [
+                        {% for optionValue in variant.optionValues %}
+                        '{{ optionValue.code }}',
+                        {% endfor %}
+                    ]
+                },
+                {% endfor %}
+            ];
+
+            form.addEventListener('submit', function (event) {
+                const formData = new FormData(event.target);
+
+                // Get quantity from FormData
+                const qty = parseInt(formData.get('sylius_shop_add_to_cart[cartItem][quantity]'), 10) || 1;
+
+                // Collect all selected variant option values
+                const selectedOptions = [];
+                for (let [key, value] of formData.entries()) {
+                    // Match variant options: sylius_shop_add_to_cart[cartItem][variant][*]
+                    if (key.includes('[cartItem][variant][')) {
+                        selectedOptions.push(value);
+                    }
+                }
+
+                // Find the variant that matches all selected options
+                // Default to first variant if available, otherwise use product code
+                let variantCode = variants.length > 0 ? variants[0].code : '{{ product.code }}';
+
+                if (selectedOptions.length > 0) {
+                    const matchingVariant = variants.find(variant => {
+                        // Check if all selected options are present in this variant
+                        return selectedOptions.every(option =>
+                            variant.optionValues.includes(option)
+                        );
+                    });
+
+                    if (matchingVariant) {
+                        variantCode = matchingVariant.code;
+                    }
+                }
+
+                window.gallyEvent.push({
+                    eventType: 'add_to_cart',
+                    metadataCode: 'product',
+                    localizedCatalogCode: '{{ gally.localizedCatalog.code }}',
+                    entityCode: '{{ product.code }}',
+                    payload: JSON.stringify({ child_sku: variantCode, cart: { qty: qty } }),
+                });
+            });
+        })();
+    </script>
+{% endif %}

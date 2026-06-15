@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Gally\SyliusPlugin\Grid\Gally;
 
+use Gally\SyliusPlugin\Search\Result;
 use Pagerfanta\Pagerfanta;
 use Pagerfanta\PagerfantaInterface;
 
@@ -61,5 +62,16 @@ class PagerfantaGally extends Pagerfanta
         $this->setCurrentPage($this->currentPage);
 
         return $currentPageResults;
+    }
+
+    public function getGallyResult(): ?Result
+    {
+        $adapter = $this->getAdapter();
+
+        if (!$adapter instanceof GallyAdapterInterface) {
+            return null;
+        }
+
+        return $adapter->getGallyResult();
     }
 }

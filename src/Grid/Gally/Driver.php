@@ -44,11 +44,13 @@ final class Driver implements DriverInterface
 
     public function getDataSource(array $configuration, Parameters $parameters): DataSourceInterface
     {
-        /** @var array<array<array>> $configuration */
+        /** @var array{class: class-string, repository: array{method: string, arguments?: array<string, mixed>}, pagination?: array{fetch_join_collection?: bool, use_output_walkers?: bool}} $configuration */
+        // @phpstan-ignore function.alreadyNarrowedType
         if (!\array_key_exists('class', $configuration)) {
             throw new \InvalidArgumentException('"class" must be configured.');
         }
 
+        // @phpstan-ignore isset.offset
         if (!isset($configuration['repository']['method'])) {
             throw new \InvalidArgumentException('"repository.method" must be configured.');
         }
@@ -62,31 +64,36 @@ final class Driver implements DriverInterface
         // @phpstan-ignore-next-line
         $repository = $manager->getRepository($class);
 
-        /** @var bool $fetchJoinCollection */
-        $fetchJoinCollection = $configuration['pagination']['fetch_join_collection'] ?? true;
-        /** @var bool $useOutputWalkers */
-        $useOutputWalkers = $configuration['pagination']['use_output_walkers'] ?? true;
+        // @phpstan-ignore cast.useless
+        $fetchJoinCollection = (bool) ($configuration['pagination']['fetch_join_collection'] ?? true);
+        // @phpstan-ignore cast.useless
+        $useOutputWalkers = (bool) ($configuration['pagination']['use_output_walkers'] ?? true);
 
+        // @phpstan-ignore offsetAccess.notFound
         $arguments = isset($configuration['repository']['arguments']) ?
             array_values($configuration['repository']['arguments']) : [];
         $method = $configuration['repository']['method'];
 
         /** @var QueryBuilder $queryBuilder */
+        // @phpstan-ignore method.dynamicName
         $queryBuilder = $repository->{$method}(...$arguments);
 
         /** @var ChannelInterface $channel */
+        // @phpstan-ignore offsetAccess.notFound
         $channel = $configuration['repository']['arguments']['channel'];
+        // @phpstan-ignore offsetAccess.notFound
         $localeCode = $configuration['repository']['arguments']['locale'];
 
         /** @var EntityRepository<Locale> $localeRepository */
         $localeRepository = $manager->getRepository(Locale::class);
-        $locale = $localeRepository->findOneBy(['code' => $localeCode]) ?: $channel->getDefaultLocale();
+        $locale = $localeRepository->findOneBy(['code' => $localeCode]) ?? $channel->getDefaultLocale();
         if (null === $locale) {
             throw new \LogicException(sprintf('Missing default locale on channel %s', $channel->getName()));
         }
         if (($channel instanceof GallyChannelInterface) && $channel->getGallyActive()) {
             $currentLocalizedCatalog = $this->catalogProvider->buildLocalizedCatalog($channel, $locale);
             /** @var TaxonInterface $taxon */
+            // @phpstan-ignore offsetAccess.notFound
             $taxon = $configuration['repository']['arguments']['taxon'];
 
             return new DataSource(

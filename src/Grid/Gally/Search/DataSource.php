@@ -33,7 +33,7 @@ final class DataSource implements DataSourceInterface
         private QueryBuilder $queryBuilder,
         private SearchManager $searchManager,
         private CatalogProvider $catalogProvider,
-        private EventDispatcherInterface $eventDispatcher
+        private EventDispatcherInterface $eventDispatcher,
     ) {
         $this->expressionBuilder = new ExpressionBuilder();
     }

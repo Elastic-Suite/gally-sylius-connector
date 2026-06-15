@@ -5,9 +5,15 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd"
 >
     <services>
-        <service id="Gally\SyliusPlugin\Twig\GallyEnabledExtension">
+        <service id="Gally\SyliusPlugin\Twig\GallyExtension">
             <argument type="service" id="Gally\SyliusPlugin\Config\ConfigManager" />
             <tag name="twig.extension" />
+        </service>
+        <service id="Gally\SyliusPlugin\Twig\GallyContext">
+            <argument type="service" id="Gally\SyliusPlugin\Indexer\Provider\CatalogProvider" />
+            <argument type="service" id="Gally\SyliusPlugin\Repository\GallyConfigurationRepository" />
+            <argument type="service" id="sylius.context.channel" />
+            <argument type="service" id="router" />
         </service>
     </services>
 </container>

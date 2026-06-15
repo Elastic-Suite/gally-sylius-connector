@@ -54,6 +54,60 @@
        - Run `php bin/console assets:install`
        - Run `php bin/console sylius:install:assets`
        - Run `php bin/console sylius:theme:assets:install`
+
+    - **Alternative: install assets via Webpack Encore (recommended for Sylius 2.x)**
+      - Add the plugin and its JS SDK as npm dependencies in your app's `package.json`:
+        ```json
+        {
+          "dependencies": {
+            "@gally/sylius-plugin": "link:vendor/gally/sylius-plugin",
+            "@elastic-suite/gally-sdk": "2.2.2-alpha.0"
+          }
+        }
+        ```
+        > **Why `link:` instead of `file:` ?**  
+        > Yarn v1 has a known bug with `file:` local packages that declare their own npm dependencies
+        > (such as `@elastic-suite/gally-sdk`): it tries to scan a `node_modules` folder inside its cache
+        > copy of the package, which does not exist, causing an `EACCES`/`ENOENT` error.  
+        > Using `link:` creates a simple symlink to `vendor/gally/sylius-plugin` without going through
+        > the cache. `@elastic-suite/gally-sdk` must then be declared explicitly at the root level so
+        > that webpack can resolve it.
+        >
+        > **Development only:** if you are working on the plugin sources directly (i.e. pointing to
+        > `link:packages/GallyPlugin` instead of `link:vendor/gally/sylius-plugin`), you must also add
+        > a `postinstall` script to build the `@elastic-suite/gally-sdk` dist files, which are not pre-compiled on the GitHub branch:
+        > ```json
+        > {
+        >   "scripts": {
+        >     "postinstall": "cd node_modules/@elastic-suite/gally-sdk && yarn install"
+        >   }
+        > }
+        > ```
+      - Add the Gally shop entry point and the SDK IIFE copy in your app's `webpack.config.js`:
+        ```js
+        Encore
+            // ... your existing shop config
+            .addEntry('gally-shop-entry', './vendor/gally/sylius-plugin/src/Resources/assets/shop/entrypoint.js')
+            .copyFiles({
+                from: './node_modules/@elastic-suite/gally-sdk/dist/browser/iife',
+                to: 'gally/[name].[ext]',
+                pattern: /gally-sdk\.global\.js/,
+            })
+        ;
+        ```
+        > The `copyFiles()` call exposes `gally-sdk.global.js` as a standalone IIFE script
+        > (available as `window.GallySDK`) for use in Twig templates via `{{ asset('build/app/shop/gally/gally-sdk.global.js') }}`.
+      - Install JS dependencies and build assets:
+        - **Without Docker** (from the Sylius root directory):
+          ```shell
+          yarn install
+          yarn build
+          ```
+        - **With Docker** (via the `nodejs` container):
+          ```shell
+          docker compose run --rm nodejs
+          ```
+          > The `nodejs` container automatically runs `yarn install && yarn build` and mounts the project into `/srv/sylius`.
     - Run `php bin/console doctrine:migrations:migrate` to update the database schema
     - Open Sylius Admin, head to Configuration > Gally and configure the Gally endpoint (URL, credentials), after that enable Gally on your channel (Configuration > Channel > Edit)
 - Run this commands from your Sylius instance. This commands must be runned only once to synchronize the structure.

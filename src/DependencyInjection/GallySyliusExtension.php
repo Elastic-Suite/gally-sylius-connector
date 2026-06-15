@@ -43,6 +43,12 @@ final class GallySyliusExtension extends AbstractResourceExtension implements Pr
     public function prepend(ContainerBuilder $container): void
     {
         $this->prependDoctrineMigrations($container);
+
+        $container->prependExtensionConfig('twig', [
+            'globals' => [
+                'gally' => '@Gally\SyliusPlugin\Twig\GallyContext',
+            ],
+        ]);
     }
 
     protected function getMigrationsNamespace(): string

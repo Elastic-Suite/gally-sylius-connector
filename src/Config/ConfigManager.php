@@ -41,6 +41,18 @@ class ConfigManager
         return $isGallyEnabled;
     }
 
+    public function isTrackingEnabled(?ChannelInterface $channel = null): bool
+    {
+        $isGallyEnabled = false;
+        $channel = $channel ?? $this->channelContext->getChannel();
+
+        if (($channel instanceof GallyChannelInterface) && $channel->getGallyTrackingActive()) {
+            $isGallyEnabled = true;
+        }
+
+        return $isGallyEnabled;
+    }
+
     public function testCredentials(): void
     {
         $gallyConfiguration = $this->gallyConfigurationRepository->getConfiguration();

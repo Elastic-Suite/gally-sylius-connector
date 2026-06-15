@@ -36,7 +36,7 @@ class GallyDynamicFilter implements FilterInterface
         /** @var array<string, mixed> $data */
         foreach ($data as $field => $value) {
             $gallyFilter = $this->filterConverter->convert($field, $value);
-            if ($gallyFilter) {
+            if (null !== $gallyFilter) {
                 $dataSource->restrict($gallyFilter);
             }
         }

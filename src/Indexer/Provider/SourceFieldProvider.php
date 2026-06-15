@@ -88,9 +88,10 @@ class SourceFieldProvider implements ProviderInterface
 
         /** @var Collection<string,ProductAttributeTranslation|ProductOptionTranslation> $translations */
         $translations = $attribute->getTranslations();
-        $defaultLabel = $translations->first() ? $translations->first()->getName() : '';
+        $firstTranslation = $translations->first();
+        $defaultLabel = false !== $firstTranslation ? $firstTranslation->getName() : '';
 
-        /** @var \Gally\Sdk\Entity\Label[] $labels */
+        /** @var Label[] $labels */
         $labels = $this->getLabels($translations, (string) $defaultLabel);
 
         return new SourceField(
@@ -117,7 +118,7 @@ class SourceFieldProvider implements ProviderInterface
         $labels = [];
         foreach ($this->localizedCatalogs as $localizedCatalog) {
             $label = $labelsByLocal[$localizedCatalog->getLocale()] ?? null;
-            if ($label && $label !== $defaultLabel) {
+            if (null !== $label && '' !== $label && $label !== $defaultLabel) {
                 $labels[] = new Label($localizedCatalog, $label);
             }
         }

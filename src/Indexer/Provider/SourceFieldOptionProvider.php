@@ -87,10 +87,11 @@ class SourceFieldOptionProvider implements ProviderInterface
             /** @var ProductOptionValueInterface $value */
             foreach ($option->getValues() as $value) {
                 $sourceField = new SourceField($metadata, (string) $option->getCode(), '', '', []);
-                /** @var list<array<string, string>> $translations */
+                /** @var \Doctrine\Common\Collections\Collection<int, \Sylius\Component\Product\Model\ProductOptionValueTranslation> $translations */
                 $translations = $value->getTranslations();
+                $firstTranslation = $translations->first();
                 /** @var ?string $defaultLabel */
-                $defaultLabel = reset($translations)['translation'] ?? $value->getCode();
+                $defaultLabel = false !== $firstTranslation ? $firstTranslation->getValue() : (string) $value->getCode();
 
                 yield $this->buildSourceFieldOption(
                     $sourceField,
@@ -147,7 +148,7 @@ class SourceFieldOptionProvider implements ProviderInterface
         $labels = [];
         foreach ($this->localizedCatalogs as $localizedCatalog) {
             $label = $labelsByLocal[$localizedCatalog->getLocale()] ?? null;
-            if ($label && $label !== $defaultLabel) {
+            if (null !== $label && '' !== $label && $label !== $defaultLabel) {
                 $labels[] = new Label($localizedCatalog, $label);
             }
         }

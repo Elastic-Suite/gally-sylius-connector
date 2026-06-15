@@ -4,7 +4,7 @@ sylius_twig_hooks:
             search_bar:
                 template: '@GallySyliusPlugin/shop/shared/components/header/search/search_bar.html.twig'
                 priority: 250
-                
+
         'sylius_shop.base.header':
             search_bar:
                 template: '@GallySyliusPlugin/shop/shared/components/header/search/search_bar_mobile.html.twig'
@@ -16,6 +16,9 @@ sylius_twig_hooks:
                 component: ~
                 props: ~
                 priority: 120
+            tracking:
+                template: '@GallySyliusPlugin/shop/product/search/tracking.html.twig'
+                priority: -10
 
         'sylius_shop.product.search.content.body.main':
             header:
@@ -23,7 +26,7 @@ sylius_twig_hooks:
                 component: ~
                 props: ~
                 priority: 350
-                
+
         'sylius_shop.product.index.content.body.main.filters':
             filter_button:
                 template: '@GallySyliusPlugin/shop/product/search/content/body/main/filters/filter_button.html.twig'
@@ -106,7 +109,12 @@ sylius_twig_hooks:
             gally:
                 template: "@GallySyliusPlugin/shop/events_stylesheets.html.twig"
                 priority: 0
-        
+
+        'sylius_shop.base.head':
+            tracking_init:
+                template: "@GallySyliusPlugin/shop/tracking/init.html.twig"
+                priority: 100
+
         'sylius_shop.base#javascripts':
             gally:
                 template: "@GallySyliusPlugin/shop/events_javascript.html.twig"
@@ -121,11 +129,9 @@ sylius_twig_hooks:
             filter:
                 template: '@GallySyliusPlugin/shop/product/index/content/body/main/filters/search/filter.html.twig'
 
-        
         'sylius_shop.product.index.content.body.main.filters.controls':
             sort:
                 template: '@GallySyliusPlugin/shop/product/index/content/body/main/filters/controls/sorting.html.twig'
-                
 
         'sylius_shop.product.index.content.body.main.filters.controls.sorting':
             menu:
@@ -135,3 +141,25 @@ sylius_twig_hooks:
                 template: ~
             toggle:
                 enabled: false
+
+        'sylius_shop.order.thank_you.content':
+            tracking:
+                template: '@GallySyliusPlugin/shop/order/thank_you/tracking.html.twig'
+                priority: -10
+
+        'sylius_shop.product.show.content':
+            tracking:
+                template: '@GallySyliusPlugin/shop/product/show/tracking.html.twig'
+                priority: -10
+
+        'sylius_shop.product.index.content':
+            tracking:
+                component: 'gally_shop:product:category_tracking'
+                props:
+                    template: '@GallySyliusPlugin/shop/product/category/tracking.html.twig'
+                priority: -10
+
+        'sylius_shop.product.show.content.info.summary.add_to_cart':
+            tracking:
+                template: '@GallySyliusPlugin/shop/product/show/add_to_cart_tracking.html.twig'
+                priority: -10
