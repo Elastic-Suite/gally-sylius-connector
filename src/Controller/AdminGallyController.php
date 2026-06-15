@@ -14,15 +14,16 @@ declare(strict_types=1);
 
 namespace Gally\SyliusPlugin\Controller;
 
+use Gally\Sdk\Client\Client;
 use Gally\Sdk\Service\StructureSynchonizer;
 use Gally\SyliusPlugin\Config\ConfigManager;
-use Gally\SyliusPlugin\Config\TokenCacheManager;
 use Gally\SyliusPlugin\Entity\GallyConfiguration;
 use Gally\SyliusPlugin\Form\Type\GallyConfigurationType;
 use Gally\SyliusPlugin\Form\Type\SyncSourceFieldsType;
 use Gally\SyliusPlugin\Form\Type\TestConnectionType;
 use Gally\SyliusPlugin\Indexer\Provider\ProviderInterface;
 use Gally\SyliusPlugin\Repository\GallyConfigurationRepository;
+use Gally\SyliusPlugin\Service\CacheManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -46,7 +47,7 @@ final class AdminGallyController extends AbstractController
         protected ConfigManager $configManager,
         \IteratorAggregate $providers,
         private TranslatorInterface $translator,
-        private TokenCacheManager $tokenCacheManager,
+        private CacheManager $cacheManager,
     ) {
         /** @var ProviderInterface[] $providersArray */
         $providersArray = iterator_to_array($providers);
@@ -65,7 +66,7 @@ final class AdminGallyController extends AbstractController
 
             $this->gallyConfigurationRepository->add($gallyConfiguration);
             $this->addFlash('success', $this->translator->trans('gally_sylius.ui.configuration_saved'));
-            $this->tokenCacheManager->clearCache();
+            $this->cacheManager->clearCache(Client::API_TOKEN_CACHE_KEY);
         }
 
         return $this->render('@GallySyliusPlugin/admin/gally/index.html.twig', [

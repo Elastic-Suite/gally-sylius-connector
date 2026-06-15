@@ -3,7 +3,7 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
-        <service id="Gally\SyliusPlugin\Config\TokenCacheManager">
+        <service id="Gally\SyliusPlugin\Service\CacheManager">
             <call method="setCache">
                 <argument type="service" id="cache.app" />
             </call>
@@ -14,19 +14,24 @@
         </service>
         <service id="Gally\Sdk\Client\Client">
             <argument type="service" id="Gally\Sdk\Client\Configuration" />
-            <argument type="service" id="Gally\SyliusPlugin\Config\TokenCacheManager" />
+            <argument type="service" id="Gally\SyliusPlugin\Service\CacheManager" />
         </service>
         <service id="Gally\Sdk\Service\StructureSynchonizer">
             <argument type="service" id="Gally\Sdk\Client\Configuration" />
-            <argument type="service" id="Gally\SyliusPlugin\Config\TokenCacheManager" />
+            <argument type="service" id="Gally\SyliusPlugin\Service\CacheManager" />
         </service>
         <service id="Gally\Sdk\Service\IndexOperation">
             <argument type="service" id="Gally\Sdk\Client\Configuration" />
-            <argument type="service" id="Gally\SyliusPlugin\Config\TokenCacheManager" />
+            <argument type="service" id="Gally\SyliusPlugin\Service\CacheManager" />
+        </service>
+        <service id="Gally\Sdk\Service\BundleManager">
+            <argument type="service" id="Gally\Sdk\Client\Configuration" />
+            <argument type="service" id="Gally\SyliusPlugin\Service\CacheManager" />
         </service>
         <service id="Gally\Sdk\Service\SearchManager">
             <argument type="service" id="Gally\Sdk\Client\Configuration" />
-            <argument type="service" id="Gally\SyliusPlugin\Config\TokenCacheManager" />
+            <argument type="service" id="Gally\Sdk\Service\BundleManager" />
+            <argument type="service" id="Gally\SyliusPlugin\Service\CacheManager" />
         </service>
         <service id="Gally\Sdk\Repository\CatalogRepository">
             <argument type="service" id="Gally\Sdk\Client\Client" />
