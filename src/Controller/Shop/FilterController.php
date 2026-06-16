@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Gally\SyliusPlugin\Controller;
+namespace Gally\SyliusPlugin\Controller\Shop;
 
 use Gally\Sdk\Entity\Metadata;
 use Gally\Sdk\Service\SearchManager;
@@ -30,7 +30,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-final class Filter extends AbstractController
+final class FilterController extends AbstractController
 {
     /**
      * @param TaxonRepository<Taxon> $taxonRepository

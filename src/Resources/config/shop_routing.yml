@@ -9,7 +9,7 @@ gally_filter_view_more_ajax:
     path: /viewMore/{filterField}
     methods: [ GET ]
     defaults:
-        _controller: Gally\SyliusPlugin\Controller\Filter::viewMore
+        _controller: Gally\SyliusPlugin\Controller\Shop\FilterController::viewMore
         _format: json
 
 gally_search_form:

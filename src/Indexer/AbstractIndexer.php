@@ -63,6 +63,9 @@ abstract class AbstractIndexer
                     $bulk = [];
                     /** @var array $document */
                     foreach ($this->getDocumentsToIndex($channel, $locale, $documentIdsToReindex) as $document) {
+                        if (0 === \count($document)) {
+                            continue;
+                        }
                         /** @var array{id: int|string} $document */
                         $bulk[$document['id']] = json_encode($document);
                         if (\count($bulk) >= $batchSize) {
