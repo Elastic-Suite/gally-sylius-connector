@@ -1,4 +1,3 @@
-{% import '@SyliusShop/shared/buttons.html.twig' as buttons %}
 {% if is_gally_enabled() %}
     {% set products = hookable_metadata.context.products %}
     {% set query = products.parameters.get('query')|default(products.parameters.get('criteria').search.value|default(false)) %}
@@ -19,12 +18,6 @@
                                 {{ sylius_grid_render_filter(products, filter) }}
                             {% endif %}
                         {% endfor %}
-                    </div>
-                    <div class="ms-auto" id="searchbarButtons">
-                        <div class="ui buttons">
-                            {{ buttons.submit('sylius.ui.search'|trans, 'contact-send', 'tabler:search', 'btn-primary') }}
-                            {{ buttons.secondary(path('gally_search_result_page', {'query': query}), 'sylius.ui.clear'|trans, 'filter-clear', 'tabler:cancel') }}
-                        </div>
                     </div>
                 </div>
             </form>

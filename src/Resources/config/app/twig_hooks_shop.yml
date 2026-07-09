@@ -61,6 +61,8 @@ sylius_twig_hooks:
                 priority: 0
 
         'sylius_shop.product.index.content.body.sidebar':
+            taxonomy:
+                enabled: false
             gally_filters:
                 template: '@GallySyliusPlugin/shop/product/index/content/body/sidebar/filters.html.twig'
                 priority: 0

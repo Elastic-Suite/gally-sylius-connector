@@ -5,6 +5,12 @@
     <services>
         <service id="Gally\SyliusPlugin\Search\FilterConverter" />
 
+        <service id="Gally\SyliusPlugin\Search\ActiveFilterResolver">
+            <argument type="service" id="request_stack" />
+            <argument type="service" id="translator" />
+            <tag name="kernel.event_listener" event="gally.grid.configure_filter" method="onFilterUpdate" />
+        </service>
+
         <service id="Gally\SyliusPlugin\Search\Finder" >
             <argument type="service" id="Gally\Sdk\Service\SearchManager" />
             <argument type="service" id="Gally\SyliusPlugin\Indexer\Provider\CatalogProvider" />

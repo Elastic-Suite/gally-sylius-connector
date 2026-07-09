@@ -4,5 +4,13 @@
     '@GallySyliusPlugin/shop/form/range_widget.html.twig'
 ] %}
 
-{% set label = 'gally_sylius.ui.filters.headline'|trans %}
-{{ form_row(form, {'label': label }) }}
+<div class="field mb-3">
+    <div class="filters-title">{{ 'gally_sylius.ui.filters.headline'|trans }}</div>
+    {{ component('gally_shop:product:active_filters', {template: '@GallySyliusPlugin/shop/product/_shared/active_filters.html.twig'}) }}
+    {% if app.request.attributes.has('slug') %}
+        {{ component('sylius_shop:product:show:taxonomy', {template: '@GallySyliusPlugin/shop/product/_shared/categories.html.twig'}) }}
+    {% endif %}
+    {{ form_widget(form) }}
+    {{ form_help(form) }}
+    {{ form_errors(form) }}
+</div>

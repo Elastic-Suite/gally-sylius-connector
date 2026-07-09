@@ -17,5 +17,10 @@
             <argument type="service" id="sylius.context.channel" />
             <tag name="sylius.twig_component"  key="gally_shop:product:sorting"/>
         </service>
+
+        <service id="Gally\SyliusPlugin\Twig\Component\Product\ActiveFiltersComponent">
+            <argument type="service" id="Gally\SyliusPlugin\Search\ActiveFilterResolver" />
+            <tag name="sylius.twig_component" key="gally_shop:product:active_filters"/>
+        </service>
     </services>
 </container>
