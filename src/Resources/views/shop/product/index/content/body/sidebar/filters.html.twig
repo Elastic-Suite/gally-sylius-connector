@@ -14,7 +14,7 @@
                     data-controller="gally--sylius-plugin--filters-autosubmit"
                     data-action="change->gally--sylius-plugin--filters-autosubmit#submit"
                 >
-                    <div class="column" id="searchbarTextField" data-controller="gally--sylius-plugin--view-more">
+                    <div class="column" id="searchbarTextField" data-controller="gally--sylius-plugin--facet-options">
                         {% for filter in products.definition.enabledFilters %}
                             {% if filter.type != 'shop_string' %}
                                 {{ sylius_grid_render_filter(products, filter) }}

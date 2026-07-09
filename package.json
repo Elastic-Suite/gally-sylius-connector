@@ -14,8 +14,8 @@
         "enabled": true,
         "fetch": "eager"
       },
-      "view-more": {
-        "main": "src/Resources/assets/shop/controllers/ViewMoreController.js",
+      "facet-options": {
+        "main": "src/Resources/assets/shop/controllers/FacetOptionsController.js",
         "enabled": true,
         "fetch": "eager"
       },

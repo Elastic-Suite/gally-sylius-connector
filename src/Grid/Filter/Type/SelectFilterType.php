@@ -24,8 +24,9 @@ final class SelectFilterType extends AbstractType
 {
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefined(['has_more_url'])
-            ->addAllowedTypes('has_more_url', 'string');
+        $resolver->setDefined(['has_more', 'search_url'])
+            ->addAllowedTypes('has_more', 'bool')
+            ->addAllowedTypes('search_url', 'string');
     }
 
     public function getParent(): string
@@ -36,6 +37,8 @@ final class SelectFilterType extends AbstractType
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         // @phpstan-ignore offsetAccess.nonOffsetAccessible
-        $view->vars['has_more_url'] = \array_key_exists('has_more_url', $options) ? $options['has_more_url'] : null;
+        $view->vars['has_more'] = \array_key_exists('has_more', $options) ? $options['has_more'] : false;
+        // @phpstan-ignore offsetAccess.nonOffsetAccessible
+        $view->vars['search_url'] = \array_key_exists('search_url', $options) ? $options['search_url'] : null;
     }
 }
