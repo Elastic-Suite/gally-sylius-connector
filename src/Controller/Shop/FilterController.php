@@ -50,6 +50,8 @@ final class FilterController extends AbstractController
     {
         /** @var string|null $search */
         $search = $request->get('search');
+        /** @var string|null $optionSearch */
+        $optionSearch = $request->get('optionSearch');
         /** @var array<string, array<string, mixed>>|null $requestFilters */
         $requestFilters = $request->get('filters');
         $filters = $requestFilters['gally'] ?? [];
@@ -91,7 +93,7 @@ final class FilterController extends AbstractController
             $gallyFilters,
         );
 
-        $aggregationOptions = $this->searchManager->viewMoreProductFilterOption($request, $filterField);
+        $aggregationOptions = $this->searchManager->viewMoreProductFilterOption($request, $filterField, $optionSearch);
 
         /** @var array<string, string>$option */
         foreach ($aggregationOptions as $option) {

@@ -255,12 +255,21 @@ class ProductIndexer extends AbstractIndexer
         $categories = [];
 
         foreach ($product->getTaxons() as $taxon) {
-            if ($taxon->isEnabled()) {
-                $categories[$taxon->getCode()] = [
-                    'id' => str_replace('/', '_', (string) $taxon->getCode()),
-                    'category_uid' => str_replace('/', '_', (string) $taxon->getCode()),
-                    'name' => $taxon->getName(),
-                    'is_parent' => $taxon->hasChildren(),
+            // include the taxon itself as well as all its ancestors (e.g. the root menu taxon),
+            // otherwise a product only assigned to a leaf taxon never appears in its parent categories
+            $taxonAndAncestors = $taxon->getAncestors()->toArray();
+            $taxonAndAncestors[] = $taxon;
+
+            foreach ($taxonAndAncestors as $taxonOrAncestor) {
+                if (!$taxonOrAncestor->isEnabled()) {
+                    continue;
+                }
+
+                $categories[$taxonOrAncestor->getCode()] = [
+                    'id' => str_replace('/', '_', (string) $taxonOrAncestor->getCode()),
+                    'category_uid' => str_replace('/', '_', (string) $taxonOrAncestor->getCode()),
+                    'name' => $taxonOrAncestor->getName(),
+                    'is_parent' => $taxonOrAncestor->hasChildren(),
                 ];
             }
         }

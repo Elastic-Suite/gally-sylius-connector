@@ -19,6 +19,8 @@ gally_sylius:
     filters:
       headline: Filters
       view_more: View more
+      search_placeholder: Search
+      search_clear: Clear search
       remove: Remove filter
       clear_all: Clear all filters
       categories: Categories

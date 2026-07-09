@@ -1,10 +1,20 @@
 {% block sylius_gally_filter_checkbox_row -%}
     <div class="{% if required %}required {% endif %}field{% if (not compound or force_error|default(false)) and not valid %} error{% endif %}">
         {{- form_label(form) -}}
+        <div class="facet-search-wrapper">
+            <input type="text" class="facet-search form-control form-control-sm"
+                data-for="{{ form.vars.id }}"
+                data-href="{{ search_url }}"
+                data-action="input->gally--sylius-plugin--facet-options#search change->gally--sylius-plugin--facet-options#stopPropagation"
+                placeholder="{{ 'gally_sylius.ui.filters.search_placeholder'|trans }}" autocomplete="off" />
+            <button type="button" class="facet-search-clear"
+                data-action="click->gally--sylius-plugin--facet-options#clearSearch"
+                aria-label="{{ 'gally_sylius.ui.filters.search_clear'|trans }}" style="display: none">{{ ux_icon('tabler:x') }}</button>
+        </div>
         {% set attr = attr|merge({'class': attr.class|default ~ ' ui'}) %}
         {{- form_widget(form, {'attr': attr}) -}}
-        {% if has_more_url %}
-            <a class="view-more" data-for="{{ form.vars.id }}" data-href="{{ has_more_url }}" data-action="click->gally--sylius-plugin--view-more#load">{{ 'gally_sylius.ui.filters.view_more'|trans }}</a>
+        {% if has_more %}
+            <a class="view-more" data-for="{{ form.vars.id }}" data-href="{{ search_url }}" data-action="click->gally--sylius-plugin--facet-options#viewMore">{{ 'gally_sylius.ui.filters.view_more'|trans }}</a>
         {% endif %}
     </div>
 {%- endblock sylius_gally_filter_checkbox_row %}
