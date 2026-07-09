@@ -101,10 +101,9 @@ class GallyDynamicFilterType extends AbstractType
                         'choices' => $choices,
                         'expanded' => true,
                         'multiple' => true,
+                        'search_url' => $this->buildSearchUrl($aggregation->getField()),
+                        'has_more' => $aggregation->hasMore(),
                     ];
-                    if ($aggregation->hasMore()) {
-                        $options['has_more_url'] = $this->buildHasMoreUrl($aggregation->getField());
-                    }
                     $builder->add(
                         $aggregation->getField(),
                         SelectFilterType::class,
@@ -122,7 +121,7 @@ class GallyDynamicFilterType extends AbstractType
         $this->aggregations = $event->getAggregations();
     }
 
-    private function buildHasMoreUrl(string $field): string
+    private function buildSearchUrl(string $field): string
     {
         $request = $this->requestStack->getCurrentRequest();
         /** @var array<string, mixed> $queryParameters */
