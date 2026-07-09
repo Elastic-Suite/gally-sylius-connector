@@ -18,6 +18,11 @@
         "main": "src/Resources/assets/shop/controllers/ViewMoreController.js",
         "enabled": true,
         "fetch": "eager"
+      },
+      "filters-autosubmit": {
+        "main": "src/Resources/assets/shop/controllers/FiltersAutosubmitController.js",
+        "enabled": true,
+        "fetch": "eager"
       }
     }
   },

@@ -1,0 +1,15 @@
+{% if active_filters|length > 0 %}
+    <div class="active-filters" id="activeFilters">
+        <div class="d-flex flex-wrap gap-2">
+            {% for activeFilter in active_filters %}
+                <a href="{{ activeFilter.removeUrl }}" class="active-filter-chip badge rounded-pill text-bg-light border d-inline-flex align-items-center gap-1">
+                    <span>{{ activeFilter.label }}</span>
+                    <span class="active-filter-chip-remove" aria-label="{{ 'gally_sylius.ui.filters.remove'|trans }}">&times;</span>
+                </a>
+            {% endfor %}
+        </div>
+        {% if clear_all_url %}
+            <a href="{{ clear_all_url }}" class="active-filters-clear-all d-inline-block mt-2">{{ 'gally_sylius.ui.filters.clear_all'|trans }}</a>
+        {% endif %}
+    </div>
+{% endif %}
