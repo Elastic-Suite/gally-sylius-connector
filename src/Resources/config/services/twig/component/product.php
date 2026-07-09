@@ -15,6 +15,8 @@ declare(strict_types=1);
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Gally\Sdk\Service\SearchManager;
+use Gally\SyliusPlugin\Search\ActiveFilterResolver;
+use Gally\SyliusPlugin\Twig\Component\Product\ActiveFiltersComponent;
 use Gally\SyliusPlugin\Twig\Component\Product\CategoryTrackingComponent;
 use Gally\SyliusPlugin\Twig\Component\Product\SortOptionComponent;
 
@@ -28,4 +30,8 @@ return static function (ContainerConfigurator $container) {
     $services->set(SortOptionComponent::class)
         ->args([service(SearchManager::class), service('request_stack'), service('translator'), service('sylius.context.channel')])
         ->tag('sylius.twig_component', ['key' => 'gally_shop:product:sorting']);
+
+    $services->set(ActiveFiltersComponent::class)
+        ->args([service(ActiveFilterResolver::class)])
+        ->tag('sylius.twig_component', ['key' => 'gally_shop:product:active_filters']);
 };

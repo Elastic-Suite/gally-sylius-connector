@@ -22,6 +22,7 @@ use Gally\SyliusPlugin\Grid\Filter\GallyDynamicFilter;
 use Gally\SyliusPlugin\Grid\Gally\Driver;
 use Gally\SyliusPlugin\Grid\Gally\Search\SearchDriver;
 use Gally\SyliusPlugin\Indexer\Provider\CatalogProvider;
+use Gally\SyliusPlugin\Search\ActiveFilterResolver;
 use Gally\SyliusPlugin\Search\FilterConverter;
 use Gally\SyliusPlugin\Search\Finder;
 use Sylius\Bundle\GridBundle\Form\Type\Filter\SelectFilterType;
@@ -30,6 +31,10 @@ return static function (ContainerConfigurator $container) {
     $services = $container->services();
 
     $services->set(FilterConverter::class);
+
+    $services->set(ActiveFilterResolver::class)
+        ->args([service('request_stack'), service('translator')])
+        ->tag('kernel.event_listener', ['event' => 'gally.grid.configure_filter', 'method' => 'onFilterUpdate']);
 
     $services->set(Finder::class)
         ->args([service(SearchManager::class), service(CatalogProvider::class), service('event_dispatcher')]);

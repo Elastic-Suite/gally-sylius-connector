@@ -19,6 +19,9 @@ gally_sylius:
     filters:
       headline: Filters
       view_more: View more
+      remove: Remove filter
+      clear_all: Clear all filters
+      categories: Categories
     sort:
         relevance: Relevance
         direction:
