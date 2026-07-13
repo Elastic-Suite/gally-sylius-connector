@@ -142,7 +142,7 @@ class RecommendationFinder
 
         $recommendations = $this->recommenderManager->getProductRecommendations(
             $typeCode,
-            $localizedCatalog->getCode(),
+            $localizedCatalog,
             $sourceProductCodes,
             $count,
         );

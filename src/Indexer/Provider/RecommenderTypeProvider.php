@@ -42,8 +42,8 @@ class RecommenderTypeProvider implements ProviderInterface
     public function buildRecommenderType(ProductAssociationTypeInterface $productAssociationType): RecommenderType
     {
         return new RecommenderType(
-            (string) $productAssociationType->getCode(),
             (string) $productAssociationType->getName(),
+            (string) $productAssociationType->getCode(),
         );
     }
 }
