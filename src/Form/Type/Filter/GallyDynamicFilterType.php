@@ -16,6 +16,7 @@ namespace Gally\SyliusPlugin\Form\Type\Filter;
 
 use Gally\SyliusPlugin\Event\GridFilterUpdateEvent;
 use Gally\SyliusPlugin\Grid\Filter\Type\SelectFilterType;
+use Gally\SyliusPlugin\Search\ActiveFilterResolver;
 use Gally\SyliusPlugin\Search\Aggregation\Aggregation;
 use Gally\SyliusPlugin\Search\Aggregation\AggregationOption;
 use Sylius\Bundle\GridBundle\Form\Type\Filter\BooleanFilterType;
@@ -24,6 +25,7 @@ use Sylius\Component\Grid\Parameters;
 use Sylius\Component\Locale\Context\LocaleContextInterface;
 use Sylius\Component\Taxonomy\Model\TaxonInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\RangeType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -49,6 +51,18 @@ class GallyDynamicFilterType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $isTaxonPage = $this->isTaxonPage();
+        $categoryFieldAdded = false;
+
+        if ($isTaxonPage && !$this->hasCategoryAggregation()) {
+            // Gally doesn't always return a "category" aggregation on taxon listing pages (e.g. a
+            // leaf taxon with no sub-taxons), so there's no signal telling us where it would
+            // normally sit in the facet order. Placed first, right below the active filters, in
+            // that case.
+            $this->addCategoryTaxonomyAnchor($builder);
+            $categoryFieldAdded = true;
+        }
+
         foreach ($this->aggregations as $aggregation) {
             switch ($aggregation->getType()) {
                 case 'slider':
@@ -95,23 +109,46 @@ class GallyDynamicFilterType extends AbstractType
                         /* @var AggregationOption $option */
                         $choices[$option->getLabel()] = $option->getId();
                     }
-                    $options = [
-                        'block_prefix' => 'sylius_gally_filter_checkbox',
-                        'label' => $aggregation->getLabel(),
-                        'choices' => $choices,
-                        'expanded' => true,
-                        'multiple' => true,
-                        'search_url' => $this->buildSearchUrl($aggregation->getField()),
-                        'has_more' => $aggregation->hasMore(),
-                    ];
                     $builder->add(
                         $aggregation->getField(),
                         SelectFilterType::class,
-                        $options
+                        [
+                            'block_prefix' => 'sylius_gally_filter_checkbox',
+                            'label' => $aggregation->getLabel(),
+                            'choices' => $choices,
+                            'expanded' => true,
+                            'multiple' => true,
+                            'search_url' => $this->buildSearchUrl($aggregation->getField()),
+                            'has_more' => $aggregation->hasMore(),
+                        ]
                     );
+                    break;
+                case 'category':
+                    // A taxon-scoped request is still a category browsing context even when
+                    // Gally does return this aggregation (e.g. a parent taxon whose products
+                    // span several sub-taxons): direct taxon navigation (native component) is
+                    // used either way, never the Gally query-string filter, which would produce
+                    // links "filtering" the current taxon page instead of going to the sub-taxon
+                    // page directly.
+                    if ($isTaxonPage) {
+                        $this->addCategoryTaxonomyAnchor($builder);
+                    } else {
+                        $this->addCategoryField($builder, $aggregation);
+                    }
+                    $categoryFieldAdded = true;
                     break;
                 default:
                     break;
+            }
+        }
+
+        // Gally excludes the category aggregation from the response as soon as a category filter is
+        // active, so once selected the field above never reappears. Without this, submitting any
+        // other filter would silently drop the category criteria.
+        if (!$categoryFieldAdded) {
+            $categoryId = $this->getCurrentCategoryId();
+            if (null !== $categoryId) {
+                $builder->add(ActiveFilterResolver::CATEGORY_FIELD, HiddenType::class, ['data' => $categoryId]);
             }
         }
     }
@@ -119,6 +156,73 @@ class GallyDynamicFilterType extends AbstractType
     public function onFilterUpdate(GridFilterUpdateEvent $event): void
     {
         $this->aggregations = $event->getAggregations();
+    }
+
+    private function isTaxonPage(): bool
+    {
+        $slug = $this->requestStack->getCurrentRequest()?->attributes->get('slug');
+
+        return \is_string($slug) && '' !== $slug;
+    }
+
+    private function hasCategoryAggregation(): bool
+    {
+        foreach ($this->aggregations as $aggregation) {
+            if ('category' === $aggregation->getType()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * On taxon listing pages Gally never returns a "category" aggregation at all (the taxon
+     * already scopes the search), so browsing there is handled by the native Sylius taxonomy
+     * component instead (proper direct links, plus a "go level up" link), inserted as a plain
+     * form field so it renders through the same form_widget(form) call and keeps its position
+     * in the facet order (see buildForm()). The block rendering it lives in checkbox.html.twig
+     * (block "sylius_gally_filter_category_taxonomy_row").
+     */
+    private function addCategoryTaxonomyAnchor(FormBuilderInterface $builder): void
+    {
+        $builder->add(ActiveFilterResolver::CATEGORY_FIELD, HiddenType::class, [
+            'block_prefix' => 'sylius_gally_filter_category_taxonomy',
+        ]);
+    }
+
+    /**
+     * Rendered through the same SelectFilterType/autosubmit mechanism as the other facets (real
+     * radio inputs, native browser change event), just themed to look like plain links via CSS
+     * (see the "sylius_gally_filter_category" block and #searchbar .category-links rule in
+     * filters.css) since a category is single-select, not a combinable criterion.
+     */
+    private function addCategoryField(FormBuilderInterface $builder, Aggregation $aggregation): void
+    {
+        $choices = [];
+        foreach ($aggregation->getOptions() as $option) {
+            /* @var AggregationOption $option */
+            $choices[$option->getLabel()] = $option->getId();
+        }
+
+        $builder->add(ActiveFilterResolver::CATEGORY_FIELD, SelectFilterType::class, [
+            'block_prefix' => 'sylius_gally_filter_category',
+            'label' => $aggregation->getLabel(),
+            'choices' => $choices,
+            'expanded' => true,
+            'multiple' => false,
+            'data' => $this->getCurrentCategoryId(),
+        ]);
+    }
+
+    private function getCurrentCategoryId(): ?string
+    {
+        $queryParameters = $this->requestStack->getCurrentRequest()?->query->all() ?? [];
+        $criteria = \is_array($queryParameters['criteria'] ?? null) ? $queryParameters['criteria'] : [];
+        $gallyCriteria = \is_array($criteria['gally'] ?? null) ? $criteria['gally'] : [];
+        $categoryId = $gallyCriteria[ActiveFilterResolver::CATEGORY_FIELD] ?? null;
+
+        return \is_string($categoryId) && '' !== $categoryId ? $categoryId : null;
     }
 
     private function buildSearchUrl(string $field): string

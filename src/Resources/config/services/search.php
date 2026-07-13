@@ -33,8 +33,14 @@ return static function (ContainerConfigurator $container) {
     $services->set(FilterConverter::class);
 
     $services->set(ActiveFilterResolver::class)
-        ->args([service('request_stack'), service('translator')])
-        ->tag('kernel.event_listener', ['event' => 'gally.grid.configure_filter', 'method' => 'onFilterUpdate']);
+        ->args([
+            service('request_stack'),
+            service('translator'),
+            service('sylius.repository.taxon'),
+            service('sylius.context.locale'),
+        ])
+        ->tag('kernel.event_listener', ['event' => 'gally.grid.configure_filter', 'method' => 'onFilterUpdate'])
+        ->tag('kernel.reset', ['method' => 'reset']);
 
     $services->set(Finder::class)
         ->args([service(SearchManager::class), service(CatalogProvider::class), service('event_dispatcher')]);

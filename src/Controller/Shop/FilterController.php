@@ -81,7 +81,7 @@ final class FilterController extends AbstractController
             }
         }
         $currentLocalizedCatalog = $this->catalogProvider->buildLocalizedCatalog($currentChannel, $currentLocale);
-        $request = new \Gally\Sdk\GraphQl\Request(
+        $gallyRequest = new \Gally\Sdk\GraphQl\Request(
             $currentLocalizedCatalog,
             new Metadata('product'),
             false,
@@ -93,7 +93,7 @@ final class FilterController extends AbstractController
             $gallyFilters,
         );
 
-        $aggregationOptions = $this->searchManager->viewMoreProductFilterOption($request, $filterField, $optionSearch);
+        $aggregationOptions = $this->searchManager->viewMoreProductFilterOption($gallyRequest, $filterField, $optionSearch);
 
         /** @var array<string, string>$option */
         foreach ($aggregationOptions as $option) {
