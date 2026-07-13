@@ -40,9 +40,57 @@ abstract class AbstractIndexer
 
     public function reindex(array $documentIdsToReindex = []): void
     {
+        $metadata = new Metadata($this->getEntityType());
+
+        foreach ($this->getActiveLocalizedCatalogs() as [$channel, $locale, $localizedCatalog]) {
+            if ([] === $documentIdsToReindex) {
+                $index = $this->indexOperation->createIndex($metadata, $localizedCatalog);
+            } else {
+                $index = $this->indexOperation->getIndexByName($metadata, $localizedCatalog);
+            }
+
+            $batchSize = $this->getBatchSize($this->getEntityType(), $channel);
+            $bulk = [];
+            /** @var array $document */
+            foreach ($this->getDocumentsToIndex($channel, $locale, $documentIdsToReindex) as $document) {
+                if (0 === \count($document)) {
+                    continue;
+                }
+                /** @var array{id: int|string} $document */
+                $bulk[$document['id']] = json_encode($document);
+                if (\count($bulk) >= $batchSize) {
+                    $this->indexOperation->executeBulk($index, $bulk);
+                    $bulk = [];
+                }
+            }
+            if (\count($bulk) > 0) {
+                $this->indexOperation->executeBulk($index, $bulk);
+            }
+
+            if ([] === $documentIdsToReindex) {
+                $this->indexOperation->refreshIndex($index);
+                $this->indexOperation->installIndex($index);
+            }
+        }
+    }
+
+    public function remove(array $documentIdsToRemove): void
+    {
+        $metadata = new Metadata($this->getEntityType());
+
+        foreach ($this->getActiveLocalizedCatalogs() as [, , $localizedCatalog]) {
+            $index = $this->indexOperation->getIndexByName($metadata, $localizedCatalog);
+            $this->indexOperation->deleteBulk($index, $documentIdsToRemove);
+        }
+    }
+
+    /**
+     * @return iterable<array{0: GallyChannelInterface, 1: LocaleInterface, 2: LocalizedCatalog}>
+     */
+    private function getActiveLocalizedCatalogs(): iterable
+    {
         /** @var ChannelInterface[] $channels */
         $channels = $this->channelRepository->findAll();
-        $metadata = new Metadata($this->getEntityType());
 
         foreach ($channels as $channel) {
             if (($channel instanceof GallyChannelInterface) && $channel->getGallyActive()) {
@@ -53,34 +101,7 @@ abstract class AbstractIndexer
                         throw new \InvalidArgumentException('No localized catalog found for channel ' . $channel->getCode() . ' and locale ' . $locale->getCode() . '. Try to synchronize your structure.');
                     }
 
-                    if ([] === $documentIdsToReindex) {
-                        $index = $this->indexOperation->createIndex($metadata, $localizedCatalog);
-                    } else {
-                        $index = $this->indexOperation->getIndexByName($metadata, $localizedCatalog);
-                    }
-
-                    $batchSize = $this->getBatchSize($this->getEntityType(), $channel);
-                    $bulk = [];
-                    /** @var array $document */
-                    foreach ($this->getDocumentsToIndex($channel, $locale, $documentIdsToReindex) as $document) {
-                        if (0 === \count($document)) {
-                            continue;
-                        }
-                        /** @var array{id: int|string} $document */
-                        $bulk[$document['id']] = json_encode($document);
-                        if (\count($bulk) >= $batchSize) {
-                            $this->indexOperation->executeBulk($index, $bulk);
-                            $bulk = [];
-                        }
-                    }
-                    if (\count($bulk) > 0) {
-                        $this->indexOperation->executeBulk($index, $bulk);
-                    }
-
-                    if ([] === $documentIdsToReindex) {
-                        $this->indexOperation->refreshIndex($index);
-                        $this->indexOperation->installIndex($index);
-                    }
+                    yield [$channel, $locale, $localizedCatalog];
                 }
             }
         }
