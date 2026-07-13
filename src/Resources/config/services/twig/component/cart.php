@@ -15,24 +15,18 @@ declare(strict_types=1);
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Gally\SyliusPlugin\Config\ConfigManager;
-use Gally\SyliusPlugin\Indexer\Provider\CatalogProvider;
-use Gally\SyliusPlugin\Repository\GallyConfigurationRepository;
-use Gally\SyliusPlugin\Twig\GallyContext;
-use Gally\SyliusPlugin\Twig\GallyExtension;
+use Gally\SyliusPlugin\Recommendation\RecommendationFinder;
+use Gally\SyliusPlugin\Twig\Component\Cart\RecommendationComponent;
 
 return static function (ContainerConfigurator $container) {
     $services = $container->services();
 
-    $services->set(GallyExtension::class)
-        ->args([service(ConfigManager::class)])
-        ->tag('twig.extension');
-
-    $services->set(GallyContext::class)
+    $services->set(RecommendationComponent::class)
         ->args([
-            service(CatalogProvider::class),
-            service(GallyConfigurationRepository::class),
-            service('sylius.context.channel'),
-            service('router'),
+            service('sylius.context.cart'),
+            service(ConfigManager::class),
             service('sylius.repository.product_association_type'),
-        ]);
+            service(RecommendationFinder::class),
+        ])
+        ->tag('sylius.twig_component', ['key' => 'gally_shop:cart:recommendation']);
 };

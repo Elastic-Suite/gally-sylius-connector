@@ -1,0 +1,5 @@
+{% if is_gally_enabled() %}
+    {{ component('gally_shop:cart:recommendation', { template: '@GallySyliusPlugin/shop/cart/index/content/recommendations_content.html.twig' }) }}
+{% else %}
+    {{ component('sylius_shop:product:list', { limit: 4, template: '@SyliusShop/product/common/list.html.twig' }) }}
+{% endif %}
