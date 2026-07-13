@@ -17,6 +17,9 @@ namespace Gally\SyliusPlugin\Search;
 use Gally\SyliusPlugin\Event\GridFilterUpdateEvent;
 use Gally\SyliusPlugin\Search\Aggregation\ActiveFilter;
 use Gally\SyliusPlugin\Search\Aggregation\Aggregation;
+use Sylius\Bundle\TaxonomyBundle\Doctrine\ORM\TaxonRepository;
+use Sylius\Component\Locale\Context\LocaleContextInterface;
+use Sylius\Component\Taxonomy\Model\TaxonInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -25,14 +28,24 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ActiveFilterResolver
 {
+    // Gally excludes the category aggregation from the response as soon as a category filter is
+    // active (a product only ever matches one category), so its label can't come from $aggregations
+    // like the other facets and has to be resolved from the taxon directly.
+    private const CATEGORY_FIELD = 'category__id';
+
     /**
      * @var Aggregation[]
      */
     private array $aggregations = [];
 
+    /**
+     * @param TaxonRepository<TaxonInterface> $taxonRepository
+     */
     public function __construct(
         private RequestStack $requestStack,
         private TranslatorInterface $translator,
+        private TaxonRepository $taxonRepository,
+        private LocaleContextInterface $localeContext,
     ) {
     }
 
@@ -61,10 +74,17 @@ class ActiveFilterResolver
                 continue;
             }
 
-            $aggregation = $this->findAggregation($field);
-            if (null === $aggregation) {
+            if (self::CATEGORY_FIELD === $field) {
+                if (\is_string($value)) {
+                    $activeFilters[] = $this->resolveCategoryFilter($field, $value, $queryParameters);
+                }
                 continue;
             }
+
+            // Gally returns no aggregation at all once a combination of filters yields zero
+            // results, so this can legitimately be null; the resolve*Filter methods below fall
+            // back to a best-effort label in that case instead of dropping the chip entirely.
+            $aggregation = $this->findAggregation($field);
 
             if (str_contains($field, '_slider')) {
                 $activeFilters[] = $this->resolveSliderFilter($aggregation, $field, $value, $queryParameters);
@@ -83,6 +103,11 @@ class ActiveFilterResolver
                     }
                     $activeFilters[] = $this->resolveCheckboxFilter($aggregation, $field, (string) $optionValue, $queryParameters);
                 }
+                continue;
+            }
+
+            if (\is_scalar($value)) {
+                $activeFilters[] = $this->resolveCheckboxFilter($aggregation, $field, (string) $value, $queryParameters);
             }
         }
 
@@ -101,21 +126,13 @@ class ActiveFilterResolver
             return null;
         }
 
-        $criteria = \is_array($queryParameters['criteria'] ?? null) ? $queryParameters['criteria'] : [];
-        unset($criteria['gally']);
-        $queryParameters['criteria'] = $criteria;
-        // clearing the filters changes the result set, the current page number may no longer be valid
-        unset($queryParameters['page']);
-
-        $queryString = http_build_query($queryParameters);
-
-        return $request->getPathInfo() . ('' !== $queryString ? '?' . $queryString : '');
+        return $this->buildUrlWithGallyCriteria($queryParameters, []);
     }
 
     /**
      * @param array<string, mixed> $queryParameters
      */
-    private function resolveSliderFilter(Aggregation $aggregation, string $field, mixed $value, array $queryParameters): ?ActiveFilter
+    private function resolveSliderFilter(?Aggregation $aggregation, string $field, mixed $value, array $queryParameters): ?ActiveFilter
     {
         if (!\is_string($value)) {
             return null;
@@ -124,7 +141,7 @@ class ActiveFilterResolver
         $parts = explode('|', $value, 2);
 
         return new ActiveFilter(
-            \sprintf('%s: %s - %s', $aggregation->getLabel(), $parts[0], $parts[1] ?? ''),
+            \sprintf('%s: %s - %s', $this->resolveLabel($aggregation, $field), $parts[0], $parts[1] ?? ''),
             $this->buildRemoveUrl($queryParameters, $field)
         );
     }
@@ -132,12 +149,12 @@ class ActiveFilterResolver
     /**
      * @param array<string, mixed> $queryParameters
      */
-    private function resolveBooleanFilter(Aggregation $aggregation, string $field, mixed $value, array $queryParameters): ActiveFilter
+    private function resolveBooleanFilter(?Aggregation $aggregation, string $field, mixed $value, array $queryParameters): ActiveFilter
     {
         $label = 'true' === $value ? 'sylius.ui.yes_label' : 'sylius.ui.no_label';
 
         return new ActiveFilter(
-            \sprintf('%s: %s', $aggregation->getLabel(), $this->translator->trans($label)),
+            \sprintf('%s: %s', $this->resolveLabel($aggregation, $field), $this->translator->trans($label)),
             $this->buildRemoveUrl($queryParameters, $field)
         );
     }
@@ -145,10 +162,10 @@ class ActiveFilterResolver
     /**
      * @param array<string, mixed> $queryParameters
      */
-    private function resolveCheckboxFilter(Aggregation $aggregation, string $field, string $optionValue, array $queryParameters): ActiveFilter
+    private function resolveCheckboxFilter(?Aggregation $aggregation, string $field, string $optionValue, array $queryParameters): ActiveFilter
     {
         $optionLabel = $optionValue;
-        foreach ($aggregation->getOptions() as $option) {
+        foreach ($aggregation?->getOptions() ?? [] as $option) {
             if ($option->getId() === $optionValue) {
                 $optionLabel = $option->getLabel();
                 break;
@@ -156,8 +173,41 @@ class ActiveFilterResolver
         }
 
         return new ActiveFilter(
-            \sprintf('%s: %s', $aggregation->getLabel(), $optionLabel),
+            \sprintf('%s: %s', $this->resolveLabel($aggregation, $field), $optionLabel),
             $this->buildRemoveUrl($queryParameters, $field, $optionValue)
+        );
+    }
+
+    /**
+     * Best-effort label when Gally didn't return the aggregation for this field (e.g. the
+     * current combination of filters yields zero results), so the real label isn't available.
+     */
+    private function resolveLabel(?Aggregation $aggregation, string $field): string
+    {
+        if (null !== $aggregation) {
+            return $aggregation->getLabel();
+        }
+
+        $rawField = str_replace(['_slider', '_boolean'], '', $field);
+
+        return ucfirst(str_replace('_', ' ', $rawField));
+    }
+
+    /**
+     * @param array<string, mixed> $queryParameters
+     */
+    private function resolveCategoryFilter(string $field, string $categoryId, array $queryParameters): ?ActiveFilter
+    {
+        $taxon = $this->taxonRepository->findOneBy(['code' => $categoryId]);
+        if (null === $taxon) {
+            return null;
+        }
+
+        $translation = $taxon->getTranslation($this->localeContext->getLocaleCode());
+
+        return new ActiveFilter(
+            \sprintf('%s: %s', $this->translator->trans('gally_sylius.ui.filters.categories'), $translation->getName()),
+            $this->buildRemoveUrl($queryParameters, $field)
         );
     }
 
@@ -195,7 +245,6 @@ class ActiveFilterResolver
      */
     private function buildRemoveUrl(array $queryParameters, string $field, ?string $optionValue = null): string
     {
-        $request = $this->requestStack->getCurrentRequest();
         $gallyCriteria = $this->extractGallyCriteria($queryParameters);
 
         if (null !== $optionValue && \is_array($gallyCriteria[$field] ?? null)) {
@@ -214,10 +263,25 @@ class ActiveFilterResolver
             unset($gallyCriteria[$field]);
         }
 
+        return $this->buildUrlWithGallyCriteria($queryParameters, $gallyCriteria);
+    }
+
+    /**
+     * @param array<string, mixed> $queryParameters
+     * @param array<int|string, mixed> $gallyCriteria
+     */
+    private function buildUrlWithGallyCriteria(array $queryParameters, array $gallyCriteria): string
+    {
+        $request = $this->requestStack->getCurrentRequest();
+
         $criteria = \is_array($queryParameters['criteria'] ?? null) ? $queryParameters['criteria'] : [];
-        $criteria['gally'] = $gallyCriteria;
+        if ([] === $gallyCriteria) {
+            unset($criteria['gally']);
+        } else {
+            $criteria['gally'] = $gallyCriteria;
+        }
         $queryParameters['criteria'] = $criteria;
-        // filtering out an option changes the result set, the current page number may no longer be valid
+        // filtering changes the result set, the current page number may no longer be valid
         unset($queryParameters['page']);
 
         $queryString = http_build_query($queryParameters);

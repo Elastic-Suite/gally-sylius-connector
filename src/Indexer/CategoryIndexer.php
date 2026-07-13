@@ -119,7 +119,7 @@ class CategoryIndexer extends AbstractIndexer
 
     private function formatTaxon(TaxonInterface $taxon, TaxonTranslationInterface $translation, TaxonInterface $menuTaxon): array
     {
-        $parentId = '';
+        $parentId = null;
         if (null !== $taxon->getParent() && $menuTaxon->getId() !== $taxon->getId()) {
             $parentId = str_replace('/', '_', (string) $taxon->getParent()->getCode());
         }

@@ -12,3 +12,14 @@
         {% endif %}
     </div>
 {%- endblock sylius_gally_filter_checkbox_row %}
+
+{% block sylius_gally_filter_category_taxonomy_row -%}
+    {{ component('sylius_shop:product:show:taxonomy', {template: '@GallySyliusPlugin/shop/product/_shared/categories.html.twig'}) }}
+{%- endblock sylius_gally_filter_category_taxonomy_row %}
+
+{% block sylius_gally_filter_category_row -%}
+    <div class="{% if required %}required {% endif %}field category-links{% if (not compound or force_error|default(false)) and not valid %} error{% endif %}">
+        {{- form_label(form) -}}
+        {{- form_widget(form) -}}
+    </div>
+{%- endblock sylius_gally_filter_category_row %}

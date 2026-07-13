@@ -8,6 +8,8 @@
         <service id="Gally\SyliusPlugin\Search\ActiveFilterResolver">
             <argument type="service" id="request_stack" />
             <argument type="service" id="translator" />
+            <argument type="service" id="sylius.repository.taxon" />
+            <argument type="service" id="sylius.context.locale" />
             <tag name="kernel.event_listener" event="gally.grid.configure_filter" method="onFilterUpdate" />
         </service>
 
