@@ -20,34 +20,43 @@ use Doctrine\ORM\Mapping as ORM;
 trait GallyChannelTrait
 {
     #[ORM\Column(name: 'gally_active', type: 'boolean', options: ['default' => false])]
-    protected $gallyActive = false;
+    protected bool $gallyActive = false;
 
     #[ORM\Column(name: 'gally_product_index_batch_size', type: 'integer', options: ['default' => 50])]
-    protected $gallyProductIndexBatchSize = 50;
+    protected int $gallyProductIndexBatchSize = 50;
 
     #[ORM\Column(name: 'gally_category_index_batch_size', type: 'integer', options: ['default' => 50])]
-    protected $gallyCategoryIndexBatchSize = 50;
+    protected int $gallyCategoryIndexBatchSize = 50;
 
     #[ORM\Column(name: 'gally_autocomplete_product_max_size', type: 'integer', options: ['default' => 6])]
-    protected $gallyAutocompleteProductMaxSize = 6;
+    protected int $gallyAutocompleteProductMaxSize = 6;
 
     #[ORM\Column(name: 'gally_autocomplete_category_max_size', type: 'integer', options: ['default' => 6])]
-    protected $gallyAutocompleteCategoryMaxSize = 6;
+    protected int $gallyAutocompleteCategoryMaxSize = 6;
 
     #[ORM\Column(name: 'gally_autocomplete_attribute_max_size', type: 'integer', options: ['default' => 6])]
-    protected $gallyAutocompleteAttributeMaxSize = 6;
+    protected int $gallyAutocompleteAttributeMaxSize = 6;
 
     #[ORM\Column(name: 'gally_tracking_active', type: 'boolean', options: ['default' => true])]
-    protected $gallyTrackingActive = true;
+    protected bool $gallyTrackingActive = true;
 
     #[ORM\Column(name: 'gally_use_sylius_endpoint_tracking', type: 'boolean', options: ['default' => true])]
-    protected $gallyUseSyliusEndpointTracking = true;
+    protected bool $gallyUseSyliusEndpointTracking = true;
 
     #[ORM\Column(name: 'gally_uid_cookie_lifetime', type: 'integer', options: ['default' => 3600])]
-    protected $gallyUidCookieLifetime = 3600;
+    protected int $gallyUidCookieLifetime = 3600;
 
     #[ORM\Column(name: 'gally_vid_cookie_lifetime', type: 'integer', options: ['default' => 31536000])]
-    protected $gallyVidCookieLifetime = 31536000;
+    protected int $gallyVidCookieLifetime = 31536000;
+
+    #[ORM\Column(name: 'gally_product_recommendation_max_size', type: 'integer', options: ['default' => 4])]
+    protected int $gallyProductRecommendationMaxSize = 4;
+
+    #[ORM\Column(name: 'gally_cart_recommendation_type_code', type: 'string', nullable: true)]
+    protected ?string $gallyCartRecommendationTypeCode = null;
+
+    #[ORM\Column(name: 'gally_cart_recommendation_max_size', type: 'integer', options: ['default' => 4])]
+    protected int $gallyCartRecommendationMaxSize = 4;
 
     public function getGallyActive(): bool
     {
@@ -147,5 +156,35 @@ trait GallyChannelTrait
     public function setGallyVidCookieLifetime(int $gallyVidCookieLifetime): void
     {
         $this->gallyVidCookieLifetime = $gallyVidCookieLifetime;
+    }
+
+    public function getGallyProductRecommendationMaxSize(): int
+    {
+        return $this->gallyProductRecommendationMaxSize;
+    }
+
+    public function setGallyProductRecommendationMaxSize(int $gallyProductRecommendationMaxSize): void
+    {
+        $this->gallyProductRecommendationMaxSize = $gallyProductRecommendationMaxSize;
+    }
+
+    public function getGallyCartRecommendationTypeCode(): ?string
+    {
+        return $this->gallyCartRecommendationTypeCode;
+    }
+
+    public function setGallyCartRecommendationTypeCode(?string $gallyCartRecommendationTypeCode): void
+    {
+        $this->gallyCartRecommendationTypeCode = $gallyCartRecommendationTypeCode;
+    }
+
+    public function getGallyCartRecommendationMaxSize(): int
+    {
+        return $this->gallyCartRecommendationMaxSize;
+    }
+
+    public function setGallyCartRecommendationMaxSize(int $gallyCartRecommendationMaxSize): void
+    {
+        $this->gallyCartRecommendationMaxSize = $gallyCartRecommendationMaxSize;
     }
 }

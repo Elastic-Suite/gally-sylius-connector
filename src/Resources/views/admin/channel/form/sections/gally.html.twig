@@ -63,5 +63,21 @@
                 {{ form_row(hookable_metadata.context.form.gallyVidCookieLifetime, sylius_test_form_attribute('gally-vid-cookie-lifetime')) }}
             </div>
         </div>
+
+        {# Groupe : Recommandations #}
+        <div class="d-flex align-items-center mb-3 p-2 bg-light border-start border-3 border-primary">
+            <h5 class="mb-0 fw-bold">{{ 'gally_sylius.ui.channel.section.recommendation'|trans }}</h5>
+        </div>
+        <div class="row mb-4">
+            <div class="col-6">
+                {{ form_row(hookable_metadata.context.form.gallyProductRecommendationMaxSize, sylius_test_form_attribute('gally-product-recommendation-max-size')) }}
+            </div>
+            <div class="col-6">
+                {{ form_row(hookable_metadata.context.form.gallyCartRecommendationTypeCode, sylius_test_form_attribute('gally-cart-recommendation-type')) }}
+            </div>
+            <div class="col-6">
+                {{ form_row(hookable_metadata.context.form.gallyCartRecommendationMaxSize, sylius_test_form_attribute('gally-cart-recommendation-max-size')) }}
+            </div>
+        </div>
     </div>
 </div>

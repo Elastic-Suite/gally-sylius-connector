@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Gally\Sdk\Service\RecommenderManager;
 use Gally\Sdk\Service\SearchManager;
 use Gally\Sdk\Service\StructureSynchonizer;
 use Gally\SyliusPlugin\Config\ConfigManager;
@@ -25,6 +26,7 @@ use Gally\SyliusPlugin\Entity\GallyConfiguration;
 use Gally\SyliusPlugin\Form\Extension\ChannelTypeExtension;
 use Gally\SyliusPlugin\Indexer\Provider\CatalogProvider;
 use Gally\SyliusPlugin\Listener\AdminMenuListener;
+use Gally\SyliusPlugin\Recommendation\RecommendationFinder;
 use Gally\SyliusPlugin\Repository\GallyConfigurationRepository;
 use Gally\SyliusPlugin\Search\FilterConverter;
 use Gally\SyliusPlugin\Search\Finder;
@@ -37,6 +39,7 @@ return static function (ContainerConfigurator $container) {
     $container->import('services/search.php');
     $container->import('services/twig.php');
     $container->import('services/twig/component/product.php');
+    $container->import('services/twig/component/cart.php');
     $container->import('services/tracking.php');
 
     $container->parameters()
@@ -83,6 +86,7 @@ return static function (ContainerConfigurator $container) {
         ->tag('controller.service_arguments');
 
     $services->set(ChannelTypeExtension::class)
+        ->args([service('sylius.repository.product_association_type')])
         ->tag('form.type_extension');
 
     $services->set('gally.listener.admin.menu_builder', AdminMenuListener::class)
@@ -90,4 +94,13 @@ return static function (ContainerConfigurator $container) {
 
     $services->set(ConfigManager::class)
         ->args([service(GallyConfigurationRepository::class), service('sylius.context.channel')]);
+
+    $services->set(RecommendationFinder::class)
+        ->args([
+            service(RecommenderManager::class),
+            service(CatalogProvider::class),
+            service('sylius.repository.product'),
+            service('sylius.repository.product_association'),
+            service('logger'),
+        ]);
 };

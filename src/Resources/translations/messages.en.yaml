@@ -16,6 +16,7 @@ gally_sylius:
         indexing: "Indexing"
         autocomplete: "Autocomplete"
         tracking: "Tracking"
+        recommendation: "Recommendations"
     filters:
       headline: Filters
       view_more: View more
@@ -44,6 +45,10 @@ gally_sylius:
     use_sylius_endpoint_tracking_help: "Use Sylius endpoint instead of Gally GraphQL API for tracking ?"
     vid_cookie_lifetime: "Vid cookie lifetime (seconds)"
     uid_cookie_lifetime: "Uid cookie lifetime (seconds)"
+    product_recommendation_max_size: "Product page recommendations max size"
+    cart_recommendation_type: "Cart recommendation type"
+    cart_recommendation_type_none: "None"
+    cart_recommendation_max_size: "Cart recommendations max size"
 
     header:
       query:
