@@ -22,4 +22,6 @@
             </form>
         </div>
     </div>
+{% elseif app.request.attributes.has('slug') %}
+    {{ component('sylius_shop:product:show:taxonomy', {template: '@GallySyliusPlugin/shop/product/_shared/categories.html.twig'}) }}
 {% endif %}

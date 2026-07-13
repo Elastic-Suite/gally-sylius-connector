@@ -22,6 +22,9 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 
 class ProductSubscriber implements EventSubscriberInterface
 {
+    /** @var array<int, int|string> */
+    private array $idsPendingDeletion = [];
+
     public function __construct(private ProductIndexer $productIndexer)
     {
     }
@@ -31,8 +34,11 @@ class ProductSubscriber implements EventSubscriberInterface
         return [
             'sylius.product.post_update' => 'onProductUpdate',
             'sylius.product.post_create' => 'onProductUpdate',
+            'sylius.product.pre_delete' => 'onProductPreDelete',
+            'sylius.product.post_delete' => 'onProductDelete',
             'sylius.product_variant.post_update' => 'onVariantUpdate',
             'sylius.product_variant.post_create' => 'onVariantUpdate',
+            'sylius.product_variant.post_delete' => 'onVariantUpdate',
         ];
     }
 
@@ -41,6 +47,30 @@ class ProductSubscriber implements EventSubscriberInterface
         $product = $event->getSubject();
         if ($product instanceof ProductInterface) {
             $this->productIndexer->reindex([$product->getId()]);
+        }
+    }
+
+    /**
+     * Doctrine nulls out the identifier once the entity is actually removed, so the id
+     * has to be captured before deletion (pre_delete) to still be usable in post_delete.
+     */
+    public function onProductPreDelete(GenericEvent $event): void
+    {
+        $product = $event->getSubject();
+        if ($product instanceof ProductInterface && null !== $product->getId()) {
+            $this->idsPendingDeletion[spl_object_id($product)] = $product->getId();
+        }
+    }
+
+    public function onProductDelete(GenericEvent $event): void
+    {
+        $product = $event->getSubject();
+        if ($product instanceof ProductInterface) {
+            $productId = $this->idsPendingDeletion[spl_object_id($product)] ?? null;
+            unset($this->idsPendingDeletion[spl_object_id($product)]);
+            if (null !== $productId) {
+                $this->productIndexer->remove([$productId]);
+            }
         }
     }
 
