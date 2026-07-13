@@ -11,6 +11,7 @@
             <argument type="service" id="sylius.repository.taxon" />
             <argument type="service" id="sylius.context.locale" />
             <tag name="kernel.event_listener" event="gally.grid.configure_filter" method="onFilterUpdate" />
+            <tag name="kernel.reset" method="reset" />
         </service>
 
         <service id="Gally\SyliusPlugin\Search\Finder" >

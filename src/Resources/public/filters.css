@@ -115,31 +115,31 @@
     cursor: pointer;
 }
 
-.active-filters .active-filter-chip
+#searchbar .active-filters .active-filter-chip
 {
     text-decoration: none;
     font-weight: normal;
     padding: 0.5em 0.85em;
 }
 
-.active-filters .active-filter-chip:hover
+#searchbar .active-filters .active-filter-chip:hover
 {
     background-color: var(--bs-secondary-bg-subtle, #e9ecef);
 }
 
-.active-filters .active-filter-chip-remove
+#searchbar .active-filters .active-filter-chip-remove
 {
     font-weight: bold;
 }
 
-.active-filters .active-filters-clear-all
+#searchbar .active-filters .active-filters-clear-all
 {
     font-size: 0.8em;
     color: var(--bs-secondary-color, rgba(0, 0, 0, 0.6));
     text-decoration: underline;
 }
 
-.active-filters .active-filters-clear-all:hover
+#searchbar .active-filters .active-filters-clear-all:hover
 {
     color: var(--bs-body-color);
 }

@@ -21,12 +21,13 @@ use Sylius\Bundle\TaxonomyBundle\Doctrine\ORM\TaxonRepository;
 use Sylius\Component\Locale\Context\LocaleContextInterface;
 use Sylius\Component\Taxonomy\Model\TaxonInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Contracts\Service\ResetInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Resolves the facet filters currently active in the request query, to be displayed as removable chips.
  */
-class ActiveFilterResolver
+class ActiveFilterResolver implements ResetInterface
 {
     // Gally excludes the category aggregation from the response as soon as a category filter is
     // active (a product only ever matches one category), so its label can't come from $aggregations
@@ -52,6 +53,16 @@ class ActiveFilterResolver
     public function onFilterUpdate(GridFilterUpdateEvent $event): void
     {
         $this->aggregations = $event->getAggregations();
+    }
+
+    /**
+     * Guards against stale aggregations leaking across requests in long-running PHP
+     * processes (Messenger workers, RoadRunner/Swoole), where this service isn't
+     * re-instantiated per request like it is under classic PHP-FPM.
+     */
+    public function reset(): void
+    {
+        $this->aggregations = [];
     }
 
     /**
