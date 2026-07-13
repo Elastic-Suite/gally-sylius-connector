@@ -20,6 +20,7 @@ use Gally\Sdk\Repository\CatalogRepository;
 use Gally\Sdk\Repository\LocalizedCatalogRepository;
 use Gally\Sdk\Service\BundleManager;
 use Gally\Sdk\Service\IndexOperation;
+use Gally\Sdk\Service\RecommenderManager;
 use Gally\Sdk\Service\SearchManager;
 use Gally\Sdk\Service\StructureSynchonizer;
 use Gally\SyliusPlugin\Config\ConfigurationFactory;
@@ -51,6 +52,9 @@ return static function (ContainerConfigurator $container) {
 
     $services->set(SearchManager::class)
         ->args([service(Configuration::class), service(BundleManager::class), service(CacheManager::class)]);
+
+    $services->set(RecommenderManager::class)
+        ->args([service(Configuration::class), service(CacheManager::class)]);
 
     $services->set(CatalogRepository::class)
         ->args([service(Client::class)]);

@@ -26,9 +26,11 @@ use Gally\SyliusPlugin\Indexer\Provider\ProductAttributeSourceFieldOptionProvide
 use Gally\SyliusPlugin\Indexer\Provider\ProductAttributeSourceFieldProvider;
 use Gally\SyliusPlugin\Indexer\Provider\ProductOptionSourceFieldOptionProvider;
 use Gally\SyliusPlugin\Indexer\Provider\ProductOptionSourceFieldProvider;
+use Gally\SyliusPlugin\Indexer\Provider\RecommenderTypeProvider;
 use Gally\SyliusPlugin\Indexer\Provider\StaticSourceFieldProvider;
 use Gally\SyliusPlugin\Indexer\Subscriber\CategorySubscriber;
 use Gally\SyliusPlugin\Indexer\Subscriber\ChannelSubscriber;
+use Gally\SyliusPlugin\Indexer\Subscriber\ProductAssociationTypeSubscriber;
 use Gally\SyliusPlugin\Indexer\Subscriber\ProductAttributeSubscriber;
 use Gally\SyliusPlugin\Indexer\Subscriber\ProductOptionSubscriber;
 use Gally\SyliusPlugin\Indexer\Subscriber\ProductSubscriber;
@@ -59,6 +61,10 @@ return static function (ContainerConfigurator $container) {
         ->args([service(CatalogProvider::class), service('sylius.repository.product_option')])
         ->tag('gally.dataprovider', ['entity' => 'sourceFieldOption']);
 
+    $services->set(RecommenderTypeProvider::class)
+        ->args([service('sylius.repository.product_association_type')])
+        ->tag('gally.dataprovider', ['entity' => 'recommenderType']);
+
     $services->set(ChannelSubscriber::class)
         ->args([service(CatalogProvider::class), service(StructureSynchonizer::class), service(ConfigManager::class)])
         ->tag('kernel.event_subscriber');
@@ -79,6 +85,10 @@ return static function (ContainerConfigurator $container) {
             service(ProductOptionSourceFieldOptionProvider::class),
             service(StructureSynchonizer::class),
         ])
+        ->tag('kernel.event_subscriber');
+
+    $services->set(ProductAssociationTypeSubscriber::class)
+        ->args([service(RecommenderTypeProvider::class), service(StructureSynchonizer::class)])
         ->tag('kernel.event_subscriber');
 
     $services->set(AbstractIndexer::class)

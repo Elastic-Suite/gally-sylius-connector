@@ -15,9 +15,12 @@ declare(strict_types=1);
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Gally\Sdk\Service\SearchManager;
+use Gally\SyliusPlugin\Config\ConfigManager;
+use Gally\SyliusPlugin\Recommendation\RecommendationFinder;
 use Gally\SyliusPlugin\Search\ActiveFilterResolver;
 use Gally\SyliusPlugin\Twig\Component\Product\ActiveFiltersComponent;
 use Gally\SyliusPlugin\Twig\Component\Product\CategoryTrackingComponent;
+use Gally\SyliusPlugin\Twig\Component\Product\RecommendationComponent;
 use Gally\SyliusPlugin\Twig\Component\Product\SortOptionComponent;
 
 return static function (ContainerConfigurator $container) {
@@ -34,4 +37,8 @@ return static function (ContainerConfigurator $container) {
     $services->set(ActiveFiltersComponent::class)
         ->args([service(ActiveFilterResolver::class)])
         ->tag('sylius.twig_component', ['key' => 'gally_shop:product:active_filters']);
+
+    $services->set(RecommendationComponent::class)
+        ->args([service('sylius.context.channel'), service(ConfigManager::class), service(RecommendationFinder::class)])
+        ->tag('sylius.twig_component', ['key' => 'gally_shop:product:recommendation']);
 };
