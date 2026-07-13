@@ -61,8 +61,10 @@
                     <small>{{ option_label }}</small>
                 </a>
             {% endfor %}
+        {% endif %}
 
-            <hr class="d-lg-none"/>
+        {% if products|length %}
+        <hr class="d-lg-none"/>
         {% endif %}
     </div>
 

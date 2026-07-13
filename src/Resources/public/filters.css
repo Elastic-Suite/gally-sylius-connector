@@ -86,31 +86,60 @@
     color: var(--bs-body-color);
 }
 
-.active-filters .active-filter-chip
+/* Category is single-select and rendered as native radio inputs (so the existing autosubmit
+   still applies unchanged), but themed to look like a plain list of links: a category is a
+   navigation, not a combinable criterion like the other facets. */
+#searchbar .category-links .form-check
+{
+    padding-left: 0;
+}
+
+#searchbar .category-links .form-check-input
+{
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+#searchbar .category-links .form-check-label
+{
+    display: inline-block;
+    padding: 0.25em 0;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+#searchbar .active-filters .active-filter-chip
 {
     text-decoration: none;
     font-weight: normal;
     padding: 0.5em 0.85em;
 }
 
-.active-filters .active-filter-chip:hover
+#searchbar .active-filters .active-filter-chip:hover
 {
     background-color: var(--bs-secondary-bg-subtle, #e9ecef);
 }
 
-.active-filters .active-filter-chip-remove
+#searchbar .active-filters .active-filter-chip-remove
 {
     font-weight: bold;
 }
 
-.active-filters .active-filters-clear-all
+#searchbar .active-filters .active-filters-clear-all
 {
     font-size: 0.8em;
     color: var(--bs-secondary-color, rgba(0, 0, 0, 0.6));
     text-decoration: underline;
 }
 
-.active-filters .active-filters-clear-all:hover
+#searchbar .active-filters .active-filters-clear-all:hover
 {
     color: var(--bs-body-color);
 }
