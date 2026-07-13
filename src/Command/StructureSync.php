@@ -35,6 +35,7 @@ class StructureSync extends Command
         'catalog' => 'syncAllLocalizedCatalogs',
         'sourceField' => 'syncAllSourceFields',
         'sourceFieldOption' => 'syncAllSourceFieldOptions',
+        'recommenderType' => 'syncAllRecommenderTypes',
     ];
 
     /**

@@ -22,5 +22,12 @@
             <argument type="service" id="Gally\SyliusPlugin\Search\ActiveFilterResolver" />
             <tag name="sylius.twig_component" key="gally_shop:product:active_filters"/>
         </service>
+
+        <service id="Gally\SyliusPlugin\Twig\Component\Product\RecommendationComponent">
+            <argument type="service" id="sylius.context.channel" />
+            <argument type="service" id="Gally\SyliusPlugin\Config\ConfigManager" />
+            <argument type="service" id="Gally\SyliusPlugin\Recommendation\RecommendationFinder" />
+            <tag name="sylius.twig_component" key="gally_shop:product:recommendation"/>
+        </service>
     </services>
 </container>

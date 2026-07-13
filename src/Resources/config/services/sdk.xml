@@ -33,6 +33,10 @@
             <argument type="service" id="Gally\Sdk\Service\BundleManager" />
             <argument type="service" id="Gally\SyliusPlugin\Service\CacheManager" />
         </service>
+        <service id="Gally\Sdk\Service\RecommenderManager">
+            <argument type="service" id="Gally\Sdk\Client\Configuration" />
+            <argument type="service" id="Gally\SyliusPlugin\Service\CacheManager" />
+        </service>
         <service id="Gally\Sdk\Repository\CatalogRepository">
             <argument type="service" id="Gally\Sdk\Client\Client" />
         </service>

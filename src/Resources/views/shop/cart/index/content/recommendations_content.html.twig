@@ -1,0 +1,13 @@
+{% if recommended_products is not empty %}
+    <div class="container mb-6" role="region" aria-labelledby="gally-recommendations-heading">
+        <h2 class="mb-5" id="gally-recommendations-heading">{{ 'sylius.ui.you_may_also_like'|trans }}</h2>
+
+        <div {{ sylius_test_html_attribute('gally-recommendations') }}>
+            <div class="products-grid">
+                {% for product in recommended_products %}
+                    <div>{{ component('sylius_shop:product:card', { product: product, template: '@SyliusShop/product/common/card.html.twig' }) }}</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endif %}

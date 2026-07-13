@@ -105,3 +105,17 @@ sylius_twig_hooks:
             tracking:
                 template: '@GallySyliusPlugin/shop/product/show/add_to_cart_tracking.html.twig'
                 priority: -10
+
+        'sylius_shop.product.show.content.product_listing':
+            associations:
+                enabled: false
+            gally_recommendations:
+                template: '@GallySyliusPlugin/shop/product/show/content/product_listing/recommendations.html.twig'
+                priority: 0
+
+        'sylius_shop.cart.index.content':
+            suggested_products:
+                enabled: false
+            gally_recommendations:
+                template: '@GallySyliusPlugin/shop/cart/index/content/recommendations.html.twig'
+                priority: 0

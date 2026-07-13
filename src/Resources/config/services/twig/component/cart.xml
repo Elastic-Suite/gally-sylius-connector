@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <service id="Gally\SyliusPlugin\Twig\Component\Cart\RecommendationComponent">
+            <argument type="service" id="sylius.context.cart" />
+            <argument type="service" id="Gally\SyliusPlugin\Config\ConfigManager" />
+            <argument type="service" id="sylius.repository.product_association_type" />
+            <argument type="service" id="Gally\SyliusPlugin\Recommendation\RecommendationFinder" />
+            <tag name="sylius.twig_component" key="gally_shop:cart:recommendation"/>
+        </service>
+    </services>
+</container>

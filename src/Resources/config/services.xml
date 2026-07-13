@@ -8,6 +8,7 @@
         <import resource="services/search.xml"/>
         <import resource="services/twig.xml"/>
         <import resource="services/twig/component/product.xml"/>
+        <import resource="services/twig/component/cart.xml"/>
         <import resource="services/tracking.xml"/>
     </imports>
 
@@ -64,6 +65,7 @@
         </service>
 
         <service id="Gally\SyliusPlugin\Form\Extension\ChannelTypeExtension">
+            <argument type="service" id="sylius.repository.product_association_type" />
             <tag name="form.type_extension"/>
         </service>
 
@@ -74,6 +76,14 @@
         <service id="Gally\SyliusPlugin\Config\ConfigManager">
             <argument type="service" id="Gally\SyliusPlugin\Repository\GallyConfigurationRepository" />
             <argument type="service" id="sylius.context.channel" />
+        </service>
+
+        <service id="Gally\SyliusPlugin\Recommendation\RecommendationFinder">
+            <argument type="service" id="Gally\Sdk\Service\RecommenderManager" />
+            <argument type="service" id="Gally\SyliusPlugin\Indexer\Provider\CatalogProvider" />
+            <argument type="service" id="sylius.repository.product" />
+            <argument type="service" id="sylius.repository.product_association" />
+            <argument type="service" id="logger" />
         </service>
     </services>
 </container>

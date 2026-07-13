@@ -20,6 +20,8 @@ use Gally\SyliusPlugin\Indexer\Provider\CatalogProvider;
 use Gally\SyliusPlugin\Model\GallyChannelInterface;
 use Gally\SyliusPlugin\Repository\GallyConfigurationRepository;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
+use Sylius\Component\Product\Model\ProductAssociationTypeInterface;
+use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class GallyContext
@@ -29,6 +31,7 @@ class GallyContext
         private GallyConfigurationRepository $gallyConfigurationRepository,
         private ChannelContextInterface $channelContext,
         private UrlGeneratorInterface $urlGenerator,
+        private RepositoryInterface $productAssociationTypeRepository,
     ) {
     }
 
@@ -58,5 +61,23 @@ class GallyContext
         }
 
         return $this->gallyConfigurationRepository->getConfiguration()->getBaseUrl();
+    }
+
+    public function getCartRecommendationTypeCode(): ?string
+    {
+        $channel = $this->channelContext->getChannel();
+
+        return $channel instanceof GallyChannelInterface ? $channel->getGallyCartRecommendationTypeCode() : null;
+    }
+
+    /**
+     * @return ProductAssociationTypeInterface[]
+     */
+    public function getProductAssociationTypes(): array
+    {
+        /** @var ProductAssociationTypeInterface[] $types */
+        $types = $this->productAssociationTypeRepository->findAll();
+
+        return $types;
     }
 }

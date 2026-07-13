@@ -21,6 +21,10 @@
             <argument type="service" id="sylius.repository.product_option" />
             <tag name="gally.dataprovider" entity="sourceFieldOption"/>
         </service>
+        <service id="Gally\SyliusPlugin\Indexer\Provider\RecommenderTypeProvider">
+            <argument type="service" id="sylius.repository.product_association_type" />
+            <tag name="gally.dataprovider" entity="recommenderType"/>
+        </service>
 
         <service id="Gally\SyliusPlugin\Indexer\Subscriber\ChannelSubscriber">
             <argument type="service" id="Gally\SyliusPlugin\Indexer\Provider\CatalogProvider" />
@@ -32,6 +36,11 @@
             <argument type="service" id="Gally\Sdk\Repository\LocalizedCatalogRepository" />
             <argument type="service" id="Gally\SyliusPlugin\Indexer\Provider\SourceFieldProvider" />
             <argument type="service" id="Gally\SyliusPlugin\Indexer\Provider\SourceFieldOptionProvider" />
+            <argument type="service" id="Gally\Sdk\Service\StructureSynchonizer" />
+            <tag name="kernel.event_subscriber" />
+        </service>
+        <service id="Gally\SyliusPlugin\Indexer\Subscriber\ProductAssociationTypeSubscriber">
+            <argument type="service" id="Gally\SyliusPlugin\Indexer\Provider\RecommenderTypeProvider" />
             <argument type="service" id="Gally\Sdk\Service\StructureSynchonizer" />
             <tag name="kernel.event_subscriber" />
         </service>

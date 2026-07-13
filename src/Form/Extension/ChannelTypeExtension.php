@@ -15,13 +15,21 @@ declare(strict_types=1);
 namespace Gally\SyliusPlugin\Form\Extension;
 
 use Sylius\Bundle\ChannelBundle\Form\Type\ChannelType;
+use Sylius\Component\Product\Model\ProductAssociationTypeInterface;
+use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\Form\AbstractTypeExtension;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 final class ChannelTypeExtension extends AbstractTypeExtension
 {
+    public function __construct(
+        private RepositoryInterface $productAssociationTypeRepository,
+    ) {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -66,11 +74,43 @@ final class ChannelTypeExtension extends AbstractTypeExtension
                 'attr' => [
                     'min' => 0,
                 ],
+            ])
+            ->add('gallyProductRecommendationMaxSize', IntegerType::class, [
+                'label' => 'gally_sylius.form.product_recommendation_max_size',
+                'attr' => [
+                    'min' => 0,
+                ],
+            ])
+            ->add('gallyCartRecommendationTypeCode', ChoiceType::class, [
+                'label' => 'gally_sylius.form.cart_recommendation_type',
+                'choices' => $this->getProductAssociationTypeChoices(),
+                'required' => false,
+                'placeholder' => 'gally_sylius.form.cart_recommendation_type_none',
+            ])
+            ->add('gallyCartRecommendationMaxSize', IntegerType::class, [
+                'label' => 'gally_sylius.form.cart_recommendation_max_size',
+                'attr' => [
+                    'min' => 0,
+                ],
             ]);
     }
 
     public static function getExtendedTypes(): iterable
     {
         return [ChannelType::class];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function getProductAssociationTypeChoices(): array
+    {
+        $choices = [];
+        /** @var ProductAssociationTypeInterface $productAssociationType */
+        foreach ($this->productAssociationTypeRepository->findAll() as $productAssociationType) {
+            $choices[(string) $productAssociationType->getName()] = (string) $productAssociationType->getCode();
+        }
+
+        return $choices;
     }
 }

@@ -14,6 +14,7 @@
             <argument type="service" id="Gally\SyliusPlugin\Repository\GallyConfigurationRepository" />
             <argument type="service" id="sylius.context.channel" />
             <argument type="service" id="router" />
+            <argument type="service" id="sylius.repository.product_association_type" />
         </service>
     </services>
 </container>
