@@ -95,8 +95,8 @@ export default class extends Controller {
             return Promise.resolve();
         }
 
-        const form = choicesEl.closest('form');
-        form.classList.add('loading');
+        const field = choicesEl.closest('.field');
+        field.classList.add('is-loading');
 
         return fetch(url)
             .then((response) => response.json())
@@ -118,7 +118,7 @@ export default class extends Controller {
                 console.error('Fetch error:', error);
             })
             .finally(() => {
-                form.classList.remove('loading');
+                field.classList.remove('is-loading');
             });
     }
 }

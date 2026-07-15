@@ -144,4 +144,39 @@
     color: var(--bs-body-color);
 }
 
+/* Loader shown on a single facet while its options are being fetched (view more / facet search),
+   scoped to that facet only so the rest of the sidebar stays interactive. */
+#searchbar .field.is-loading
+{
+    position: relative;
+    pointer-events: none;
+}
+
+#searchbar .field.is-loading .ui
+{
+    opacity: 0.5;
+}
+
+#searchbar .field.is-loading::after
+{
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 1em;
+    height: 1em;
+    border: 0.15em solid var(--bs-secondary-bg-subtle, #e9ecef);
+    border-top-color: var(--bs-primary, #3d4750);
+    border-radius: 50%;
+    animation: gally-facet-spin 0.6s linear infinite;
+}
+
+@keyframes gally-facet-spin
+{
+    to
+    {
+        transform: rotate(360deg);
+    }
+}
+
 
