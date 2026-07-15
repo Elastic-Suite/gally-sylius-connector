@@ -12,7 +12,7 @@
                     <input type="hidden" name="criteria[search][value]" value="{{ products.parameters.get('criteria').search.value }}" />
                 {% endif %}
                 <div class="" id="searchbar">
-                    <div class="column" id="searchbarTextField">
+                    <div class="column" id="searchbarTextField" data-controller="gally--sylius-plugin--view-more">
                         {% for filter in products.definition.enabledFilters %}
                             {% if filter.type != 'shop_string' %}
                                 {{ sylius_grid_render_filter(products, filter) }}

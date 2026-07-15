@@ -1,7 +1,12 @@
 {%- block sylius_gally_filter_range_widget -%}
-    <div class="ui double-slider" tabindex="0">
-        <input type="hidden" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}>
-        {% set valueParts = value ? value|split('|') : [] %}
-        <div class="range-slider" data-input-id="#{{ id }}" data-min="{{ valueParts|length > 0 ? min(valueParts[0], attr.min) : attr.min }}" data-max="{{ valueParts|length > 1 ? max(valueParts[1], attr.max) : attr.max }}" {% if value is defined %} data-value="{{ value }}"{% endif %}></div>
+    {% set valueParts = value ? value|split('|') : [] %}
+    <div class="ui double-slider" tabindex="0"
+        data-controller="gally--sylius-plugin--range-slider"
+        data-gally--sylius-plugin--range-slider-min-value="{{ valueParts|length > 0 ? min(valueParts[0], attr.min) : attr.min }}"
+        data-gally--sylius-plugin--range-slider-max-value="{{ valueParts|length > 1 ? max(valueParts[1], attr.max) : attr.max }}"
+        {% if value is defined %}data-gally--sylius-plugin--range-slider-value-value="{{ value }}"{% endif %}
+    >
+        <input type="hidden" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %} data-gally--sylius-plugin--range-slider-target="input">
+        <div class="range-slider" data-gally--sylius-plugin--range-slider-target="slider"></div>
     </div>
 {%- endblock sylius_gally_filter_range_widget -%}
