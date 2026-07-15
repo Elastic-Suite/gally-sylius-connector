@@ -2,6 +2,28 @@
   "name": "@gally/sylius-plugin",
   "version": "2.3.0",
   "license": "OSL-3.0",
+  "symfony": {
+    "controllers": {
+      "range-slider": {
+        "main": "src/Resources/assets/shop/controllers/RangeSliderController.js",
+        "enabled": true,
+        "fetch": "eager"
+      },
+      "search-autocomplete": {
+        "main": "src/Resources/assets/shop/controllers/SearchAutocompleteController.js",
+        "enabled": true,
+        "fetch": "eager"
+      },
+      "view-more": {
+        "main": "src/Resources/assets/shop/controllers/ViewMoreController.js",
+        "enabled": true,
+        "fetch": "eager"
+      }
+    }
+  },
+  "peerDependencies": {
+    "@hotwired/stimulus": "^3.0.0"
+  },
   "dependencies": {
     "@elastic-suite/gally-sdk": "2.2.2-alpha.0",
     "file-loader": "^6.2.0"

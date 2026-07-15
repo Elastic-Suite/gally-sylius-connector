@@ -50,12 +50,7 @@
         use GallyChannelTrait;
      }
      ```
-    - Copy the bundle assets (Javascript & CSS files):
-       - Run `php bin/console assets:install`
-       - Run `php bin/console sylius:install:assets`
-       - Run `php bin/console sylius:theme:assets:install`
-
-    - **Alternative: install assets via Webpack Encore (recommended for Sylius 2.x)**
+    - Install assets via Webpack Encore:
       - Add the plugin and its JS SDK as npm dependencies in your app's `package.json`:
         ```json
         {
@@ -97,6 +92,37 @@
         ```
         > The `copyFiles()` call exposes `gally-sdk.global.js` as a standalone IIFE script
         > (available as `window.GallySDK`) for use in Twig templates via `{{ asset('build/app/shop/gally/gally-sdk.global.js') }}`.
+      - Register the plugin's Stimulus controllers in your app's root `assets/controllers.json`:
+        ```json
+        {
+          "controllers": {
+            "@gally/sylius-plugin": {
+              "range-slider": {
+                "main": "src/Resources/assets/shop/controllers/RangeSliderController.js",
+                "enabled": true,
+                "fetch": "eager"
+              },
+              "search-autocomplete": {
+                "main": "src/Resources/assets/shop/controllers/SearchAutocompleteController.js",
+                "enabled": true,
+                "fetch": "eager"
+              },
+              "view-more": {
+                "main": "src/Resources/assets/shop/controllers/ViewMoreController.js",
+                "enabled": true,
+                "fetch": "eager"
+              }
+            }
+          }
+        }
+        ```
+        > This step is required because `@gally/sylius-plugin` is installed as a local `path` repository
+        > rather than a real registered npm/Symfony UX package: Symfony Flex normally adds a package's
+        > Stimulus controllers to your app's `assets/controllers.json` automatically via that package's
+        > recipe when you run `composer require`, but local `path` packages have no such recipe. This
+        > entry must therefore mirror the `symfony.controllers` section of the plugin's own `package.json`
+        > and be kept in sync manually if a future version of the plugin adds, renames, or removes a
+        > controller.
       - Install JS dependencies and build assets:
         - **Without Docker** (from the Sylius root directory):
           ```shell
