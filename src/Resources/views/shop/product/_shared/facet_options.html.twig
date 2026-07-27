@@ -1,0 +1,29 @@
+<div{{ attributes.defaults({class: 'facet-options', 'data-loading': 'addClass(is-loading)'}) }}>
+    {% if hasMore %}
+        <div class="facet-search-wrapper">
+            <input type="text" class="facet-search form-control form-control-sm"
+                data-model="on(input)|debounce(300)|optionSearch"
+                value="{{ optionSearch }}"
+                placeholder="{{ 'gally_sylius.ui.filters.search_placeholder'|trans }}" autocomplete="off" />
+            <button type="button" class="facet-search-clear"
+                {{ live_action('clearSearch') }}
+                aria-label="{{ 'gally_sylius.ui.filters.search_clear'|trans }}"
+                style="display: {{ optionSearch is empty ? 'none' : '' }}">{{ ux_icon('tabler:x') }}</button>
+        </div>
+    {% endif %}
+    <div class="ui">
+        {% for label, value in choices %}
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input"
+                    id="{{ baseId }}_{{ loop.index0 }}"
+                    name="{{ fieldName }}[]"
+                    value="{{ value }}"
+                    {% if value in selectedValues %}checked{% endif %}>
+                <label class="form-check-label" for="{{ baseId }}_{{ loop.index0 }}">{{ label }}</label>
+            </div>
+        {% endfor %}
+    </div>
+    {% if hasMore and optionSearch is empty and not expanded %}
+        <button type="button" class="view-more" {{ live_action('viewMore') }}>{{ 'gally_sylius.ui.filters.view_more'|trans }}</button>
+    {% endif %}
+</div>

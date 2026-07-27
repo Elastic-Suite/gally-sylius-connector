@@ -5,13 +5,6 @@ gally_tracking_graphql_proxy:
     defaults:
         _controller: Gally\SyliusPlugin\Controller\Shop\TrackingController::graphqlProxy
 
-gally_filter_view_more_ajax:
-    path: /viewMore/{filterField}
-    methods: [ GET ]
-    defaults:
-        _controller: Gally\SyliusPlugin\Controller\Shop\FilterController::viewMore
-        _format: json
-
 gally_search_form:
     path: /search
     methods: [ GET ]

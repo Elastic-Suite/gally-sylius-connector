@@ -30,6 +30,15 @@
         resource: "@GallySyliusPlugin/Resources/config/shop_routing.yml"
         prefix: /{_locale}
     ```
+  - The plugin uses `symfony/ux-live-component` (facet search/view-more, product & cart recommendations).
+    Check that the `ux_live_component` route is imported (it should already be there if you
+    `composer require`d `symfony/ux-live-component` directly at some point, via its Flex recipe; it is
+    not guaranteed if it only came in transitively through `sylius/sylius`). If `bin/console debug:router
+    ux_live_component` reports no match, create `config/routes/ux_live_component.yaml`:
+    ```yaml
+    _live_component:
+        resource: "@LiveComponentBundle/config/routes.php"
+    ```
    - Implement the `Gally\SyliusPlugin\Model\GallyChannelInterface` and `Gally\SyliusPlugin\Model\GallyChannelTrait` in your Channel Entity `src/App/Entity/Channel/Channel.php`.
     ```php
     <?php
@@ -107,8 +116,8 @@
                 "enabled": true,
                 "fetch": "eager"
               },
-              "view-more": {
-                "main": "src/Resources/assets/shop/controllers/ViewMoreController.js",
+              "filters-autosubmit": {
+                "main": "src/Resources/assets/shop/controllers/FiltersAutosubmitController.js",
                 "enabled": true,
                 "fetch": "eager"
               }
