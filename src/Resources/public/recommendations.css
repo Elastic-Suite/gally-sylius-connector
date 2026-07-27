@@ -1,0 +1,48 @@
+.product-card-placeholder-line.title {
+    width: 12rem;
+    height: 1.5rem;
+    margin-bottom: 1.25rem;
+}
+
+.products-grid-placeholder {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    grid-gap: 3rem 2rem;
+}
+
+.product-card-placeholder {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.product-card-placeholder-image {
+    aspect-ratio: 1 / 1;
+    border-radius: 0.25rem;
+}
+
+.product-card-placeholder-line {
+    height: 0.9rem;
+    border-radius: 0.25rem;
+}
+
+.product-card-placeholder-line.short {
+    width: 40%;
+}
+
+.product-card-placeholder-image,
+.product-card-placeholder-line {
+    background: var(--bs-secondary-bg-subtle, #e9ecef);
+    animation: gally-placeholder-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes gally-placeholder-pulse {
+    0%, 100%
+    {
+        opacity: 1;
+    }
+    50%
+    {
+        opacity: 0.4;
+    }
+}

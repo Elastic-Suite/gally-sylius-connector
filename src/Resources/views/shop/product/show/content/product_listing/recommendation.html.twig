@@ -1,10 +1,27 @@
-{% if associated_products is not empty %}
-    <h2 class="mb-5">{{ product_association_type.name }}</h2>
-    <div {{ sylius_test_html_attribute('product-recommendation', product_association_type.name) }}>
-        <div class="products-grid">
-            {% for product in associated_products %}
-                <div>{{ component('sylius_shop:product:card', { product: product, template: '@SyliusShop/product/common/card.html.twig' }) }}</div>
-            {% endfor %}
+<div{{ attributes }}>
+    {% if associated_products is not empty %}
+        <h2 class="mb-5">{{ product_association_type.name }}</h2>
+        <div {{ sylius_test_html_attribute('product-recommendation', product_association_type.name) }}>
+            <div class="products-grid">
+                {% for product in associated_products %}
+                    <div>{{ component('sylius_shop:product:card', { product: product, template: '@SyliusShop/product/common/card.html.twig' }) }}</div>
+                {% endfor %}
+            </div>
         </div>
+    {% else %}
+        {{ component('sylius_shop:product:list', { limit: 4, template: '@SyliusShop/product/common/list.html.twig' }) }}
+    {% endif %}
+</div>
+
+{% macro placeholder(props) %}
+    <div class="product-card-placeholder-line title"></div>
+    <div class="products-grid-placeholder">
+        {% for _ in 1..4 %}
+            <div class="product-card-placeholder">
+                <div class="product-card-placeholder-image"></div>
+                <div class="product-card-placeholder-line"></div>
+                <div class="product-card-placeholder-line short"></div>
+            </div>
+        {% endfor %}
     </div>
-{% endif %}
+{% endmacro %}
