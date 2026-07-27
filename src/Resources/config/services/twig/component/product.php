@@ -33,6 +33,12 @@ return static function (ContainerConfigurator $container) {
         ->tag('sylius.twig_component', ['key' => 'gally_shop:product:sorting']);
 
     $services->set(RecommendationComponent::class)
-        ->args([service('sylius.context.channel'), service(ConfigManager::class), service(RecommendationFinder::class)])
-        ->tag('sylius.twig_component', ['key' => 'gally_shop:product:recommendation']);
+        ->autoconfigure()
+        ->args([
+            service('sylius.context.channel'),
+            service(ConfigManager::class),
+            service(RecommendationFinder::class),
+            service('sylius.repository.product_association_type'),
+            service('sylius.repository.product'),
+        ]);
 };
