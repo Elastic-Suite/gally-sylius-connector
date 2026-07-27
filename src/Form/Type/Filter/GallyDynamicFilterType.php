@@ -29,7 +29,6 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\RangeType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class GallyDynamicFilterType extends AbstractType
 {
@@ -37,7 +36,6 @@ class GallyDynamicFilterType extends AbstractType
      * @param TaxonRepository<TaxonInterface> $taxonRepository
      */
     public function __construct(
-        private UrlGeneratorInterface $router,
         private RequestStack $requestStack,
         private TaxonRepository $taxonRepository,
         private LocaleContextInterface $localeContext,
@@ -53,6 +51,7 @@ class GallyDynamicFilterType extends AbstractType
     {
         $isTaxonPage = $this->isTaxonPage();
         $categoryFieldAdded = false;
+        $facetContext = $this->buildFacetContext();
 
         if ($isTaxonPage && !$this->hasCategoryAggregation()) {
             // Gally doesn't always return a "category" aggregation on taxon listing pages (e.g. a
@@ -118,7 +117,9 @@ class GallyDynamicFilterType extends AbstractType
                             'choices' => $choices,
                             'expanded' => true,
                             'multiple' => true,
-                            'search_url' => $this->buildSearchUrl($aggregation->getField()),
+                            'facet_search' => $facetContext['search'],
+                            'facet_filters' => $facetContext['filters'],
+                            'facet_taxon_code' => $facetContext['taxonCode'],
                             'has_more' => $aggregation->hasMore(),
                         ]
                     );
@@ -225,7 +226,10 @@ class GallyDynamicFilterType extends AbstractType
         return \is_string($categoryId) && '' !== $categoryId ? $categoryId : null;
     }
 
-    private function buildSearchUrl(string $field): string
+    /**
+     * @return array{search: ?string, filters: array<string, mixed>, taxonCode: ?string}
+     */
+    private function buildFacetContext(): array
     {
         $request = $this->requestStack->getCurrentRequest();
         /** @var array<string, mixed> $queryParameters */
@@ -234,20 +238,18 @@ class GallyDynamicFilterType extends AbstractType
         /** @var array<string, array<string, mixed>> $criteria */
         $criteria = $parameters->get('criteria', []);
         $query = $parameters->get('query', null);
-        $search = (\is_string($query) && '' !== $query) ? $query : ((isset($criteria['search'], $criteria['search']['value'])) ? $criteria['search']['value'] : '');
-        unset($criteria['search']);
+        $search = (\is_string($query) && '' !== $query) ? $query : ((isset($criteria['search'], $criteria['search']['value']) && \is_string($criteria['search']['value'])) ? $criteria['search']['value'] : null);
         /** @var string $slug */
         $slug = $request?->attributes->get('slug') ?? '';
         $taxon = $this->taxonRepository->findOneBySlug($slug, $this->localeContext->getLocaleCode());
 
-        return $this->router->generate(
-            'gally_filter_view_more_ajax',
-            [
-                'filterField' => $field,
-                'search' => $search,
-                'filters' => $criteria,
-                'taxon' => $taxon?->getId(),
-            ]
-        );
+        /** @var array<string, mixed> $filters */
+        $filters = \is_array($criteria['gally'] ?? null) ? $criteria['gally'] : [];
+
+        return [
+            'search' => $search,
+            'filters' => $filters,
+            'taxonCode' => $taxon?->getCode(),
+        ];
     }
 }

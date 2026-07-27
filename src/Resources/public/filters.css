@@ -1,6 +1,10 @@
 #searchbar .view-more {
     color: rgba(0, 0, 0, 0.87);
     cursor: pointer;
+    appearance: none;
+    border: none;
+    background: none;
+    padding: 0;
 }
 
 #searchbar .col-form-label
@@ -35,7 +39,12 @@
 
 #searchbar .view-more
 {
-    font-size: 0.75em;
+    font-size: 0.875em;
+}
+
+#searchbar .view-more:hover
+{
+    color: var(--bs-link-hover-color, #1b947b);
 }
 
 #searchbar .facet-search-wrapper
@@ -146,23 +155,29 @@
 
 /* Loader shown on a single facet while its options are being fetched (view more / facet search),
    scoped to that facet only so the rest of the sidebar stays interactive. */
-#searchbar .field.is-loading
+#searchbar .facet-options.is-loading
 {
-    position: relative;
     pointer-events: none;
 }
 
-#searchbar .field.is-loading .ui
+#searchbar .facet-options.is-loading .ui
 {
     opacity: 0.5;
 }
 
-#searchbar .field.is-loading::after
+#searchbar .facet-options.is-loading .facet-search-clear
+{
+    display: none;
+}
+
+#searchbar .facet-options.is-loading .facet-search-wrapper::after
 {
     content: '';
     position: absolute;
     top: 0;
-    right: 0;
+    bottom: 0;
+    right: 0.4em;
+    margin: auto 0;
     width: 1em;
     height: 1em;
     border: 0.15em solid var(--bs-secondary-bg-subtle, #e9ecef);

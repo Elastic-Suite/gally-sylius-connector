@@ -24,9 +24,11 @@ final class SelectFilterType extends AbstractType
 {
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefined(['has_more', 'search_url'])
+        $resolver->setDefined(['has_more', 'facet_search', 'facet_filters', 'facet_taxon_code'])
             ->addAllowedTypes('has_more', 'bool')
-            ->addAllowedTypes('search_url', 'string');
+            ->addAllowedTypes('facet_search', ['string', 'null'])
+            ->addAllowedTypes('facet_filters', 'array')
+            ->addAllowedTypes('facet_taxon_code', ['string', 'null']);
     }
 
     public function getParent(): string
@@ -39,6 +41,10 @@ final class SelectFilterType extends AbstractType
         // @phpstan-ignore offsetAccess.nonOffsetAccessible
         $view->vars['has_more'] = \array_key_exists('has_more', $options) ? $options['has_more'] : false;
         // @phpstan-ignore offsetAccess.nonOffsetAccessible
-        $view->vars['search_url'] = \array_key_exists('search_url', $options) ? $options['search_url'] : null;
+        $view->vars['facet_search'] = \array_key_exists('facet_search', $options) ? $options['facet_search'] : null;
+        // @phpstan-ignore offsetAccess.nonOffsetAccessible
+        $view->vars['facet_filters'] = \array_key_exists('facet_filters', $options) ? $options['facet_filters'] : [];
+        // @phpstan-ignore offsetAccess.nonOffsetAccessible
+        $view->vars['facet_taxon_code'] = \array_key_exists('facet_taxon_code', $options) ? $options['facet_taxon_code'] : null;
     }
 }

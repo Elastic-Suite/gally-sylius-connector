@@ -14,7 +14,7 @@
                     data-controller="gally--sylius-plugin--filters-autosubmit"
                     data-action="change->gally--sylius-plugin--filters-autosubmit#submit"
                 >
-                    <div class="column" id="searchbarTextField" data-controller="gally--sylius-plugin--facet-options">
+                    <div class="column" id="searchbarTextField">
                         {% for filter in products.definition.enabledFilters %}
                             {% if filter.type != 'shop_string' %}
                                 {{ sylius_grid_render_filter(products, filter) }}
@@ -25,4 +25,7 @@
             </form>
         </div>
     </div>
+{% elseif app.request.attributes.has('slug') %}
+    {# Gally disabled: fall back to Sylius' own native taxonomy component and its default template. #}
+    {{ component('sylius_shop:product:show:taxonomy') }}
 {% endif %}

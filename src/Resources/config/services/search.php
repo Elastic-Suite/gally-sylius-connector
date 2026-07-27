@@ -71,7 +71,6 @@ return static function (ContainerConfigurator $container) {
     $services->set(GallyDynamicFilterType::class)
         ->autoconfigure()
         ->args([
-            service('router'),
             service('request_stack'),
             service('sylius.repository.taxon'),
             service('sylius.context.locale'),
