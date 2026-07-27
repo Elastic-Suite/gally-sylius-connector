@@ -4,17 +4,11 @@
     {% set cart_recommendation_type_code = gally.getCartRecommendationTypeCode() %}
     {% set association_types = gally.getProductAssociationTypes()|filter(type => type.code != cart_recommendation_type_code) %}
 
-    {% set rendered_blocks %}
-        {% for association_type in association_types %}
-            {{ component('gally_shop:product:recommendation', { productAssociationType: association_type, product: product, template: '@GallySyliusPlugin/shop/product/show/content/product_listing/recommendation.html.twig' }) }}
-        {% endfor %}
-    {% endset %}
-
-    {% if rendered_blocks|trim is not empty %}
-        {{ rendered_blocks|raw }}
+    {% for association_type in association_types %}
+        {{ component('gally_shop:product:recommendation', { productAssociationType: association_type, product: product, loading: 'lazy' }) }}
     {% else %}
         {{ component('sylius_shop:product:list', { limit: 4, template: '@SyliusShop/product/common/list.html.twig' }) }}
-    {% endif %}
+    {% endfor %}
 {% else %}
     {% for association in product.associations %}
         {{ component('sylius_shop:product:association', { productAssociation: association, template: '@SyliusShop/product/show/content/product_listing/association.html.twig' }) }}
