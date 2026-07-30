@@ -1,6 +1,7 @@
 /vendor/
 /node_modules/
 /composer.lock
+/yarn.lock
 
 /etc/build/*
 !/etc/build/.gitignore
