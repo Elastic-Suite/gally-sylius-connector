@@ -61,7 +61,7 @@
         {
           "dependencies": {
             "@gally/sylius-plugin": "link:vendor/gally/sylius-plugin",
-            "@elastic-suite/gally-sdk": "2.2.2-alpha.0"
+            "@elastic-suite/gally-sdk": "2.3.0"
           }
         }
         ```
