@@ -34,6 +34,7 @@ return static function (ContainerConfigurator $container) {
     $container->import('services/twig.php');
     $container->import('services/twig/component/product.php');
     $container->import('services/twig/component/filter.php');
+    $container->import('services/twig/component/search.php');
     $container->import('services/tracking.php');
 
     $container->parameters()

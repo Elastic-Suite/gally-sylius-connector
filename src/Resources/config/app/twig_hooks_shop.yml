@@ -1,14 +1,20 @@
 sylius_twig_hooks:
     hooks:
+        # Desktop searchbar placeholder
         'sylius_shop.base.header.content':
             search_bar:
                 template: '@GallySyliusPlugin/shop/shared/components/header/search/search_bar.html.twig'
                 priority: 250
 
+        # Mobile searchbar placeholder
         'sylius_shop.base.header':
             search_bar:
                 template: '@GallySyliusPlugin/shop/shared/components/header/search/search_bar_mobile.html.twig'
                 priority: 150
+            # Real searchbar renderer
+            gally_search_bar:
+                component: 'gally_shop:search:search_bar'
+                priority: 400
 
         'sylius_shop.product.search.content':
             breadcrumbs:

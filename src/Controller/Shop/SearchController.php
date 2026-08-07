@@ -23,7 +23,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 
 class SearchController extends AbstractController
@@ -32,31 +31,6 @@ class SearchController extends AbstractController
         private Finder $finder,
         private ChannelContextInterface $channelContext,
     ) {
-    }
-
-    public function getForm(Request $renderRequest, RequestStack $requestStack): Response
-    {
-        /** @var string|null $query */
-        $query = $requestStack->getMainRequest()?->get('query');
-        if (null === $query || '' === $query) {
-            /** @var array<string, array<string, string>> $query */
-            $query = $requestStack->getMainRequest()?->get('criteria', []);
-            $query = $query['search']['value'] ?? '';
-        }
-
-        $searchForm = $this->createForm(
-            SearchFormType::class,
-            ['query' => $query],
-            ['action' => $this->generateUrl('gally_search_result_page'), 'method' => 'POST']
-        );
-
-        return $this->render(
-            '@GallySyliusPlugin/shop/shared/components/header/search/form.html.twig',
-            [
-                'searchForm' => $searchForm->createView(),
-                'mobileMode' => $renderRequest->get('mobile_mode'),
-            ]
-        );
     }
 
     public function getResults(Request $request): Response

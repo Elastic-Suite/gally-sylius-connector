@@ -120,6 +120,11 @@
                 "main": "src/Resources/assets/shop/controllers/FiltersAutosubmitController.js",
                 "enabled": true,
                 "fetch": "eager"
+              },
+              "search-bar-mover": {
+                "main": "src/Resources/assets/shop/controllers/SearchBarMoverController.js",
+                "enabled": true,
+                "fetch": "eager"
               }
             }
           }
