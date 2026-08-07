@@ -1,9 +1,12 @@
 {% block sylius_gally_filter_checkbox_row -%}
     <div class="{% if required %}required {% endif %}field{% if (not compound or force_error|default(false)) and not valid %} error{% endif %}">
         {{- form_label(form) -}}
-        {% set choices = {} %}
+        {% set choices = [] %}
         {% for choice in form.vars.choices %}
-            {% set choices = choices|merge({(choice.label): choice.value}) %}
+            {# merge() renumbers integer-like keys (PHP array_merge behavior), so labels that
+               look like numbers (e.g. "12") must not be used as array keys: kept as a list of
+               {label, value} pairs instead. #}
+            {% set choices = choices|merge([{label: choice.label, value: choice.value}]) %}
         {% endfor %}
         {{ component('gally_shop:filter:facet_options', {
             filterField: form.vars.name,
