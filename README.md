@@ -136,6 +136,8 @@
           > The `nodejs` container automatically runs `yarn install && yarn build` and mounts the project into `/srv/sylius`.
     - Run `php bin/console doctrine:migrations:migrate` to update the database schema
     - Open Sylius Admin, head to Configuration > Gally and configure the Gally endpoint (URL, credentials), after that enable Gally on your channel (Configuration > Channel > Edit)
+      > Every locale enabled on a Gally-active channel must use the full `xx_XX` format (e.g. `en_US`), not a bare
+      > language code (e.g. `en`). Configure this in Sylius under Configuration > Locales.
 - Run this commands from your Sylius instance. This commands must be runned only once to synchronize the structure.
     ```shell
         bin/console gally:structure:sync   # Sync catalog et source field data with gally
