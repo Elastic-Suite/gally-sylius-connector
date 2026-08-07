@@ -5,12 +5,6 @@ gally_tracking_graphql_proxy:
     defaults:
         _controller: Gally\SyliusPlugin\Controller\Shop\TrackingController::graphqlProxy
 
-gally_search_form:
-    path: /search
-    methods: [ GET ]
-    defaults:
-        _controller: Gally\SyliusPlugin\Controller\Shop\SearchController::getForm
-
 gally_search_post_result:
     path: /search-results
     methods: [ POST ]
