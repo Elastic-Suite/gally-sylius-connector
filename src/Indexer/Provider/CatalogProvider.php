@@ -68,11 +68,16 @@ class CatalogProvider implements ProviderInterface
             );
         }
 
+        $localeCode = str_replace('-', '_', (string) $locale->getCode());
+        if (1 !== preg_match('/^[a-z]{2}_[A-Z]{2}$/', $localeCode)) {
+            throw new \InvalidArgumentException(sprintf('Gally requires locales in the "xx_XX" format (e.g. "en_US"), got "%s" for channel "%s". Configure a full locale in Sylius (Configuration > Locales).', $localeCode, (string) $channel->getCode()));
+        }
+
         return new LocalizedCatalog(
             $this->catalogCache[$channel->getCode()],
             $channel->getCode() . '_' . $locale->getCode(),
             (string) $locale->getName(),
-            str_replace('-', '_', (string) $locale->getCode()),
+            $localeCode,
             (string) $channel->getBaseCurrency()?->getCode(),
         );
     }
