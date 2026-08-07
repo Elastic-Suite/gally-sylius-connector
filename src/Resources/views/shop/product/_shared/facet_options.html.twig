@@ -12,14 +12,14 @@
         </div>
     {% endif %}
     <div class="ui">
-        {% for label, value in choices %}
+        {% for choice in choices %}
             <div class="form-check">
                 <input type="checkbox" class="form-check-input"
                     id="{{ baseId }}_{{ loop.index0 }}"
                     name="{{ fieldName }}[]"
-                    value="{{ value }}"
-                    {% if value in selectedValues %}checked{% endif %}>
-                <label class="form-check-label" for="{{ baseId }}_{{ loop.index0 }}">{{ label }}</label>
+                    value="{{ choice.value }}"
+                    {% if choice.value in selectedValues %}checked{% endif %}>
+                <label class="form-check-label" for="{{ baseId }}_{{ loop.index0 }}">{{ choice.label }}</label>
             </div>
         {% endfor %}
     </div>

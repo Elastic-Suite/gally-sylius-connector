@@ -48,7 +48,7 @@ class FacetOptionsComponent
     #[LiveProp]
     public string $baseId = '';
 
-    /** @var array<string, string> */
+    /** @var list<array{label: string, value: string}> */
     #[LiveProp]
     public array $initialChoices = [];
 
@@ -97,7 +97,7 @@ class FacetOptionsComponent
     }
 
     /**
-     * @return array<string, string>
+     * @return list<array{label: string, value: string}>
      */
     #[ExposeInTemplate('choices')]
     public function getChoices(): array
@@ -116,7 +116,7 @@ class FacetOptionsComponent
         /** @var array<string, string> $option */
         foreach ($aggregationOptions as $option) {
             if (isset($option['label'])) {
-                $choices[$option['label']] = $option['value'] ?? '';
+                $choices[] = ['label' => $option['label'], 'value' => $option['value'] ?? ''];
             }
         }
 
