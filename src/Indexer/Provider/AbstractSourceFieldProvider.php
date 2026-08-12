@@ -52,10 +52,6 @@ abstract class AbstractSourceFieldProvider implements ProviderInterface
         ProductAttributeInterface|ProductOptionInterface $attribute,
         ?string $type = null,
     ): SourceField {
-        if (!\array_key_exists($entity, $this->metadataCache)) {
-            $this->metadataCache[$entity] = new Metadata($entity);
-        }
-
         /** @var Collection<string,ProductAttributeTranslation|ProductOptionTranslation> $translations */
         $translations = $attribute->getTranslations();
         $firstTranslation = $translations->first();
@@ -65,13 +61,22 @@ abstract class AbstractSourceFieldProvider implements ProviderInterface
         $labels = $this->getLabels($translations, (string) $defaultLabel);
 
         return new SourceField(
-            $this->metadataCache[$entity],
+            $this->getMetadata($entity),
             (string) $attribute->getCode(),
             // @phpstan-ignore-next-line
             $type ?: $this->getGallyType($attribute->getType()),
             (string) $defaultLabel,
             $labels,
         );
+    }
+
+    protected function getMetadata(string $entity): Metadata
+    {
+        if (!\array_key_exists($entity, $this->metadataCache)) {
+            $this->metadataCache[$entity] = new Metadata($entity);
+        }
+
+        return $this->metadataCache[$entity];
     }
 
     /**
