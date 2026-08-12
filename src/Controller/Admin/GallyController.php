@@ -31,8 +31,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class GallyController extends AbstractController
 {
-    /** @var ProviderInterface[] */
-    protected array $providers;
+    /** @var array<string, ProviderInterface[]> */
+    protected array $providers = [];
 
     /** @var array<string, string> */
     protected array $syncMethod = [
@@ -49,9 +49,21 @@ final class GallyController extends AbstractController
         private TranslatorInterface $translator,
         private CacheManager $cacheManager,
     ) {
-        /** @var ProviderInterface[] $providersArray */
-        $providersArray = iterator_to_array($providers);
-        $this->providers = $providersArray;
+        /** @var ProviderInterface $provider */
+        foreach ($providers as $provider) {
+            $this->providers[$provider->getEntity()][] = $provider;
+        }
+    }
+
+    /**
+     * Merges the provide() results of every provider registered for the given entity,
+     * so several namespaces can contribute to it independently.
+     */
+    private function provideAll(string $entity): iterable
+    {
+        foreach ($this->providers[$entity] ?? [] as $provider) {
+            yield from $provider->provide();
+        }
     }
 
     public function renderGallyConfigForm(Request $request): Response
@@ -122,7 +134,7 @@ final class GallyController extends AbstractController
             if ($validConnection) {
                 foreach ($this->syncMethod as $entity => $method) {
                     // @phpstan-ignore method.dynamicName
-                    $this->synchonizer->{$method}($this->providers[$entity]->provide());
+                    $this->synchonizer->{$method}($this->provideAll($entity));
                 }
                 $this->addFlash('success', $this->translator->trans('gally_sylius.ui.sync_success'));
             }

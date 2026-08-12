@@ -18,7 +18,9 @@ use Gally\Sdk\Entity\Metadata;
 use Gally\Sdk\GraphQl\Request;
 use Gally\Sdk\GraphQl\Response;
 use Gally\Sdk\Service\SearchManager;
+use Gally\SyliusPlugin\Event\SearchRequestContextEvent;
 use Gally\SyliusPlugin\Indexer\Provider\CatalogProvider;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Perform search operations on Gally index and return array of Sylius products.
@@ -28,6 +30,7 @@ class Finder
     public function __construct(
         private SearchManager $searchManager,
         private CatalogProvider $catalogProvider,
+        private EventDispatcherInterface $eventDispatcher,
     ) {
     }
 
@@ -37,6 +40,9 @@ class Finder
         string $metadata,
         array $fields,
     ): Response {
+        $context = new SearchRequestContextEvent();
+        $this->eventDispatcher->dispatch($context, 'gally.search.build_request');
+
         $request = new Request(
             $this->catalogProvider->getLocalizedCatalog(),
             new Metadata($metadata),
@@ -46,7 +52,10 @@ class Finder
             $resultLimit,
             null,
             $query,
-            []
+            [],
+            null,
+            null,
+            $context->getPriceGroupId()
         );
 
         return $this->searchManager->search($request);

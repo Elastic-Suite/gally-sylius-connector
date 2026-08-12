@@ -32,7 +32,7 @@ return static function (ContainerConfigurator $container) {
     $services->set(FilterConverter::class);
 
     $services->set(Finder::class)
-        ->args([service(SearchManager::class), service(CatalogProvider::class)]);
+        ->args([service(SearchManager::class), service(CatalogProvider::class), service('event_dispatcher')]);
 
     $services->set(SearchDriver::class)
         ->args([service(SearchManager::class), service(CatalogProvider::class), service('event_dispatcher'), service('doctrine')])

@@ -23,11 +23,11 @@ return static function (ContainerConfigurator $container) {
     $services = $container->services();
 
     $services->set(StructureSync::class)
-        ->args([service(StructureSynchonizer::class), tagged_iterator('gally.dataprovider', 'entity')])
+        ->args([service(StructureSynchonizer::class), tagged_iterator('gally.dataprovider')])
         ->tag('console.command');
 
     $services->set(StructureClean::class)
-        ->args([service(StructureSynchonizer::class), tagged_iterator('gally.dataprovider', 'entity')])
+        ->args([service(StructureSynchonizer::class), tagged_iterator('gally.dataprovider')])
         ->tag('console.command');
 
     $services->set(Index::class)
