@@ -26,6 +26,7 @@ use Gally\SyliusPlugin\Indexer\Provider\ProductAttributeSourceFieldOptionProvide
 use Gally\SyliusPlugin\Indexer\Provider\ProductAttributeSourceFieldProvider;
 use Gally\SyliusPlugin\Indexer\Provider\ProductOptionSourceFieldOptionProvider;
 use Gally\SyliusPlugin\Indexer\Provider\ProductOptionSourceFieldProvider;
+use Gally\SyliusPlugin\Indexer\Provider\StaticSourceFieldProvider;
 use Gally\SyliusPlugin\Indexer\Subscriber\CategorySubscriber;
 use Gally\SyliusPlugin\Indexer\Subscriber\ChannelSubscriber;
 use Gally\SyliusPlugin\Indexer\Subscriber\ProductAttributeSubscriber;
@@ -38,6 +39,9 @@ return static function (ContainerConfigurator $container) {
     $services->set(CatalogProvider::class)
         ->args([service('sylius.repository.channel'), service('sylius.context.channel'), service('sylius.context.locale')])
         ->tag('gally.dataprovider', ['entity' => 'catalog']);
+
+    $services->set(StaticSourceFieldProvider::class)
+        ->tag('gally.dataprovider', ['entity' => 'sourceField']);
 
     $services->set(ProductAttributeSourceFieldProvider::class)
         ->args([service(CatalogProvider::class), service('sylius.repository.product_attribute')])

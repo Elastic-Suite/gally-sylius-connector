@@ -19,7 +19,7 @@ use Sylius\Component\Product\Model\ProductAttributeInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 
 /**
- * Gally source field provider for Sylius product attributes, plus the plugin's static fields.
+ * Gally source field provider for Sylius product attributes.
  */
 class ProductAttributeSourceFieldProvider extends AbstractSourceFieldProvider
 {
@@ -38,17 +38,6 @@ class ProductAttributeSourceFieldProvider extends AbstractSourceFieldProvider
         /** @var ProductAttributeInterface $productAttribute */
         foreach ($this->productAttributeRepository->findAll() as $productAttribute) {
             yield $this->buildSourceField('product', $productAttribute);
-        }
-
-        // Static fields are not tied to attributes or options, kept here to avoid a third provider.
-        $staticSourceField = [
-            'product' => ['slug' => 'text'],
-            'category' => ['slug' => 'text'],
-        ];
-        foreach ($staticSourceField as $entity => $fields) {
-            foreach ($fields as $code => $type) {
-                yield new SourceField($this->getMetadata($entity), $code, $this->getGallyType($type), $code, []);
-            }
         }
     }
 }
