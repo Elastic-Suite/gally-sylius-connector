@@ -57,7 +57,7 @@ return static function (ContainerConfigurator $container) {
             service(GallyConfigurationRepository::class),
             service(StructureSynchonizer::class),
             service(ConfigManager::class),
-            tagged_iterator('gally.dataprovider', 'entity'),
+            tagged_iterator('gally.dataprovider'),
             service('translator'),
             service(CacheManager::class),
         ])

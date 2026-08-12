@@ -27,8 +27,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 )]
 class StructureSync extends Command
 {
-    /** @var ProviderInterface[] */
-    protected array $providers;
+    /** @var array<string, ProviderInterface[]> */
+    protected array $providers = [];
 
     /** @var array<string, string> */
     protected array $syncMethod = [
@@ -45,7 +45,9 @@ class StructureSync extends Command
         iterable $providers,
     ) {
         parent::__construct();
-        $this->providers = iterator_to_array($providers);
+        foreach ($providers as $provider) {
+            $this->providers[$provider->getEntity()][] = $provider;
+        }
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -57,7 +59,7 @@ class StructureSync extends Command
             $time = microtime(true);
             $output->writeln("$message ...");
             // @phpstan-ignore method.dynamicName
-            $this->synchonizer->{$method}($this->providers[$entity]->provide());
+            $this->synchonizer->{$method}($this->provideAll($entity));
             $time = number_format(microtime(true) - $time, 2);
             $output->writeln("\033[1A$message <info>✔</info> ($time)s");
         }
@@ -65,5 +67,16 @@ class StructureSync extends Command
         $output->writeln('');
 
         return 0;
+    }
+
+    /**
+     * Merges the provide() results of every provider registered for the given entity,
+     * so several namespaces can contribute to it independently.
+     */
+    protected function provideAll(string $entity): iterable
+    {
+        foreach ($this->providers[$entity] ?? [] as $provider) {
+            yield from $provider->provide();
+        }
     }
 }

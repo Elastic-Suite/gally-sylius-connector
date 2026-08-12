@@ -22,11 +22,14 @@ use Gally\SyliusPlugin\Indexer\AbstractIndexer;
 use Gally\SyliusPlugin\Indexer\CategoryIndexer;
 use Gally\SyliusPlugin\Indexer\ProductIndexer;
 use Gally\SyliusPlugin\Indexer\Provider\CatalogProvider;
-use Gally\SyliusPlugin\Indexer\Provider\SourceFieldOptionProvider;
-use Gally\SyliusPlugin\Indexer\Provider\SourceFieldProvider;
+use Gally\SyliusPlugin\Indexer\Provider\ProductAttributeSourceFieldOptionProvider;
+use Gally\SyliusPlugin\Indexer\Provider\ProductAttributeSourceFieldProvider;
+use Gally\SyliusPlugin\Indexer\Provider\ProductOptionSourceFieldOptionProvider;
+use Gally\SyliusPlugin\Indexer\Provider\ProductOptionSourceFieldProvider;
 use Gally\SyliusPlugin\Indexer\Subscriber\CategorySubscriber;
 use Gally\SyliusPlugin\Indexer\Subscriber\ChannelSubscriber;
 use Gally\SyliusPlugin\Indexer\Subscriber\ProductAttributeSubscriber;
+use Gally\SyliusPlugin\Indexer\Subscriber\ProductOptionSubscriber;
 use Gally\SyliusPlugin\Indexer\Subscriber\ProductSubscriber;
 
 return static function (ContainerConfigurator $container) {
@@ -36,12 +39,20 @@ return static function (ContainerConfigurator $container) {
         ->args([service('sylius.repository.channel'), service('sylius.context.channel'), service('sylius.context.locale')])
         ->tag('gally.dataprovider', ['entity' => 'catalog']);
 
-    $services->set(SourceFieldProvider::class)
-        ->args([service(CatalogProvider::class), service('sylius.repository.product_attribute'), service('sylius.repository.product_option')])
+    $services->set(ProductAttributeSourceFieldProvider::class)
+        ->args([service(CatalogProvider::class), service('sylius.repository.product_attribute')])
         ->tag('gally.dataprovider', ['entity' => 'sourceField']);
 
-    $services->set(SourceFieldOptionProvider::class)
-        ->args([service(CatalogProvider::class), service('sylius.repository.product_attribute'), service('sylius.repository.product_option')])
+    $services->set(ProductOptionSourceFieldProvider::class)
+        ->args([service(CatalogProvider::class), service('sylius.repository.product_option')])
+        ->tag('gally.dataprovider', ['entity' => 'sourceField']);
+
+    $services->set(ProductAttributeSourceFieldOptionProvider::class)
+        ->args([service(CatalogProvider::class), service('sylius.repository.product_attribute')])
+        ->tag('gally.dataprovider', ['entity' => 'sourceFieldOption']);
+
+    $services->set(ProductOptionSourceFieldOptionProvider::class)
+        ->args([service(CatalogProvider::class), service('sylius.repository.product_option')])
         ->tag('gally.dataprovider', ['entity' => 'sourceFieldOption']);
 
     $services->set(ChannelSubscriber::class)
@@ -51,8 +62,17 @@ return static function (ContainerConfigurator $container) {
     $services->set(ProductAttributeSubscriber::class)
         ->args([
             service(LocalizedCatalogRepository::class),
-            service(SourceFieldProvider::class),
-            service(SourceFieldOptionProvider::class),
+            service(ProductAttributeSourceFieldProvider::class),
+            service(ProductAttributeSourceFieldOptionProvider::class),
+            service(StructureSynchonizer::class),
+        ])
+        ->tag('kernel.event_subscriber');
+
+    $services->set(ProductOptionSubscriber::class)
+        ->args([
+            service(LocalizedCatalogRepository::class),
+            service(ProductOptionSourceFieldProvider::class),
+            service(ProductOptionSourceFieldOptionProvider::class),
             service(StructureSynchonizer::class),
         ])
         ->tag('kernel.event_subscriber');
@@ -68,7 +88,7 @@ return static function (ContainerConfigurator $container) {
 
     $services->set(ProductIndexer::class)
         ->parent(AbstractIndexer::class)
-        ->args([service('sylius.repository.product'), service('sylius.calculator.product_variant_price')])
+        ->args([service('sylius.repository.product'), service('sylius.calculator.product_variant_price'), service('event_dispatcher')])
         ->tag('gally.entity.indexer', ['priority' => 50]);
 
     $services->set(CategorySubscriber::class)

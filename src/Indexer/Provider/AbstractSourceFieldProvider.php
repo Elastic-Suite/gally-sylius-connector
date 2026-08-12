@@ -23,12 +23,11 @@ use Sylius\Component\Product\Model\ProductAttributeInterface;
 use Sylius\Component\Product\Model\ProductAttributeTranslation;
 use Sylius\Component\Product\Model\ProductOptionInterface;
 use Sylius\Component\Product\Model\ProductOptionTranslation;
-use Sylius\Component\Resource\Repository\RepositoryInterface;
 
 /**
- * Gally Catalog data provider.
+ * Shared source field building logic for the product attribute and product option providers.
  */
-class SourceFieldProvider implements ProviderInterface
+abstract class AbstractSourceFieldProvider implements ProviderInterface
 {
     /** @var LocalizedCatalog[] */
     private array $localizedCatalogs = [];
@@ -36,45 +35,16 @@ class SourceFieldProvider implements ProviderInterface
     /** @var Metadata[] */
     private array $metadataCache = [];
 
-    public function __construct(
-        protected CatalogProvider $catalogProvider,
-        protected RepositoryInterface $productAttributeRepository,
-        protected RepositoryInterface $productOptionRepository,
-    ) {
+    public function __construct(protected CatalogProvider $catalogProvider)
+    {
         foreach ($this->catalogProvider->provide() as $localizedCatalog) {
             $this->localizedCatalogs[] = $localizedCatalog;
         }
     }
 
-    /**
-     * @return iterable<SourceField>
-     */
-    public function provide(): iterable
+    public function getEntity(): string
     {
-        /** @var ProductAttributeInterface $productAttribute */
-        foreach ($this->productAttributeRepository->findAll() as $productAttribute) {
-            yield $this->buildSourceField('product', $productAttribute);
-        }
-        /** @var ProductOptionInterface $productOption */
-        foreach ($this->productOptionRepository->findAll() as $productOption) {
-            yield $this->buildSourceField('product', $productOption, 'select');
-        }
-
-        $staticSourceField = [
-            'product' => ['slug' => 'text'],
-            'category' => ['slug' => 'text'],
-        ];
-
-        // Static source field
-        foreach ($staticSourceField as $entity => $fields) {
-            foreach ($fields as $code => $type) {
-                if (!\array_key_exists($entity, $this->metadataCache)) {
-                    $this->metadataCache[$entity] = new Metadata($entity);
-                }
-
-                yield new SourceField($this->metadataCache[$entity], $code, $this->getGallyType($type), $code, []);
-            }
-        }
+        return 'sourceField';
     }
 
     public function buildSourceField(

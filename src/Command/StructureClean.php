@@ -47,7 +47,7 @@ class StructureClean extends StructureSync
             $output->writeln("$message ...");
             // @phpstan-ignore method.dynamicName
             $this->synchonizer->{$method}(
-                $this->providers[$entity]->provide(),
+                $this->provideAll($entity),
                 true,
                 $isDryRun
             );

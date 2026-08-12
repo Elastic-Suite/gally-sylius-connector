@@ -19,5 +19,11 @@ namespace Gally\SyliusPlugin\Indexer\Provider;
  */
 interface ProviderInterface
 {
+    /**
+     * The Gally entity this provider contributes to (e.g. "catalog", "sourceField", "sourceFieldOption").
+     * Several providers can share the same entity: their provide() results are merged.
+     */
+    public function getEntity(): string;
+
     public function provide(): iterable;
 }

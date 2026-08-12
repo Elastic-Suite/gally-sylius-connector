@@ -37,6 +37,11 @@ class CatalogProvider implements ProviderInterface
     ) {
     }
 
+    public function getEntity(): string
+    {
+        return 'catalog';
+    }
+
     /**
      * @return iterable<LocalizedCatalog>
      */

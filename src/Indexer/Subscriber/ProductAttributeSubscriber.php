@@ -16,11 +16,9 @@ namespace Gally\SyliusPlugin\Indexer\Subscriber;
 
 use Gally\Sdk\Repository\LocalizedCatalogRepository;
 use Gally\Sdk\Service\StructureSynchonizer;
-use Gally\SyliusPlugin\Indexer\Provider\SourceFieldOptionProvider;
-use Gally\SyliusPlugin\Indexer\Provider\SourceFieldProvider;
+use Gally\SyliusPlugin\Indexer\Provider\ProductAttributeSourceFieldOptionProvider;
+use Gally\SyliusPlugin\Indexer\Provider\ProductAttributeSourceFieldProvider;
 use Sylius\Component\Product\Model\ProductAttributeInterface;
-use Sylius\Component\Product\Model\ProductOptionInterface;
-use Sylius\Component\Product\Model\ProductOptionValueInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -28,8 +26,8 @@ final class ProductAttributeSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private LocalizedCatalogRepository $localizedCatalogRepository,
-        private SourceFieldProvider $sourceFieldProvider,
-        private SourceFieldOptionProvider $sourceFieldOptionProvider,
+        private ProductAttributeSourceFieldProvider $sourceFieldProvider,
+        private ProductAttributeSourceFieldOptionProvider $sourceFieldOptionProvider,
         private StructureSynchonizer $structureSynchonizer,
     ) {
     }
@@ -37,61 +35,41 @@ final class ProductAttributeSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            'sylius.product_attribute.post_update' => 'onProductUpdate',
-            'sylius.product_attribute.post_create' => 'onProductUpdate',
-            'sylius.product_option.post_update' => 'onProductUpdate',
-            'sylius.product_option.post_create' => 'onProductUpdate',
+            'sylius.product_attribute.post_update' => 'onProductAttributeUpdate',
+            'sylius.product_attribute.post_create' => 'onProductAttributeUpdate',
         ];
     }
 
-    public function onProductUpdate(GenericEvent $event): void
+    public function onProductAttributeUpdate(GenericEvent $event): void
     {
         $this->localizedCatalogRepository->findAll();
         $attribute = $event->getSubject();
-        if ($attribute instanceof ProductAttributeInterface) {
-            $sourceField = $this->sourceFieldProvider->buildSourceField('product', $attribute);
-            $this->structureSynchonizer->syncSourceField($sourceField);
-            if ('select' === $attribute->getType()) {
-                $position = 0;
-                $configuration = $attribute->getConfiguration();
-                /** @var array<array<string, string>|null> $choices */
-                $choices = $configuration['choices'] ?? [];
-                $options = [];
-                foreach ($choices as $code => $choice) {
-                    $translations = [];
-                    foreach ($choice ?? [] as $locale => $translation) {
-                        $translations[] = [
-                            'locale' => $locale,
-                            'translation' => $translation,
-                        ];
-                    }
-                    /** @var ?string $defaultLabel */
-                    $defaultLabel = reset($translations)['translation'] ?? $attribute->getCode();
+        if (!$attribute instanceof ProductAttributeInterface) {
+            return;
+        }
 
-                    $options[] = $this->sourceFieldOptionProvider->buildSourceFieldOption(
-                        $sourceField,
-                        $code,
-                        (string) $defaultLabel,
-                        $translations,
-                        ++$position,
-                    );
-                }
-                $this->structureSynchonizer->syncAllSourceFieldOptions($options);
-            }
-        } elseif ($attribute instanceof ProductOptionInterface) {
-            $sourceField = $this->sourceFieldProvider->buildSourceField('product', $attribute, 'select');
-            $this->structureSynchonizer->syncSourceField($sourceField);
+        $sourceField = $this->sourceFieldProvider->buildSourceField('product', $attribute);
+        $this->structureSynchonizer->syncSourceField($sourceField);
+        if ('select' === $attribute->getType()) {
             $position = 0;
+            $configuration = $attribute->getConfiguration();
+            /** @var array<array<string, string>|null> $choices */
+            $choices = $configuration['choices'] ?? [];
             $options = [];
-            /** @var ProductOptionValueInterface $value */
-            foreach ($attribute->getValues() as $value) {
-                /** @var \Doctrine\Common\Collections\Collection<int, \Sylius\Component\Product\Model\ProductOptionValueTranslation> $translations */
-                $translations = $value->getTranslations();
-                $firstTranslation = $translations->first();
-                $defaultLabel = false !== $firstTranslation ? $firstTranslation->getValue() : (string) $value->getCode();
+            foreach ($choices as $code => $choice) {
+                $translations = [];
+                foreach ($choice ?? [] as $locale => $translation) {
+                    $translations[] = [
+                        'locale' => $locale,
+                        'translation' => $translation,
+                    ];
+                }
+                /** @var ?string $defaultLabel */
+                $defaultLabel = reset($translations)['translation'] ?? $attribute->getCode();
+
                 $options[] = $this->sourceFieldOptionProvider->buildSourceFieldOption(
                     $sourceField,
-                    (string) $value->getCode(),
+                    $code,
                     (string) $defaultLabel,
                     $translations,
                     ++$position,

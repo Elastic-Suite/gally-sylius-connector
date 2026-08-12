@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Gally\SyliusPlugin\Indexer;
 
 use Gally\Sdk\Service\IndexOperation;
+use Gally\SyliusPlugin\Event\ProductDocumentsIndexEvent;
 use Gally\SyliusPlugin\Indexer\Provider\CatalogProvider;
 use Sylius\Component\Attribute\Model\AttributeValueInterface;
 use Sylius\Component\Core\Calculator\ProductVariantPricesCalculatorInterface;
@@ -26,6 +27,7 @@ use Sylius\Component\Core\Repository\ProductRepositoryInterface;
 use Sylius\Component\Locale\Model\LocaleInterface;
 use Sylius\Component\Product\Model\ProductOptionValueInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Class ProductIndexer.
@@ -45,6 +47,7 @@ class ProductIndexer extends AbstractIndexer
         IndexOperation $indexOperation,
         private ProductRepositoryInterface $productRepository,
         private ProductVariantPricesCalculatorInterface $productVariantPriceCalculator,
+        private EventDispatcherInterface $eventDispatcher,
     ) {
         parent::__construct($channelRepository, $catalogProvider, $indexOperation);
     }
@@ -76,15 +79,25 @@ class ProductIndexer extends AbstractIndexer
             );
             $products = $queryBuilder->getQuery()->execute();
         }
-        /** @var iterable $products */
+        $documents = [];
+        /** @var iterable<ProductInterface> $products */
         foreach ($products as $product) {
             /** @var ProductInterface $product */
             if (!$product->isEnabled()) {
                 continue;
             }
 
-            yield $this->formatProduct($product, $channel, $locale);
+            /** @var int|string $productId */
+            $productId = $product->getId();
+            $documents[(string) $productId] = $this->formatProduct($product, $channel, $locale);
         }
+
+        $this->eventDispatcher->dispatch(
+            new ProductDocumentsIndexEvent($products, $documents),
+            'gally.indexer.product.documents'
+        );
+
+        yield from $documents;
     }
 
     private function formatProduct(ProductInterface $product, ChannelInterface $channel, LocaleInterface $locale): array

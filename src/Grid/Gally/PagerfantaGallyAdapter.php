@@ -20,6 +20,7 @@ use Gally\Sdk\Entity\Metadata;
 use Gally\Sdk\GraphQl\Request;
 use Gally\Sdk\Service\SearchManager;
 use Gally\SyliusPlugin\Event\GridFilterUpdateEvent;
+use Gally\SyliusPlugin\Event\SearchRequestContextEvent;
 use Gally\SyliusPlugin\Search\Aggregation\AggregationBuilder;
 use Gally\SyliusPlugin\Search\Result;
 use Pagerfanta\Adapter\AdapterInterface;
@@ -81,6 +82,9 @@ class PagerfantaGallyAdapter implements AdapterInterface, GallyAdapterInterface
         /** @var int|string $page */
         $page = $this->parameters->get('page', 1);
 
+        $context = new SearchRequestContextEvent();
+        $this->eventDispatcher->dispatch($context, 'gally.search.build_request');
+
         $request = new Request(
             $this->currentLocalizedCatalog,
             new Metadata('product'),
@@ -92,7 +96,8 @@ class PagerfantaGallyAdapter implements AdapterInterface, GallyAdapterInterface
             $search,
             $this->filters,
             (string) $sortField,
-            $sortDirection
+            $sortDirection,
+            $context->getPriceGroupId()
         );
         $response = $this->searchManager->search($request);
         $productNumbers = [];
