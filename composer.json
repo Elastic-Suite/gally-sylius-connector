@@ -10,7 +10,7 @@
     "license": "OSL-3.0",
     "require": {
         "php": "^8.0",
-        "gally/gally-php-sdk": "2.3.0",
+        "gally/gally-php-sdk": "2.3.x-dev",
         "sylius/grid-bundle": "^1.14.1",
         "sylius/sylius": "^2.0"
     },
@@ -37,12 +37,12 @@
         "phpunit/phpunit": "^9.5",
         "polishsymfonycommunity/symfony-mocker-container": "^1.0",
         "sylius-labs/coding-standard": "^4.2",
-        "symfony/browser-kit": "^6.4 || ^7.1",
-        "symfony/debug-bundle": "^6.4 || ^7.1",
-        "symfony/dotenv": "^6.4 || ^7.1",
+        "symfony/browser-kit": "^6.4 || ^7.1 || ^8.0",
+        "symfony/debug-bundle": "^6.4 || ^7.1 || ^8.0",
+        "symfony/dotenv": "^6.4 || ^7.1 || ^8.0",
         "symfony/flex": "^2.2.2",
-        "symfony/intl": "^6.4 || ^7.1",
-        "symfony/web-profiler-bundle": "^6.4 || ^7.1",
+        "symfony/intl": "^6.4 || ^7.1 || ^8.0",
+        "symfony/web-profiler-bundle": "^6.4 || ^7.1 || ^8.0",
         "vimeo/psalm": "6.10.3"
     },
     "conflict": {
@@ -58,7 +58,7 @@
     },
     "extra": {
         "symfony": {
-            "require": "^5.4 || ^6.0",
+            "require": "^6.4 || ^7.4 || ^8.0",
             "allow-contrib": true
         }
     },
