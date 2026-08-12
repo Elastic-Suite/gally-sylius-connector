@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Gally\SyliusPlugin\Indexer\Provider;
 
-use Gally\Sdk\Entity\Metadata;
 use Gally\Sdk\Entity\SourceField;
 use Sylius\Component\Product\Model\ProductAttributeInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
@@ -24,9 +23,6 @@ use Sylius\Component\Resource\Repository\RepositoryInterface;
  */
 class ProductAttributeSourceFieldProvider extends AbstractSourceFieldProvider
 {
-    /** @var Metadata[] */
-    private array $metadataCache = [];
-
     public function __construct(
         CatalogProvider $catalogProvider,
         private RepositoryInterface $productAttributeRepository,
@@ -51,11 +47,7 @@ class ProductAttributeSourceFieldProvider extends AbstractSourceFieldProvider
         ];
         foreach ($staticSourceField as $entity => $fields) {
             foreach ($fields as $code => $type) {
-                if (!\array_key_exists($entity, $this->metadataCache)) {
-                    $this->metadataCache[$entity] = new Metadata($entity);
-                }
-
-                yield new SourceField($this->metadataCache[$entity], $code, $this->getGallyType($type), $code, []);
+                yield new SourceField($this->getMetadata($entity), $code, $this->getGallyType($type), $code, []);
             }
         }
     }
