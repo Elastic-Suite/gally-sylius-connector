@@ -17,6 +17,7 @@ namespace Gally\SyliusPlugin\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class SearchFormType extends AbstractType
 {
@@ -27,6 +28,7 @@ class SearchFormType extends AbstractType
             TextType::class,
             [
                 'label' => false,
+                'constraints' => [new NotBlank(normalizer: 'trim')],
                 'attr' => [
                     'class' => 'form-control',
                     'placeholder' => 'gally_sylius.form.header.query.placeholder',
