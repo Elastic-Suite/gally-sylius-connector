@@ -26,6 +26,7 @@ gally_sylius:
       view_more: View more
       search_placeholder: Search
       search_clear: Clear search
+      load_more_error: Could not load more options for this filter.
       remove: Remove filter
       clear_all: Clear all filters
       categories: Categories

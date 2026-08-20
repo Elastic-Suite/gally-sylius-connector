@@ -14,6 +14,7 @@
                 <div class="" id="searchbar"
                     data-controller="gally--sylius-plugin--filters-autosubmit"
                     data-action="change->gally--sylius-plugin--filters-autosubmit#submit"
+                    data-gally--sylius-plugin--filters-autosubmit-load-more-error-message-value="{{ 'gally_sylius.ui.filters.load_more_error'|trans }}"
                 >
                     <div class="column" id="searchbarTextField">
                         {% for filter in products.definition.enabledFilters %}

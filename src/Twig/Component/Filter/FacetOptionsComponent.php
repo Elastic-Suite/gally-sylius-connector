@@ -22,6 +22,7 @@ use Gally\SyliusPlugin\Search\FilterConverter;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Core\Model\ChannelInterface;
 use Sylius\Component\Locale\Context\LocaleContextInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
@@ -107,11 +108,15 @@ class FacetOptionsComponent
         }
 
         $choices = [];
-        $aggregationOptions = $this->searchManager->viewMoreProductFilterOption(
-            $this->buildGallyRequest(),
-            $this->filterField,
-            '' !== $this->optionSearch ? $this->optionSearch : null,
-        );
+        try {
+            $aggregationOptions = $this->searchManager->viewMoreProductFilterOption(
+                $this->buildGallyRequest(),
+                $this->filterField,
+                '' !== $this->optionSearch ? $this->optionSearch : null,
+            );
+        } catch (\RuntimeException $exception) {
+            throw new NotFoundHttpException(sprintf('Unable to load options for filter "%s".', $this->filterField), $exception);
+        }
 
         /** @var array<string, string> $option */
         foreach ($aggregationOptions as $option) {
