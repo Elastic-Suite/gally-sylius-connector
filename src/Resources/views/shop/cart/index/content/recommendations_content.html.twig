@@ -10,4 +10,21 @@
             </div>
         </div>
     </div>
+
+    {% if is_gally_tracking_enabled() %}
+        <script>
+            window.gallyEvent.push({
+                eventType: 'display',
+                metadataCode: 'product',
+                localizedCatalogCode: '{{ gally.localizedCatalog.code }}',
+                payload: JSON.stringify({
+                    items: [
+                        {% for product in recommended_products %}
+                            { entityCode: '{{ product.code }}', display: { position: {{ loop.index0 }} } },
+                        {% endfor %}
+                    ],
+                }),
+            })
+        </script>
+    {% endif %}
 {% endif %}

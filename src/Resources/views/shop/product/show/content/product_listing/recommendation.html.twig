@@ -8,6 +8,25 @@
                 {% endfor %}
             </div>
         </div>
+        {% if is_gally_tracking_enabled() %}
+            {% set items = [] %}
+            {% for product in associated_products %}
+                {% set items = items|merge([{ entityCode: product.code, display: { position: loop.index0 } }]) %}
+            {% endfor %}
+            {% set trackingEvent = {
+                eventType: 'display',
+                metadataCode: 'product',
+                localizedCatalogCode: gally.localizedCatalog.code,
+                payload: { items: items }|json_encode,
+            } %}
+            {#
+                Rendered by an ajax-loaded LiveComponent (loading: 'lazy'): its Idiomorph-based
+                render inserts <script> tags without executing them, so a plain window.gallyEvent.push
+                script here would silently never fire. This data attribute is picked up instead by
+                the MutationObserver set up in shop/tracking/init.html.twig.
+            #}
+            <div class="d-none" data-gally-display-tracking="{{ trackingEvent|json_encode_safe }}"></div>
+        {% endif %}
     {% else %}
         {{ component('sylius_shop:product:list', { limit: 4, template: '@SyliusShop/product/common/list.html.twig' }) }}
     {% endif %}
