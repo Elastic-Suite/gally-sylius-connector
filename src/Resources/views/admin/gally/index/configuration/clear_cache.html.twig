@@ -1,0 +1,29 @@
+{% import '@SyliusAdmin/shared/helper/button.html.twig' as button %}
+
+<div class="card g-col-12 g-col-xl-12">
+    {% set clearCacheForm = hookable_metadata.context.clearCacheForm %}
+    {% form_theme clearCacheForm '@SyliusAdmin/shared/form_theme.html.twig' %}
+    {{ form_start(clearCacheForm, {'action': path('gally_sylius_clear_cache'), 'attr': {'class': 'ui loadable form', 'novalidate': 'novalidate', 'id': clearCacheForm.vars.id}}) }}
+
+    <div class="card-header"> {{ 'gally_sylius.ui.clear_cache_header'|trans }} </div>
+
+    <div class="card-body">
+        {{ form_errors(clearCacheForm) }}
+        <div class="row">
+            <div class="col-12">
+                {{ button.primary(
+                    sylius_test_form_attribute('gally-clear-cache')|merge({
+                        text: 'gally_sylius.ui.btn_clear_cache'|trans,
+                        type: 'submit',
+                        form: clearCacheForm.vars.id,
+                        icon: 'tabler:refresh'
+                    })
+                ) }}
+                <p class="text-muted mt-2 mb-0">{{ 'gally_sylius.ui.clear_cache_help'|trans }}</p>
+            </div>
+        </div>
+    </div>
+
+    {{ form_row(clearCacheForm._token) }}
+    {{ form_end(clearCacheForm, {'render_rest': false}) }}
+</div>

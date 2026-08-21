@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Gally\SyliusPlugin\Recommendation;
+namespace Gally\SyliusPlugin\Service;
 
 use Gally\Sdk\Service\RecommenderManager;
 use Gally\SyliusPlugin\Indexer\Provider\CatalogProvider;
@@ -25,7 +25,7 @@ use Sylius\Component\Product\Model\ProductInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 
 /**
- * For a given association type and a set of context products (fiche produit: 1, panier: N),
+ * For a given association type and a set of context products (product page: 1, cart: N),
  * resolves the manually curated ("hard") directly associated products first, then the
  * Gally-recommended products, ready to be displayed together.
  */
@@ -129,7 +129,7 @@ class RecommendationFinder
     }
 
     /**
-     * @param string[] $sourceProductCodes products used as the recommendation source (fiche produit: 1, panier: N)
+     * @param string[] $sourceProductCodes products used as the recommendation source (product page: 1, cart: N)
      *
      * @return ProductInterface[] ordered by Gally relevance
      */

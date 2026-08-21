@@ -16,8 +16,8 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Gally\Sdk\Service\SearchManager;
 use Gally\SyliusPlugin\Config\ConfigManager;
-use Gally\SyliusPlugin\Recommendation\RecommendationFinder;
 use Gally\SyliusPlugin\Search\ActiveFilterResolver;
+use Gally\SyliusPlugin\Service\RecommendationFinder;
 use Gally\SyliusPlugin\Twig\Component\Product\ActiveFiltersComponent;
 use Gally\SyliusPlugin\Twig\Component\Product\CategoryTrackingComponent;
 use Gally\SyliusPlugin\Twig\Component\Product\RecommendationComponent;

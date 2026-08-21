@@ -16,7 +16,7 @@ namespace Gally\SyliusPlugin\Twig\Component\Cart;
 
 use Gally\SyliusPlugin\Config\ConfigManager;
 use Gally\SyliusPlugin\Model\GallyChannelInterface;
-use Gally\SyliusPlugin\Recommendation\RecommendationFinder;
+use Gally\SyliusPlugin\Service\RecommendationFinder;
 use Sylius\Component\Core\Model\OrderInterface;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Context\CartNotFoundException;

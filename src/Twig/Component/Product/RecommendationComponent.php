@@ -16,7 +16,7 @@ namespace Gally\SyliusPlugin\Twig\Component\Product;
 
 use Gally\SyliusPlugin\Config\ConfigManager;
 use Gally\SyliusPlugin\Model\GallyChannelInterface;
-use Gally\SyliusPlugin\Recommendation\RecommendationFinder;
+use Gally\SyliusPlugin\Service\RecommendationFinder;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Product\Model\ProductAssociationTypeInterface;
 use Sylius\Component\Product\Model\ProductInterface;

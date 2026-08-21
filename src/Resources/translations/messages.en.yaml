@@ -9,6 +9,10 @@ gally_sylius:
     sync_header: Synchronize attributes
     btn_sync: Synchronize
     sync_success: Attribute sync successful!
+    clear_cache_header: Gally cache
+    clear_cache_help: "Clears the cached authentication token, active bundles, and recommender types."
+    btn_clear_cache: Clear cache
+    clear_cache_success: Gally cache cleared!
     channel:
       header: Gally configuration
       section:

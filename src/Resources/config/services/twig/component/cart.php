@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
 use Gally\SyliusPlugin\Config\ConfigManager;
-use Gally\SyliusPlugin\Recommendation\RecommendationFinder;
+use Gally\SyliusPlugin\Service\RecommendationFinder;
 use Gally\SyliusPlugin\Twig\Component\Cart\RecommendationComponent;
 
 return static function (ContainerConfigurator $container) {
