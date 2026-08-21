@@ -16,3 +16,9 @@ gally_sylius_sync:
     defaults:
         _controller: Gally\SyliusPlugin\Controller\Admin\GallyController::renderSyncFieldsForm
         name: ~
+
+gally_sylius_clear_cache:
+    path: /gally/clear-cache
+    defaults:
+        _controller: Gally\SyliusPlugin\Controller\Admin\GallyController::renderClearCacheForm
+        name: ~

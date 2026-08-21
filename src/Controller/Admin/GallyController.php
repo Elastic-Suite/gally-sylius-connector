@@ -15,9 +15,12 @@ declare(strict_types=1);
 namespace Gally\SyliusPlugin\Controller\Admin;
 
 use Gally\Sdk\Client\Client;
+use Gally\Sdk\Repository\RecommenderTypeRepository;
+use Gally\Sdk\Service\BundleManager;
 use Gally\Sdk\Service\StructureSynchonizer;
 use Gally\SyliusPlugin\Config\ConfigManager;
 use Gally\SyliusPlugin\Entity\GallyConfiguration;
+use Gally\SyliusPlugin\Form\Type\ClearCacheType;
 use Gally\SyliusPlugin\Form\Type\GallyConfigurationType;
 use Gally\SyliusPlugin\Form\Type\SyncSourceFieldsType;
 use Gally\SyliusPlugin\Form\Type\TestConnectionType;
@@ -85,6 +88,7 @@ final class GallyController extends AbstractController
             'connectionForm' => $configForm->createView(),
             'testForm' => $this->createForm(TestConnectionType::class)->createView(),
             'syncForm' => $this->createForm(SyncSourceFieldsType::class)->createView(),
+            'clearCacheForm' => $this->createForm(ClearCacheType::class)->createView(),
         ]);
     }
 
@@ -110,6 +114,7 @@ final class GallyController extends AbstractController
             'connectionForm' => $this->createForm(GallyConfigurationType::class, $gallyConfiguration)->createView(),
             'testForm' => $testForm->createView(),
             'syncForm' => $this->createForm(SyncSourceFieldsType::class)->createView(),
+            'clearCacheForm' => $this->createForm(ClearCacheType::class)->createView(),
         ]);
     }
 
@@ -144,6 +149,28 @@ final class GallyController extends AbstractController
             'connectionForm' => $this->createForm(GallyConfigurationType::class, $gallyConfiguration)->createView(),
             'testForm' => $this->createForm(TestConnectionType::class)->createView(),
             'syncForm' => $syncForm->createView(),
+            'clearCacheForm' => $this->createForm(ClearCacheType::class)->createView(),
+        ]);
+    }
+
+    public function renderClearCacheForm(Request $request): Response
+    {
+        $gallyConfiguration = $this->gallyConfigurationRepository->getConfiguration();
+        $clearCacheForm = $this->createForm(ClearCacheType::class);
+        $clearCacheForm->handleRequest($request);
+
+        if ($clearCacheForm->isSubmitted() && $clearCacheForm->isValid()) {
+            $this->cacheManager->clearCache(Client::API_TOKEN_CACHE_KEY);
+            $this->cacheManager->clearCache(BundleManager::BUNDLES_CACHE_KEY);
+            $this->cacheManager->clearCache(RecommenderTypeRepository::RECOMMENDER_TYPES_CACHE_KEY);
+            $this->addFlash('success', $this->translator->trans('gally_sylius.ui.clear_cache_success'));
+        }
+
+        return $this->render('@GallySyliusPlugin/admin/gally/index.html.twig', [
+            'connectionForm' => $this->createForm(GallyConfigurationType::class, $gallyConfiguration)->createView(),
+            'testForm' => $this->createForm(TestConnectionType::class)->createView(),
+            'syncForm' => $this->createForm(SyncSourceFieldsType::class)->createView(),
+            'clearCacheForm' => $clearCacheForm->createView(),
         ]);
     }
 }
