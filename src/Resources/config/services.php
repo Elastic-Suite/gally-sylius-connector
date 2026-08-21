@@ -24,10 +24,10 @@ use Gally\SyliusPlugin\Entity\GallyConfiguration;
 use Gally\SyliusPlugin\Form\Extension\ChannelTypeExtension;
 use Gally\SyliusPlugin\Indexer\Provider\CatalogProvider;
 use Gally\SyliusPlugin\Listener\AdminMenuListener;
-use Gally\SyliusPlugin\Recommendation\RecommendationFinder;
 use Gally\SyliusPlugin\Repository\GallyConfigurationRepository;
 use Gally\SyliusPlugin\Search\Finder;
 use Gally\SyliusPlugin\Service\CacheManager;
+use Gally\SyliusPlugin\Service\RecommendationFinder;
 
 return static function (ContainerConfigurator $container) {
     $container->import('services/sdk.php');

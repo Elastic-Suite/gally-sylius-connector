@@ -31,6 +31,9 @@ sylius_twig_hooks:
             sync_source_fields:
                 template: '@GallySyliusPlugin/admin/gally/index/configuration/sync_source_fields.html.twig'
                 priority: 10
+            clear_cache:
+                template: '@GallySyliusPlugin/admin/gally/index/configuration/clear_cache.html.twig'
+                priority: 0
         
         'gally_admin.gally.index.content.header':
             breadcrumbs:
