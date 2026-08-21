@@ -1,7 +1,4 @@
 {% if is_gally_enabled() %}
-{#todo: in package.json set the right tag for "@gally/sdk": "Elastic-Suite/gally-ts-sdk#master" and update yarn.lock#}
-{# demo: tester un parcours complet, tester graphql proxy #}
-
     <script>
         const gallyOptions = {
             sdkUrl: '{{ asset('build/app/shop/gally/gally-sdk.global.js') }}',
@@ -14,5 +11,25 @@
             w.gallyEvent={push:function(i){try{const r=localStorage.getItem('gally-event-queue'),c=r?JSON.parse(r):[];c.push(i);localStorage.setItem('gally-event-queue',JSON.stringify(c))}catch(_){}}}
             const g=d.createElement('script'),s=d.scripts[0];g.async=1;g.src=o.sdkUrl;g.onload=function(){w.gallyEvent.init(o)};s.parentNode.insertBefore(g,s)
         })(window,document,gallyOptions)
+        ;(function(w,d){
+            // LiveComponent ajax renders (Idiomorph) insert <script> tags without running them,
+            // so tracking markers coming from those fragments use a data-attribute instead and
+            // rely on this observer to fire the push, both on initial load and after any morph.
+            function process(el){
+                if(el.dataset.gallyDisplayTrackingSent)return
+                el.dataset.gallyDisplayTrackingSent='1'
+                try{w.gallyEvent.push(JSON.parse(el.dataset.gallyDisplayTracking))}catch(_){}
+            }
+            function scan(root){
+                if(root.matches&&root.matches('[data-gally-display-tracking]'))process(root)
+                root.querySelectorAll&&root.querySelectorAll('[data-gally-display-tracking]').forEach(process)
+            }
+            new MutationObserver(function(mutations){
+                mutations.forEach(function(mutation){
+                    mutation.addedNodes.forEach(function(node){if(node.nodeType===1)scan(node)})
+                })
+            }).observe(d.documentElement,{childList:true,subtree:true})
+            d.addEventListener('DOMContentLoaded',function(){scan(d.documentElement)})
+        })(window,document)
     </script>
 {% endif %}
