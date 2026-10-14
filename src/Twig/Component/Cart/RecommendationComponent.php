@@ -23,13 +23,12 @@ use Sylius\Component\Order\Context\CartNotFoundException;
 use Sylius\Component\Order\Model\OrderItemInterface;
 use Sylius\Component\Product\Model\ProductAssociationTypeInterface;
 use Sylius\Component\Product\Model\ProductInterface;
-use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 use Symfony\UX\TwigComponent\Attribute\ExposeInTemplate;
 
 /**
- * Displays, for the cart association type configured on the channel, the manually curated ("hard")
- * associated products of the products in the cart first, then the Gally-recommended products.
+ * Displays, for a given cart association type, the manually curated ("hard") associated products
+ * of the products in the cart first, then the Gally-recommended products.
  */
 #[AsTwigComponent]
 class RecommendationComponent
@@ -38,40 +37,14 @@ class RecommendationComponent
 
     private ?OrderInterface $cart = null;
 
-    private bool $productAssociationTypeResolved = false;
-
-    private ?ProductAssociationTypeInterface $productAssociationType = null;
+    #[ExposeInTemplate('product_association_type')]
+    public ProductAssociationTypeInterface $productAssociationType;
 
     public function __construct(
         private CartContextInterface $cartContext,
         private ConfigManager $configManager,
-        private RepositoryInterface $productAssociationTypeRepository,
         private RecommendationFinder $recommendationFinder,
     ) {
-    }
-
-    #[ExposeInTemplate('product_association_type')]
-    public function getProductAssociationType(): ?ProductAssociationTypeInterface
-    {
-        if ($this->productAssociationTypeResolved) {
-            return $this->productAssociationType;
-        }
-        $this->productAssociationTypeResolved = true;
-
-        $channel = $this->getCart()?->getChannel();
-        if (!$channel instanceof GallyChannelInterface) {
-            return null;
-        }
-
-        $typeCode = $channel->getGallyCartRecommendationTypeCode();
-        if (null === $typeCode || '' === $typeCode) {
-            return null;
-        }
-
-        /** @var ProductAssociationTypeInterface|null $productAssociationType */
-        $productAssociationType = $this->productAssociationTypeRepository->findOneBy(['code' => $typeCode]);
-
-        return $this->productAssociationType = $productAssociationType;
     }
 
     /**
@@ -87,11 +60,6 @@ class RecommendationComponent
 
         $channel = $cart->getChannel();
         if (!$channel instanceof GallyChannelInterface || !$this->configManager->isGallyEnabled($channel)) {
-            return [];
-        }
-
-        $productAssociationType = $this->getProductAssociationType();
-        if (null === $productAssociationType) {
             return [];
         }
 
@@ -113,9 +81,9 @@ class RecommendationComponent
 
         return $this->recommendationFinder->find(
             array_values($cartProducts),
-            $productAssociationType,
+            $this->productAssociationType,
             $channel,
-            $channel->getGallyCartRecommendationMaxSize(),
+            $this->configManager->getCartRecommendationMaxSize(),
         );
     }
 

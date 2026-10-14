@@ -1,10 +1,7 @@
 {% set product = hookable_metadata.context.product %}
 
 {% if is_gally_enabled() %}
-    {% set cart_recommendation_type_code = gally.getCartRecommendationTypeCode() %}
-    {% set association_types = gally.getProductAssociationTypes()|filter(type => type.code != cart_recommendation_type_code) %}
-
-    {% for association_type in association_types %}
+    {% for association_type in gally.getProductRecommendationTypes() %}
         {{ component('gally_shop:product:recommendation', { productAssociationType: association_type, product: product, loading: 'lazy' }) }}
     {% else %}
         {{ component('sylius_shop:product:list', { limit: 4, template: '@SyliusShop/product/common/list.html.twig' }) }}

@@ -1,6 +1,6 @@
 {% if recommended_products is not empty %}
-    <div class="container mb-6" role="region" aria-labelledby="gally-recommendations-heading">
-        <h2 class="mb-5" id="gally-recommendations-heading">{{ product_association_type.name }}</h2>
+    <div class="container mb-6" role="region" aria-labelledby="gally-recommendations-heading-{{ product_association_type.code }}">
+        <h2 class="mb-5" id="gally-recommendations-heading-{{ product_association_type.code }}">{{ product_association_type.name }}</h2>
 
         <div {{ sylius_test_html_attribute('gally-recommendations') }}>
             <div class="products-grid">

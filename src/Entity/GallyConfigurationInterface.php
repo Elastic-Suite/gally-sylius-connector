@@ -31,4 +31,32 @@ interface GallyConfigurationInterface
     public function getPassword(): string;
 
     public function setPassword(string $password): void;
+
+    /**
+     * @return string[]
+     */
+    public function getProductRecommendationTypeCodes(): array;
+
+    /**
+     * @param string[] $productRecommendationTypeCodes
+     */
+    public function setProductRecommendationTypeCodes(array $productRecommendationTypeCodes): void;
+
+    public function getProductRecommendationMaxSize(): int;
+
+    public function setProductRecommendationMaxSize(int $productRecommendationMaxSize): void;
+
+    /**
+     * @return string[]
+     */
+    public function getCartRecommendationTypeCodes(): array;
+
+    /**
+     * @param string[] $cartRecommendationTypeCodes
+     */
+    public function setCartRecommendationTypeCodes(array $cartRecommendationTypeCodes): void;
+
+    public function getCartRecommendationMaxSize(): int;
+
+    public function setCartRecommendationMaxSize(int $cartRecommendationMaxSize): void;
 }

@@ -99,7 +99,7 @@ class RecommendationComponent
             [$this->product],
             $this->productAssociationType,
             $channel,
-            $channel->getGallyProductRecommendationMaxSize(),
+            $this->configManager->getProductRecommendationMaxSize(),
         );
     }
 }

@@ -49,15 +49,6 @@ trait GallyChannelTrait
     #[ORM\Column(name: 'gally_vid_cookie_lifetime', type: 'integer', options: ['default' => 31536000])]
     protected int $gallyVidCookieLifetime = 31536000;
 
-    #[ORM\Column(name: 'gally_product_recommendation_max_size', type: 'integer', options: ['default' => 4])]
-    protected int $gallyProductRecommendationMaxSize = 4;
-
-    #[ORM\Column(name: 'gally_cart_recommendation_type_code', type: 'string', nullable: true)]
-    protected ?string $gallyCartRecommendationTypeCode = null;
-
-    #[ORM\Column(name: 'gally_cart_recommendation_max_size', type: 'integer', options: ['default' => 4])]
-    protected int $gallyCartRecommendationMaxSize = 4;
-
     public function getGallyActive(): bool
     {
         return $this->gallyActive;
@@ -156,35 +147,5 @@ trait GallyChannelTrait
     public function setGallyVidCookieLifetime(int $gallyVidCookieLifetime): void
     {
         $this->gallyVidCookieLifetime = $gallyVidCookieLifetime;
-    }
-
-    public function getGallyProductRecommendationMaxSize(): int
-    {
-        return $this->gallyProductRecommendationMaxSize;
-    }
-
-    public function setGallyProductRecommendationMaxSize(int $gallyProductRecommendationMaxSize): void
-    {
-        $this->gallyProductRecommendationMaxSize = $gallyProductRecommendationMaxSize;
-    }
-
-    public function getGallyCartRecommendationTypeCode(): ?string
-    {
-        return $this->gallyCartRecommendationTypeCode;
-    }
-
-    public function setGallyCartRecommendationTypeCode(?string $gallyCartRecommendationTypeCode): void
-    {
-        $this->gallyCartRecommendationTypeCode = $gallyCartRecommendationTypeCode;
-    }
-
-    public function getGallyCartRecommendationMaxSize(): int
-    {
-        return $this->gallyCartRecommendationMaxSize;
-    }
-
-    public function setGallyCartRecommendationMaxSize(int $gallyCartRecommendationMaxSize): void
-    {
-        $this->gallyCartRecommendationMaxSize = $gallyCartRecommendationMaxSize;
     }
 }
