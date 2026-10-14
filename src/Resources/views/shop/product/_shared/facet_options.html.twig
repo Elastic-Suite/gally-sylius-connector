@@ -26,4 +26,7 @@
     {% if hasMore and optionSearch is empty and not expanded %}
         <button type="button" class="view-more" {{ live_action('viewMore') }}>{{ 'gally_sylius.ui.filters.view_more'|trans }}</button>
     {% endif %}
+    {% if hasMore and optionSearch is empty and expanded %}
+        <button type="button" class="view-more" {{ live_action('viewLess') }}>{{ 'gally_sylius.ui.filters.view_less'|trans }}</button>
+    {% endif %}
 </div>
