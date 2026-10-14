@@ -9,7 +9,7 @@
     ],
     "license": "OSL-3.0",
     "require": {
-        "php": "^8.0",
+        "php": "^8.2",
         "gally/gally-php-sdk": "2.3.x-dev",
         "sylius/grid-bundle": "^1.14.1",
         "sylius/sylius": "^2.0"

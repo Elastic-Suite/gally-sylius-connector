@@ -53,6 +53,16 @@ class ConfigManager
         return $isGallyEnabled;
     }
 
+    public function getProductRecommendationMaxSize(): int
+    {
+        return $this->gallyConfigurationRepository->getConfiguration()->getProductRecommendationMaxSize();
+    }
+
+    public function getCartRecommendationMaxSize(): int
+    {
+        return $this->gallyConfigurationRepository->getConfiguration()->getCartRecommendationMaxSize();
+    }
+
     public function testCredentials(): void
     {
         $gallyConfiguration = $this->gallyConfigurationRepository->getConfiguration();

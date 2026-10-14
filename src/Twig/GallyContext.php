@@ -63,21 +63,38 @@ class GallyContext
         return $this->gallyConfigurationRepository->getConfiguration()->getBaseUrl();
     }
 
-    public function getCartRecommendationTypeCode(): ?string
+    /**
+     * @return ProductAssociationTypeInterface[]
+     */
+    public function getProductRecommendationTypes(): array
     {
-        $channel = $this->channelContext->getChannel();
-
-        return $channel instanceof GallyChannelInterface ? $channel->getGallyCartRecommendationTypeCode() : null;
+        return $this->findProductAssociationTypes($this->getGallyConfiguration()->getProductRecommendationTypeCodes());
     }
 
     /**
      * @return ProductAssociationTypeInterface[]
      */
-    public function getProductAssociationTypes(): array
+    public function getCartRecommendationTypes(): array
     {
-        // RepositoryInterface is a BC alias (sylius/resource-bundle) that doesn't propagate its
-        // generic template through to PHPStan, so findAll() resolves as ResourceInterface[] here.
-        // @phpstan-ignore return.type
-        return $this->productAssociationTypeRepository->findAll();
+        return $this->findProductAssociationTypes($this->getGallyConfiguration()->getCartRecommendationTypeCodes());
+    }
+
+    /**
+     * @param string[] $codes
+     *
+     * @return ProductAssociationTypeInterface[]
+     */
+    private function findProductAssociationTypes(array $codes): array
+    {
+        $productAssociationTypes = [];
+        foreach ($codes as $code) {
+            /** @var ProductAssociationTypeInterface|null $productAssociationType */
+            $productAssociationType = $this->productAssociationTypeRepository->findOneBy(['code' => $code]);
+            if (null !== $productAssociationType) {
+                $productAssociationTypes[] = $productAssociationType;
+            }
+        }
+
+        return $productAssociationTypes;
     }
 }

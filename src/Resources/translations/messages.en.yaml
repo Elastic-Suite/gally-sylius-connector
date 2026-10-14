@@ -1,6 +1,7 @@
 gally_sylius:
   ui:
     configuration_header: Gally configuration
+    recommendations_header: Recommendations
     configuration_saved: Connection configuration stored!
     test_connection_header: Test connection
     btn_test: Test connection
@@ -20,7 +21,6 @@ gally_sylius:
         indexing: "Indexing"
         autocomplete: "Autocomplete"
         tracking: "Tracking"
-        recommendation: "Recommendations"
     filters:
       headline: Filters
       view_more: View more
@@ -56,10 +56,10 @@ gally_sylius:
     use_sylius_endpoint_tracking_help: "Use Sylius endpoint instead of Gally GraphQL API for tracking ?"
     vid_cookie_lifetime: "Vid cookie lifetime (seconds)"
     uid_cookie_lifetime: "Uid cookie lifetime (seconds)"
-    product_recommendation_max_size: "Product page recommendations max size"
-    cart_recommendation_type: "Cart recommendation type"
-    cart_recommendation_type_none: "None"
-    cart_recommendation_max_size: "Cart recommendations max size"
+    product_recommendation_type_codes: "Recommendation types shown on the product page"
+    product_recommendation_max_size: "Max number of recommended products per block on the product page"
+    cart_recommendation_type_codes: "Recommendation types shown on the cart"
+    cart_recommendation_max_size: "Max number of recommended products per block on the cart"
 
     header:
       query:

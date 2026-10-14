@@ -25,7 +25,6 @@ return static function (ContainerConfigurator $container) {
         ->args([
             service('sylius.context.cart'),
             service(ConfigManager::class),
-            service('sylius.repository.product_association_type'),
             service(RecommendationFinder::class),
         ])
         ->tag('sylius.twig_component', ['key' => 'gally_shop:cart:recommendation']);

@@ -27,6 +27,26 @@
             </div>
 
             <div class="col-12">
+                <h5 class="mb-3 mt-3">{{ 'gally_sylius.ui.recommendations_header'|trans }}</h5>
+            </div>
+
+            <div class="col-12">
+                {{ form_row(connectionForm.productRecommendationTypeCodes) }}
+            </div>
+
+            <div class="col-12">
+                {{ form_row(connectionForm.productRecommendationMaxSize) }}
+            </div>
+
+            <div class="col-12">
+                {{ form_row(connectionForm.cartRecommendationTypeCodes) }}
+            </div>
+
+            <div class="col-12">
+                {{ form_row(connectionForm.cartRecommendationMaxSize) }}
+            </div>
+
+            <div class="col-12">
                 {{ button.primary(
                     sylius_test_form_attribute('update-changes-button-gally-connection')|merge({
                         text: 'sylius.ui.save_changes'|trans,

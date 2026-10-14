@@ -24,6 +24,14 @@ class GallyConfiguration implements ResourceInterface, GallyConfigurationInterfa
     private string $userName;
     private string $password;
 
+    /** @var string[] */
+    private array $productRecommendationTypeCodes = [];
+    private int $productRecommendationMaxSize = 4;
+
+    /** @var string[] */
+    private array $cartRecommendationTypeCodes = [];
+    private int $cartRecommendationMaxSize = 4;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -74,5 +82,57 @@ class GallyConfiguration implements ResourceInterface, GallyConfigurationInterfa
         if (null !== $password && '' !== $password) {
             $this->password = $password;
         }
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getProductRecommendationTypeCodes(): array
+    {
+        return $this->productRecommendationTypeCodes;
+    }
+
+    /**
+     * @param string[] $productRecommendationTypeCodes
+     */
+    public function setProductRecommendationTypeCodes(array $productRecommendationTypeCodes): void
+    {
+        $this->productRecommendationTypeCodes = array_values($productRecommendationTypeCodes);
+    }
+
+    public function getProductRecommendationMaxSize(): int
+    {
+        return $this->productRecommendationMaxSize;
+    }
+
+    public function setProductRecommendationMaxSize(int $productRecommendationMaxSize): void
+    {
+        $this->productRecommendationMaxSize = $productRecommendationMaxSize;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getCartRecommendationTypeCodes(): array
+    {
+        return $this->cartRecommendationTypeCodes;
+    }
+
+    /**
+     * @param string[] $cartRecommendationTypeCodes
+     */
+    public function setCartRecommendationTypeCodes(array $cartRecommendationTypeCodes): void
+    {
+        $this->cartRecommendationTypeCodes = array_values($cartRecommendationTypeCodes);
+    }
+
+    public function getCartRecommendationMaxSize(): int
+    {
+        return $this->cartRecommendationMaxSize;
+    }
+
+    public function setCartRecommendationMaxSize(int $cartRecommendationMaxSize): void
+    {
+        $this->cartRecommendationMaxSize = $cartRecommendationMaxSize;
     }
 }

@@ -57,16 +57,4 @@ interface GallyChannelInterface extends ChannelInterface
     public function getGallyVidCookieLifetime(): int;
 
     public function setGallyVidCookieLifetime(int $gallyVidCookieLifetime): void;
-
-    public function getGallyProductRecommendationMaxSize(): int;
-
-    public function setGallyProductRecommendationMaxSize(int $gallyProductRecommendationMaxSize): void;
-
-    public function getGallyCartRecommendationTypeCode(): ?string;
-
-    public function setGallyCartRecommendationTypeCode(?string $gallyCartRecommendationTypeCode): void;
-
-    public function getGallyCartRecommendationMaxSize(): int;
-
-    public function setGallyCartRecommendationMaxSize(int $gallyCartRecommendationMaxSize): void;
 }

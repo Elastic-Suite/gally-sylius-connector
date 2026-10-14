@@ -12,5 +12,17 @@
         <field name="checkSSL" type="boolean" column="check_ssl" />
         <field name="userName" type="string" column="username" />
         <field name="password" type="string" column="password" />
+        <field name="productRecommendationTypeCodes" type="json" column="product_recommendation_type_codes" />
+        <field name="productRecommendationMaxSize" type="integer" column="product_recommendation_max_size">
+            <options>
+                <option name="default">4</option>
+            </options>
+        </field>
+        <field name="cartRecommendationTypeCodes" type="json" column="cart_recommendation_type_codes" />
+        <field name="cartRecommendationMaxSize" type="integer" column="cart_recommendation_max_size">
+            <options>
+                <option name="default">4</option>
+            </options>
+        </field>
     </mapped-superclass>
 </doctrine-mapping>

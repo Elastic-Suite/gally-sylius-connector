@@ -22,6 +22,7 @@ use Gally\SyliusPlugin\Controller\Admin\GallyController;
 use Gally\SyliusPlugin\Controller\Shop\SearchController;
 use Gally\SyliusPlugin\Entity\GallyConfiguration;
 use Gally\SyliusPlugin\Form\Extension\ChannelTypeExtension;
+use Gally\SyliusPlugin\Form\Type\GallyConfigurationType;
 use Gally\SyliusPlugin\Indexer\Provider\CatalogProvider;
 use Gally\SyliusPlugin\Listener\AdminMenuListener;
 use Gally\SyliusPlugin\Repository\GallyConfigurationRepository;
@@ -71,8 +72,11 @@ return static function (ContainerConfigurator $container) {
         ->call('setContainer', [service('service_container')])
         ->tag('controller.service_arguments');
 
-    $services->set(ChannelTypeExtension::class)
+    $services->set(GallyConfigurationType::class)
         ->args([service('sylius.repository.product_association_type')])
+        ->tag('form.type');
+
+    $services->set(ChannelTypeExtension::class)
         ->tag('form.type_extension');
 
     $services->set('gally.listener.admin.menu_builder', AdminMenuListener::class)
