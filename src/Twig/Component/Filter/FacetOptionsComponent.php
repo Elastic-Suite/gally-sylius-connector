@@ -97,6 +97,12 @@ class FacetOptionsComponent
         $this->expanded = true;
     }
 
+    #[LiveAction]
+    public function viewLess(): void
+    {
+        $this->expanded = false;
+    }
+
     /**
      * @return list<array{label: string, value: string}>
      */
