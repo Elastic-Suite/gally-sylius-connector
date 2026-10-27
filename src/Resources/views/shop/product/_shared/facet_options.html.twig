@@ -22,6 +22,13 @@
                 <label class="form-check-label" for="{{ baseId }}_{{ loop.index0 }}">{{ choice.label }}</label>
             </div>
         {% endfor %}
+        {# Selected values absent from the displayed choices (e.g. in-facet search results) must still be submitted. #}
+        {% set displayedValues = choices|map(choice => choice.value) %}
+        {% for selectedValue in selectedValues %}
+            {% if selectedValue not in displayedValues %}
+                <input type="hidden" name="{{ fieldName }}[]" value="{{ selectedValue }}">
+            {% endif %}
+        {% endfor %}
     </div>
     {% if hasMore and optionSearch is empty and not expanded %}
         <button type="button" class="view-more" {{ live_action('viewMore') }}>{{ 'gally_sylius.ui.filters.view_more'|trans }}</button>
