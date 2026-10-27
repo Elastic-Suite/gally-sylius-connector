@@ -8,12 +8,14 @@
                {label, value} pairs instead. #}
             {% set choices = choices|merge([{label: choice.label, value: choice.value}]) %}
         {% endfor %}
+        {# Raw criteria are used because form data drops submitted values that are not in the form choices (outside the aggregation top N). #}
+        {% set rawSelectedValues = facet_filters[form.vars.name] ?? [] %}
         {{ component('gally_shop:filter:facet_options', {
             filterField: form.vars.name,
             fieldName: form.vars.full_name,
             baseId: form.vars.id,
             initialChoices: choices,
-            selectedValues: form.vars.value,
+            selectedValues: rawSelectedValues is iterable ? rawSelectedValues : [rawSelectedValues],
             hasMore: has_more,
             search: facet_search,
             filters: facet_filters,
